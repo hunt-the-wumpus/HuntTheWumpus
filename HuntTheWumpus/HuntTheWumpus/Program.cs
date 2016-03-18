@@ -16,7 +16,19 @@ namespace HuntTheWumpus
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            var MainForm = new Form1();
+            MainForm.Show();
+            MainForm.DrawAll();
+            var ticktim = new System.Diagnostics.Stopwatch();
+            ticktim.Start();
+            while (MainForm.Created)
+            {
+                MainForm.DrawAll();
+                Application.DoEvents();
+                //Apdate(ticktim.ElapsedMilliseconds);
+                ticktim.Restart();
+            }
         }
     }
 }
