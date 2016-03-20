@@ -6,12 +6,16 @@ using System.Windows.Forms;
 
 namespace HuntTheWumpus
 {
-    static class Program
+
+	class Program
     {
-        /// <summary>
-        /// Главная точка входа для приложения.
-        /// </summary>
-        [STAThread]
+
+		public static MiniGame m = new MiniGame();
+
+		/// <summary>
+		/// Главная точка входа для приложения.
+		/// </summary>
+		[STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
@@ -22,20 +26,22 @@ namespace HuntTheWumpus
             MainForm.DrawAll();
             var ticktim = new System.Diagnostics.Stopwatch();
             ticktim.Start();
+			m.InitializeMiniGame(1);
             while (MainForm.Created)
             {
                 MainForm.DrawAll();
                 Application.DoEvents();
-                //Apdate(ticktim.ElapsedMilliseconds);
                 ticktim.Restart();
+
             }
         }
 
         public static void GetScreen(System.Drawing.Graphics g)
         {
-            g.Clear(System.Drawing.Color.Green);
-            var fn = new System.Drawing.Font("Arial", 20);
-            g.DrawString("Hello, world!", fn, System.Drawing.Brushes.Red, 20, 30);
+            //g.Clear(System.Drawing.Color.Green);
+            //var fn = new System.Drawing.Font("Arial", 20);
+            //g.DrawString("Hello, world!", fn, System.Drawing.Brushes.Red, 20, 30);
+			m.DrawMiniGame(g);
         }
     }
 }
