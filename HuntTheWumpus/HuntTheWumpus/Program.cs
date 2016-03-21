@@ -10,7 +10,7 @@ namespace HuntTheWumpus
 	class Program
     {
 
-		public static MiniGame m = new MiniGame();
+		public static MiniGame m = new MiniGame(640, 480);
 
 		/// <summary>
 		/// Главная точка входа для приложения.

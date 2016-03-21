@@ -8,53 +8,87 @@ using System.Drawing;
 
 namespace HuntTheWumpus {
 	class MiniGame {
-		/// This is TRUE, if player winner at last game, else it's FALSE
+		// This is TRUE, if player winner at last game, else it's FALSE
 		public bool Is_Winner = true;
-		/// This is TRUE, if now game initialized and playing, else it's FALSE
+		// This is TRUE, if now game initialized and playing, else it's FALSE
 		public bool Is_playing = false;
 
-		private List<int> CircleCoordinateX;
-		private List<int> CircleCoordinateY;
-		private const int radius = 10;
-		private int Scale_Distance = 20;
+		// This integers for set height and width canvas
+		// and correct drawing figure
+		private int CanvasHeight;
+		private int CanvasWidth;
 
-		public MiniGame () {
-			
+		// Coordinats of circles points
+		private List<int> CircleCoordinateX = new List<int>();
+		private List<int> CircleCoordinateY = new List<int>();
+
+		// Coordinats of mouse cursors positions,
+		// when user draw a figure
+		private List<int> MousePositionsX = new List<int>();
+		private List<int> MousePositionsY = new List<int>();
+
+		// Radius of point
+		private const int radius = 10;
+
+		private const int MaxPointsFromOneFigure = 750;
+
+		// Scale for transform figure position to screen position 
+		private float Scale_Distance = 20.0f;
+
+		/// Class constructor, say me window's width and height
+		public MiniGame (int DrawingWidth, int DrawingHeight) {
+			CanvasWidth = DrawingWidth / 2;
+			CanvasHeight = DrawingHeight / 2;
+		}
+
+		/// Read and apply info about figure
+		private void Set_Figure(string filename) {
+			//* Clear memory about last drawing figure... *//
+			CircleCoordinateX.Clear();
+			CircleCoordinateY.Clear();
+			MousePositionsX.Clear();
+			MousePositionsY.Clear();			
+			//* ...and read info about new figure */
+			StreamReader file = new StreamReader(@"" + filename);
+			string line = "";
+			while ((line = file.ReadLine()) != null) {
+				string[] points = line.Split(' ').ToArray();
+				int x = Convert.ToInt32(points[0]);
+				CircleCoordinateX.Add(x);
+				CircleCoordinateY.Add(int.Parse(points[1]));
+			}
+			Scale_Distance = 20.0f;
 		}
 
 		/// Call this method for create new game
 		public void InitializeMiniGame(int difficult) {
-			CircleCoordinateX.Clear();
-			CircleCoordinateY.Clear();
+			//* Read info about game level and set random figure *//
 			Is_playing = true;
 			StreamReader file = new StreamReader(@"Difficulties" + difficult.ToString() + ".txt");
-			List<List<string>> files_Difficulties = new List<List<string>>();
+			List<string> files_Difficulties = new List<string>();
 			string line = "";
-			int now_index = -1;
 			while ((line = file.ReadLine()) != null) {
-				if (line == "new_difficult") {
-					files_Difficulties.Add(new List<string>());
-					now_index++;
-				} else {
-					files_Difficulties[now_index].Add(line);
-				}
+				files_Difficulties.Add(line);
 			}
 			file.Close();
 			Random range = new Random();
-			int number_file = range.Next(0, files_Difficulties[difficult - 1].Count - 1);
-			file = new StreamReader(@"" + files_Difficulties[difficult - 1][number_file]);
-			while ((line = file.ReadLine()) != null) {
-
-			}
+			Set_Figure(files_Difficulties[range.Next(0, files_Difficulties.Count - 1)]);
 		}
 
 		/// Call this method, then game playing
 		public void DrawMiniGame(Graphics g) {
+			//* If game not initialized, then we not drawing *//
 			if (!Is_playing) {
 				return;
 			}
+			//* Clear window and drawing the points *//
 			g.Clear(Color.FromArgb(80, 0, 0, 0));
-			g.DrawEllipse(Pens.White, new Rectangle(50, 50, 2 * radius, 2 * radius));
+			for (int i = 0; i < CircleCoordinateX.Count; ++i) {
+				g.DrawEllipse(Pens.White, new Rectangle(
+					CircleCoordinateX[i] * (int)Scale_Distance + CanvasWidth,
+					CircleCoordinateY[i] * (int)Scale_Distance + CanvasHeight, 
+					2 * radius, 2 * radius));
+			}
 		}
 
 		public void MouseEvents() {
