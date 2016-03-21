@@ -12,7 +12,7 @@ namespace HuntTheWumpus
 {
     public partial class Form1 : Form
     {
-        public Form1()
+        public Form1(System.Windows.Forms.PaintEventHandler DrawForm)
         {
             InitializeComponent();
             pictureBox1.Paint += DrawForm;
@@ -24,13 +24,22 @@ namespace HuntTheWumpus
             //this.pictureBox1.MouseMove += ??.MouseMove; MouseMove(object sender, MouseEventArgs e)
             //this.FormBorderStyle = FormBorderStyle.None;//If we want form without border
         }
-
-        public void DrawForm(System.Object sender, System.Windows.Forms.PaintEventArgs e)
+        
+        public void Loop()
         {
-            var bmp = new System.Drawing.Bitmap(this.ClientSize.Width, this.ClientSize.Height);
-            var g = System.Drawing.Graphics.FromImage(bmp);
-            Program.GetScreen(g);
-            e.Graphics.DrawImage(bmp, 0, 0);
+            long time = 0;
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            while (true)
+            {
+                time += timer.ElapsedMilliseconds;
+                timer.Restart();
+                if (time >= 1000 / 25)
+                {
+                    time -= 1000 / 25;
+                    DrawAll();
+                }
+            }
         }
 
         public void DrawAll()//принудительная перерисовка
