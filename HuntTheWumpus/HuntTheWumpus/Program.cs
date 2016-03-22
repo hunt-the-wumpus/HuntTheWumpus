@@ -31,6 +31,7 @@ namespace HuntTheWumpus
             {
                 MainForm.DrawAll();
                 Application.DoEvents();
+				m.TickTime(ticktim.Elapsed.Milliseconds);
                 ticktim.Restart();
 
             }

@@ -31,6 +31,7 @@ namespace HuntTheWumpus {
 		private const int radius = 10;
 
 		private const int MaxPointsFromOneFigure = 750;
+		private const float Speed_Change_Scale_Distance = 1.0f;
 
 		// Scale for transform figure position to screen position 
 		private float Scale_Distance = 20.0f;
@@ -72,7 +73,7 @@ namespace HuntTheWumpus {
 			}
 			file.Close();
 			Random range = new Random();
-			Set_Figure(files_Difficulties[range.Next(0, files_Difficulties.Count - 1)]);
+			Set_Figure(files_Difficulties[range.Next(0, files_Difficulties.Count)]);
 		}
 
 		/// Call this method, then game playing
@@ -89,6 +90,10 @@ namespace HuntTheWumpus {
 					CircleCoordinateY[i] * (int)Scale_Distance + CanvasHeight, 
 					2 * radius, 2 * radius));
 			}
+		}
+
+		public void TickTime(long Milliseconds) {
+			Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
 		}
 
 		public void MouseEvents() {
