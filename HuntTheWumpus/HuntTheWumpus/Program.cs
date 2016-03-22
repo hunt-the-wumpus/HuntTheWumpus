@@ -7,12 +7,13 @@ using System.Windows.Forms;
 
 namespace HuntTheWumpus
 {
-    static class Program
+
+	class Program
     {
         /// <summary>
-        /// Главная точка входа для приложения.
-        /// </summary>
-        [STAThread]
+		/// Главная точка входа для приложения.
+		/// </summary>
+		[STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();

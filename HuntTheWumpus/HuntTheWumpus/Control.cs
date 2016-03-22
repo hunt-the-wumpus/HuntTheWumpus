@@ -9,7 +9,7 @@ namespace HuntTheWumpus
 {
     class Control
     {
-        private int state = 0;
+        private int state = 1;
         //0 - menu
         //1 - game in cave
 
@@ -28,10 +28,10 @@ namespace HuntTheWumpus
         {
             var gen = new System.Random();
             view.Clear();
-            if (state == 0 && !MiniGameEnd)
+            if (state == 1 && !MiniGameEnd)
             {
                 model.minigame.DrawMiniGame(view.g);
-                if (!MiniGameEnd && !model.minigame.Is_playing)
+                if (!model.minigame.Is_playing)
                 {
                     if (model.minigame.Is_Winner)
                         ++MiniGameOK;

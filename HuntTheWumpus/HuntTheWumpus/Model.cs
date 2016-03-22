@@ -9,20 +9,11 @@ namespace HuntTheWumpus
 {
     class Model
     {
-        public IMiniGame minigame { get; set; }
+        public MiniGame minigame { get; set; }
         public Model(int width, int height)
         {
-            //minigame = new IMiniGame(width, height);
+            minigame = new MiniGame(width, height);
+            minigame.InitializeMiniGame(2);
         }
-    }
-    interface IMiniGame
-    {
-        void Down(MouseEventArgs e);
-        void Up(MouseEventArgs e);
-        void Move(MouseEventArgs e);
-        void DrawMiniGame(System.Drawing.Graphics g);
-        void InitializeMiniGame(int difficult);
-        bool Is_Winner { get; }
- 		bool Is_playing { get; }
     }
 }
