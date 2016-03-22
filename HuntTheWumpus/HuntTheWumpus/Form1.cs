@@ -12,12 +12,17 @@ namespace HuntTheWumpus
 {
     public partial class Form1 : Form
     {
-        public Form1(System.Windows.Forms.PaintEventHandler DrawForm)
+        public Form1(PaintEventHandler DrawForm, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove, int width, int height)
         {
             InitializeComponent();
             pictureBox1.Paint += DrawForm;
-            pictureBox1.Width = this.ClientSize.Width;
-            pictureBox1.Height = this.ClientSize.Height;
+            this.pictureBox1.KeyDown += KeyDown;
+            this.pictureBox1.MouseDown += MouseDown;
+            this.pictureBox1.MouseMove += MouseMove;
+            this.pictureBox1.MouseUp += MouseUp;
+            this.ClientSize = new Size(width, height);
+            pictureBox1.Width = width;
+            pictureBox1.Height = height;
             //this.KeyDown += ??.KeyDown; KeyDown(object sender, KeyEventArgs e)
             //this.pictureBox1.MouseDown += ??.MouseDown; MouseDown(object sender, MouseEventArgs e) 
             //this.pictureBox1.MouseUp += ??.MouseUp; MouseUp(object sender, MouseEventArgs e)
@@ -34,9 +39,9 @@ namespace HuntTheWumpus
             {
                 time += timer.ElapsedMilliseconds;
                 timer.Restart();
-                if (time >= 1000 / 25)
+                if (time >= 1000 / 60)
                 {
-                    time -= 1000 / 25;
+                    time -= 1000 / 60;
                     DrawAll();
                 }
             }

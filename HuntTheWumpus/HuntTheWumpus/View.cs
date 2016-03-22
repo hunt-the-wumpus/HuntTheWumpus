@@ -9,19 +9,16 @@ namespace HuntTheWumpus
 {
     class View
     {
-        private System.Drawing.Graphics g;
+        public System.Drawing.Graphics g { get; set; }
         public Form1 MainForm { get; private set; }
         private System.Drawing.Bitmap bmp;
 
-        public View(int width, int height)
+        public View(int width, int height, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
             bmp = new System.Drawing.Bitmap(width, height);
             g = System.Drawing.Graphics.FromImage(bmp);
-            MainForm = new Form1(Drawing);
-            MainForm.Width = width;
-            MainForm.Height = height;
+            MainForm = new Form1(Drawing, KeyDown, MouseDown, MouseUp, MouseMove, width, height);
             MainForm.Show();
-            MainForm.DrawAll();
         }
 
         public void DrawText(string str, int x, int y, int size_font)
@@ -33,6 +30,16 @@ namespace HuntTheWumpus
         public void Drawing(System.Object sender, System.Windows.Forms.PaintEventArgs e)
         {
             e.Graphics.DrawImage(bmp, 0, 0);
+        }
+
+        public void Clear()
+        {
+            g.Clear(System.Drawing.Color.White);
+        }
+
+        public void Clear(System.Drawing.Color cl)
+        {
+            g.Clear(cl);
         }
 
         public bool Created()
