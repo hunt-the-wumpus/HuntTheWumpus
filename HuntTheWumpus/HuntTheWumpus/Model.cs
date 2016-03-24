@@ -14,7 +14,7 @@ namespace HuntTheWumpus
         public Model(int width, int height)
         {
             minigame = new MiniGame(width, height);
-            minigame.InitializeMiniGame(2);
+            minigame.InitializeMiniGame(1);
         }
     }
 }

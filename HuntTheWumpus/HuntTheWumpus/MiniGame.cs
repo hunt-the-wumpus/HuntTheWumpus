@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace HuntTheWumpus
 {
@@ -20,9 +21,19 @@ namespace HuntTheWumpus
         // for locking mouse events
         private bool Is_Analytics = false;
 
+		// This is TRUE, if mini-game paused else it's FALSE
+		private bool Is_Pause = false;
+
+		// This is true, if user began drawing
+		private bool Is_Mouse_Down = false;
+
         // While this bigger than zero, game playing
         private int PlayerPoints = 500;
 
+		// This timer can say milliseconds with last called time
+		private Stopwatch Event_timer = new Stopwatch();
+
+		// This array have figures file names
         List<string> files_Difficulties = new List<string>();
 
         // This integers for set height and width canvas
@@ -59,7 +70,8 @@ namespace HuntTheWumpus
         /// Read and apply info about figure
         private void Set_Figure(string filename)
         {
-            //* Clear memory about last drawing figure... *//
+			//* Clear memory about last drawing figure... *//
+			Scale_Distance = 20.0f;
             CircleCoordinateX.Clear();
             CircleCoordinateY.Clear();
             MousePositionsX.Clear();
@@ -92,13 +104,15 @@ namespace HuntTheWumpus
             file.Close();
             Random range = new Random();
             Set_Figure(files_Difficulties[range.Next(0, files_Difficulties.Count)]);
+			Event_timer = new Stopwatch();
+			Event_timer.Start();
         }
 
         /// Call this method, then game playing
         public void DrawMiniGame(Graphics g)
         {
             //* If game not initialized, then we not drawing *//
-            if (!Is_playing)
+            if (!Is_playing || Is_Pause)
             {
                 return;
             }
@@ -111,19 +125,28 @@ namespace HuntTheWumpus
                     (int)(CircleCoordinateY[i] * Scale_Distance) + CanvasHeight,
                     2 * radius, 2 * radius));
             }
+			/* Here we drawing user's line */
+			Pen line_marker = new Pen(Color.Yellow);
+			line_marker.Width = 2;
+			for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i) {
+				g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
+			}
         }
 
-        public void TickTime(long Milliseconds)
+        public void TickTime()
         {
-            if (Is_Analytics || !Is_playing)
+			long Milliseconds = Event_timer.ElapsedMilliseconds;
+            if (Is_Analytics || !Is_playing || Is_Pause)
             {
                 return;
             }
             Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
+			Event_timer.Restart();
         }
 
         private void Analytics()
         {
+			Event_timer.Stop();
             int points = MaxPointsFromOneFigure;
             List<int> EndCoordinatsX = new List<int>();
             List<int> EndCoordinatsY = new List<int>();
@@ -167,19 +190,40 @@ namespace HuntTheWumpus
             Is_Analytics = false;
         }
 
+		public void Pause(bool setting) {
+			Is_Pause = setting;
+			if (setting) {
+				Event_timer.Stop();
+			} else {
+				Event_timer.Start();
+			}
+		}
+
         public void Down(MouseEventArgs e)
         {
-           
+			if (Is_Pause || Is_Analytics || !Is_playing) {
+				return;
+			}
+			Is_Mouse_Down = true;
+			MousePositionsX.Add(e.X);
+			MousePositionsY.Add(e.Y);
         }
 
         public void Up(MouseEventArgs e)
         {
-
+			MousePositionsX.Add(e.X);
+			MousePositionsY.Add(e.Y);
+			Is_Analytics = true;
+			Analytics();
         }
 
         public void Move(MouseEventArgs e)
         {
-
+			if (Is_Pause || Is_Analytics || !Is_playing) {
+				return;
+			}
+			MousePositionsX.Add(e.X);
+			MousePositionsY.Add(e.Y);
         }
     }
 }
