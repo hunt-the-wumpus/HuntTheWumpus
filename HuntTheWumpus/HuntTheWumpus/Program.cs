@@ -19,15 +19,24 @@ namespace HuntTheWumpus
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;//double.Parse(str) use format a.b
-            Control control = new Control(640, 480);
-            Thread t = new Thread(new ThreadStart(control.view.MainForm.Loop));
-            t.Start();
+            Control control = new Control(1024, 768);
+            long TimeDrawing = 0;
+            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
+            timer.Start();
+            
             while (control.view.Created())
             {
                 Application.DoEvents();
                 control.UpDate();
+
+                TimeDrawing += timer.ElapsedMilliseconds;
+                timer.Restart();
+                if (TimeDrawing >= 1000 / 60)
+                {
+                    TimeDrawing -= 1000 / 60;
+                    control.view.MainForm.DrawAll();
+                }
             }
-            t.Abort();
         }
     }
 }

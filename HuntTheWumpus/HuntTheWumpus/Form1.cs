@@ -23,30 +23,8 @@ namespace HuntTheWumpus
             this.ClientSize = new Size(width, height);
             pictureBox1.Width = width;
             pictureBox1.Height = height;
-            //this.KeyDown += ??.KeyDown; KeyDown(object sender, KeyEventArgs e)
-            //this.pictureBox1.MouseDown += ??.MouseDown; MouseDown(object sender, MouseEventArgs e) 
-            //this.pictureBox1.MouseUp += ??.MouseUp; MouseUp(object sender, MouseEventArgs e)
-            //this.pictureBox1.MouseMove += ??.MouseMove; MouseMove(object sender, MouseEventArgs e)
-            //this.FormBorderStyle = FormBorderStyle.None;//If we want form without border
         }
         
-        public void Loop()
-        {
-            long time = 0;
-            System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
-            while (true)
-            {
-                time += timer.ElapsedMilliseconds;
-                timer.Restart();
-                if (time >= 1000 / 60)
-                {
-                    time -= 1000 / 60;
-                    DrawAll();
-                }
-            }
-        }
-
         public void DrawAll()//принудительная перерисовка
         { 
            pictureBox1.Refresh(); 

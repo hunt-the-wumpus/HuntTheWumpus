@@ -10,6 +10,7 @@ namespace HuntTheWumpus
     class Model
     {
         public MiniGame minigame { get; set; }
+
         public Model(int width, int height)
         {
             minigame = new MiniGame(width, height);

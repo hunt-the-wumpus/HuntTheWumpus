@@ -9,12 +9,15 @@ namespace HuntTheWumpus
 {
     class Control
     {
-        private int state = 1;
-        //0 - menu
-        //1 - game in cave
+        enum ControlState
+        {
+            Menu, 
+            Cave
+        }
 
-        private bool MiniGameEnd = true;
-        int MiniGameOK = 0, MiniGameFail = 0;
+        private ControlState state = ControlState.Cave;
+        
+        private bool MiniGameEnd = false;
 
         public Model model;
         public View view;
@@ -26,28 +29,7 @@ namespace HuntTheWumpus
 
         public void UpDate()
         {
-            var gen = new System.Random();
-            view.Clear();
-            if (state == 1 && !MiniGameEnd)
-            {
-                model.minigame.DrawMiniGame(view.g);
-                if (!model.minigame.Is_playing)
-                {
-                    if (model.minigame.Is_Winner)
-                        ++MiniGameOK;
-                    else
-                        ++MiniGameFail;
-                    if (MiniGameOK == 2 || MiniGameFail == 2)
-                    {
-                        MiniGameEnd = true;
-                        MiniGameFail = MiniGameOK = 0;
-                    }
-                    else
-                    {
-                        model.minigame.InitializeMiniGame(2);
-                    }
-                }
-            }
+           
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
