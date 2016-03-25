@@ -53,11 +53,18 @@ namespace HuntTheWumpus
         // Radius of point
         private const int radius = 10;
 
-        private const int MaxPointsFromOneFigure = 750;
+        private const int MaxPointsFromOneFigure = 1200;
         private const float Speed_Change_Scale_Distance = 1.0f;
 
         // Scale for transform figure position to screen position 
         private float Scale_Distance = 20.0f;
+
+		// Very very much animations properties
+		// without comments
+
+		int ProgressBarSettedAngle = 0;
+		int ProgressBarDrawingAngle = 0;
+		int ProgressBarSpeedChangeAngle = 288;
 
         /// Class constructor, say me window's width and height
         public MiniGame(int DrawingWidth, int DrawingHeight)
@@ -127,14 +134,15 @@ namespace HuntTheWumpus
             }
 			/* Here we drawing user's line */
 			Pen line_marker = new Pen(Color.Yellow);
-			line_marker.Width = 2;
+			line_marker.Width = 5;
 			for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i) {
 				g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
 			}
 			Font f = new Font("Arial", 10);
 			g.DrawString(PlayerPoints.ToString(), f, Brushes.Yellow, 0, 0);
 			g.DrawString((MaxPointsFromOneFigure / CircleCoordinateX.Count).ToString(), f, Brushes.Yellow, 0, 30);
-			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight / 3, CanvasHeight / 3), 0, 360 * (500 - PlayerPoints) / 500);
+			line_marker.Color = Color.FromArgb(255 * (360 - ProgressBarDrawingAngle) / 360, 255 * ProgressBarDrawingAngle / 360, 0);
+			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
         }
 
         public void TickTime()
@@ -144,6 +152,9 @@ namespace HuntTheWumpus
             {
                 return;
             }
+			if (ProgressBarDrawingAngle < ProgressBarSettedAngle) {
+				ProgressBarDrawingAngle += ProgressBarSpeedChangeAngle * (int)Milliseconds / 1000;
+			}
             Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
 			Event_timer.Restart();
         }
@@ -182,6 +193,7 @@ namespace HuntTheWumpus
 				create new figure
 			*/
             PlayerPoints -= points;
+			ProgressBarSettedAngle = 360 * (500 - PlayerPoints) / 500;
             if (PlayerPoints <= 0)
             {
                 Is_playing = false;
