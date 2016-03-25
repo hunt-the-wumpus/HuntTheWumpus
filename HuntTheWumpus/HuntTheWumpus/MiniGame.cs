@@ -59,12 +59,31 @@ namespace HuntTheWumpus
         // Scale for transform figure position to screen position 
         private float Scale_Distance = 20.0f;
 
-		// Very very much animations properties
-		// without comments
+		// Timer that we must get 500 points
+		private int LifeTimer = 15000;
 
-		int ProgressBarSettedAngle = 0;
-		int ProgressBarDrawingAngle = 0;
-		int ProgressBarSpeedChangeAngle = 288;
+		// Constant of Max time for LifeTimer
+		private const int MaxLife = 15000;
+
+		// Very very much animations properties...
+		// ...without comments
+
+		private int ProgressBarSettedAngle = 0;
+		private int ProgressBarDrawingAngle = 0;
+		private int ProgressBarSpeedChangeAngle = 288;
+
+		private const int MaximalNegative = 255;
+		private const int MinimalNegative = 85;
+		private int NowNegative = 255;
+		private int NowChange = -1;
+		private const int SpeedChangeNegative = 250;
+
+		private int ScreenNowNegative = 0;
+		private bool IsNegatingScreen = false;
+		private int NowChangeScreen = 1;
+		private const int ScreenMaxNegative = 150;
+		private const int ScreenMinNegative = 0;
+		private const int SpeedChangeNegativeScreen = 300;
 
         /// Class constructor, say me window's width and height
         public MiniGame(int DrawingWidth, int DrawingHeight)
@@ -99,7 +118,8 @@ namespace HuntTheWumpus
         /// Call this method for create new game
         public void InitializeMiniGame(int difficult)
         {
-            //* Read info about game level and set random figure *//
+			//* Read info about game level and set random figure *//
+			LifeTimer = MaxLife;
             files_Difficulties.Clear();
             Is_playing = true;
             StreamReader file = new StreamReader(@"Difficulties" + difficult.ToString() + ".txt");
@@ -125,7 +145,10 @@ namespace HuntTheWumpus
             }
             //* Clear window and drawing the points *//
             g.Clear(Color.FromArgb(80, 0, 0, 0));
-            for (int i = 0; i < CircleCoordinateX.Count && !Is_Analytics; ++i)
+			if (IsNegatingScreen) {
+				g.Clear(Color.FromArgb(ScreenNowNegative, 0, 255, 0));
+			}
+			for (int i = 0; i < CircleCoordinateX.Count && !Is_Analytics; ++i)
             {
                 g.DrawEllipse(Pens.White, new Rectangle(
                     (int)(CircleCoordinateX[i] * Scale_Distance) + CanvasWidth,
@@ -133,16 +156,18 @@ namespace HuntTheWumpus
                     2 * radius, 2 * radius));
             }
 			/* Here we drawing user's line */
-			Pen line_marker = new Pen(Color.Yellow);
+			Pen line_marker = new Pen(Color.FromArgb(150, 0, 255, 0));
 			line_marker.Width = 5;
 			for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i) {
 				g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
 			}
-			Font f = new Font("Arial", 10);
-			g.DrawString(PlayerPoints.ToString(), f, Brushes.Yellow, 0, 0);
-			g.DrawString((MaxPointsFromOneFigure / CircleCoordinateX.Count).ToString(), f, Brushes.Yellow, 0, 30);
+			Font f = new Font("Arial", 40);
+			Brush brush = new SolidBrush(Color.FromArgb(50, 0, 0, 255));
+			g.DrawString(PlayerPoints.ToString(), f, brush, CanvasWidth - 50, CanvasHeight - 20);
 			line_marker.Color = Color.FromArgb(255 * (360 - ProgressBarDrawingAngle) / 360, 255 * ProgressBarDrawingAngle / 360, 0);
 			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
+			line_marker.Color = Color.FromArgb(NowNegative, 255 * (MaxLife - LifeTimer) / MaxLife, 255 * LifeTimer / MaxLife, 0);
+			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6 - 10, CanvasHeight * 3 / 2 + 20, CanvasHeight * 3 / 2 + 20), -90, LifeTimer * 360 / MaxLife);
         }
 
         public void TickTime()
@@ -154,6 +179,35 @@ namespace HuntTheWumpus
             }
 			if (ProgressBarDrawingAngle < ProgressBarSettedAngle) {
 				ProgressBarDrawingAngle += ProgressBarSpeedChangeAngle * (int)Milliseconds / 1000;
+			}
+			LifeTimer -= (int)Milliseconds;
+			if (LifeTimer <= 0) {
+				Is_Winner = false;
+				Is_playing = false;
+			}
+			if (LifeTimer < MaxLife / 2) {
+				if (NowNegative >= MaximalNegative) {
+					NowChange = -1;
+				}
+				if (NowNegative <= MinimalNegative) {
+					NowChange = 1;
+				}
+				NowNegative += NowChange * SpeedChangeNegative * (int)Milliseconds / 1000;
+				NowNegative = Math.Min(NowNegative, 255);
+				NowNegative = Math.Max(NowNegative, 0);
+			}
+			if (IsNegatingScreen) {
+				ScreenNowNegative += NowChangeScreen * SpeedChangeNegativeScreen * (int)Milliseconds / 1000;
+				ScreenNowNegative = Math.Min(ScreenNowNegative, 255);
+				ScreenNowNegative = Math.Max(ScreenNowNegative, 0);
+				if (ScreenNowNegative >= ScreenMaxNegative) {
+					NowChangeScreen = -1;
+				}
+				if (ScreenNowNegative <= ScreenMinNegative) {
+					NowChangeScreen = 1;
+					IsNegatingScreen = false;
+					ScreenNowNegative = 0;
+				}
 			}
             Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
 			Event_timer.Restart();
@@ -194,6 +248,7 @@ namespace HuntTheWumpus
 			*/
             PlayerPoints -= points;
 			ProgressBarSettedAngle = 360 * (500 - PlayerPoints) / 500;
+			IsNegatingScreen = true;
             if (PlayerPoints <= 0)
             {
                 Is_playing = false;
