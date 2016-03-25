@@ -78,13 +78,6 @@ namespace HuntTheWumpus
 		private int NowChange = -1;
 		private const int SpeedChangeNegative = 250;
 
-		private int ScreenNowNegative = 0;
-		private bool IsNegatingScreen = false;
-		private int NowChangeScreen = 1;
-		private const int ScreenMaxNegative = 150;
-		private const int ScreenMinNegative = 0;
-		private const int SpeedChangeNegativeScreen = 300;
-
         /// Class constructor, say me window's width and height
         public MiniGame(int DrawingWidth, int DrawingHeight)
         {
@@ -145,9 +138,6 @@ namespace HuntTheWumpus
             }
             //* Clear window and drawing the points *//
             g.Clear(Color.FromArgb(80, 0, 0, 0));
-			if (IsNegatingScreen) {
-				g.Clear(Color.FromArgb(ScreenNowNegative, 0, 255, 0));
-			}
 			for (int i = 0; i < CircleCoordinateX.Count && !Is_Analytics; ++i)
             {
                 g.DrawEllipse(Pens.White, new Rectangle(
@@ -196,20 +186,7 @@ namespace HuntTheWumpus
 				NowNegative = Math.Min(NowNegative, 255);
 				NowNegative = Math.Max(NowNegative, 0);
 			}
-			if (IsNegatingScreen) {
-				ScreenNowNegative += NowChangeScreen * SpeedChangeNegativeScreen * (int)Milliseconds / 1000;
-				ScreenNowNegative = Math.Min(ScreenNowNegative, 255);
-				ScreenNowNegative = Math.Max(ScreenNowNegative, 0);
-				if (ScreenNowNegative >= ScreenMaxNegative) {
-					NowChangeScreen = -1;
-				}
-				if (ScreenNowNegative <= ScreenMinNegative) {
-					NowChangeScreen = 1;
-					IsNegatingScreen = false;
-					ScreenNowNegative = 0;
-				}
-			}
-            Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
+			Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
 			Event_timer.Restart();
         }
 
@@ -248,8 +225,7 @@ namespace HuntTheWumpus
 			*/
             PlayerPoints -= points;
 			ProgressBarSettedAngle = 360 * (500 - PlayerPoints) / 500;
-			IsNegatingScreen = true;
-            if (PlayerPoints <= 0)
+			if (PlayerPoints <= 0)
             {
                 Is_playing = false;
                 Is_Winner = true;
