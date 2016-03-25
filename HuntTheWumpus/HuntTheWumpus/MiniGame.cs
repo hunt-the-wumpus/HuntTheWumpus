@@ -131,6 +131,10 @@ namespace HuntTheWumpus
 			for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i) {
 				g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
 			}
+			Font f = new Font("Arial", 10);
+			g.DrawString(PlayerPoints.ToString(), f, Brushes.Yellow, 0, 0);
+			g.DrawString((MaxPointsFromOneFigure / CircleCoordinateX.Count).ToString(), f, Brushes.Yellow, 0, 30);
+			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight / 3, CanvasHeight / 3), 0, 360 * (500 - PlayerPoints) / 500);
         }
 
         public void TickTime()
@@ -159,18 +163,18 @@ namespace HuntTheWumpus
             /* Get how good drawing the figure */
             for (int i = 0; i < EndCoordinatsX.Count; ++i)
             {
-                double minimal_distance = 1000000.0f;
+                double minimal_distance = 100000.0f;
                 for (int j = 0; j < MousePositionsX.Count; ++j)
                 {
                     double now_distance = Math.Sqrt(Math.Pow(EndCoordinatsX[i] - MousePositionsX[j], 2) + Math.Pow(EndCoordinatsY[i] - MousePositionsY[j], 2));
                     minimal_distance = Math.Min(now_distance, minimal_distance);
                 }
-                if (minimal_distance > radius)
+                if (minimal_distance >= radius)
                 {
                     points -= MaxPointsFromOneFigure / EndCoordinatsX.Count;
                 }
                 else {
-                    points -= (int)(MaxPointsFromOneFigure / EndCoordinatsX.Count * (float)radius - minimal_distance);
+                    points -= (int)(MaxPointsFromOneFigure * (minimal_distance / radius) / EndCoordinatsX.Count);
                 }
             }
             /* "Added" points 
@@ -214,12 +218,13 @@ namespace HuntTheWumpus
 			MousePositionsX.Add(e.X);
 			MousePositionsY.Add(e.Y);
 			Is_Analytics = true;
+			Is_Mouse_Down = false;
 			Analytics();
         }
 
         public void Move(MouseEventArgs e)
         {
-			if (Is_Pause || Is_Analytics || !Is_playing) {
+			if (Is_Pause || Is_Analytics || !Is_playing || !Is_Mouse_Down) {
 				return;
 			}
 			MousePositionsX.Add(e.X);
