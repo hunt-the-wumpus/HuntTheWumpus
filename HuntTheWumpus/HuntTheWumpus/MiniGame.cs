@@ -101,9 +101,8 @@ namespace HuntTheWumpus
             while ((line = file.ReadLine()) != null)
             {
                 string[] points = line.Split(' ').ToArray();
-                int x = Convert.ToInt32(points[0]);
-                CircleCoordinateX.Add(x);
-                CircleCoordinateY.Add(int.Parse(points[1]));
+                CircleCoordinateX.Add(-int.Parse(points[0]));
+                CircleCoordinateY.Add(-int.Parse(points[1]));
             }
             Scale_Distance = 20.0f;
         }
@@ -157,7 +156,7 @@ namespace HuntTheWumpus
 			line_marker.Color = Color.FromArgb(255 * (360 - ProgressBarDrawingAngle) / 360, 255 * ProgressBarDrawingAngle / 360, 0);
 			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
 			line_marker.Color = Color.FromArgb(NowNegative, 255 * (MaxLife - LifeTimer) / MaxLife, 255 * LifeTimer / MaxLife, 0);
-			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6 - 10, CanvasHeight * 3 / 2 + 20, CanvasHeight * 3 / 2 + 20), -90, LifeTimer * 360 / MaxLife);
+			g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2 - 10, CanvasHeight / 6 - 10, CanvasHeight * 3 / 2 + 20, CanvasHeight * 3 / 2 + 20), -90, LifeTimer * 360 / MaxLife);
         }
 
         public void TickTime()
@@ -169,6 +168,7 @@ namespace HuntTheWumpus
             }
 			if (ProgressBarDrawingAngle < ProgressBarSettedAngle) {
 				ProgressBarDrawingAngle += ProgressBarSpeedChangeAngle * (int)Milliseconds / 1000;
+				ProgressBarDrawingAngle = Math.Min(ProgressBarDrawingAngle, 360);
 			}
 			LifeTimer -= (int)Milliseconds;
 			if (LifeTimer <= 0) {
@@ -225,6 +225,7 @@ namespace HuntTheWumpus
 			*/
             PlayerPoints -= points;
 			ProgressBarSettedAngle = 360 * (500 - PlayerPoints) / 500;
+			ProgressBarSettedAngle = Math.Min(ProgressBarSettedAngle, 360);
 			if (PlayerPoints <= 0)
             {
                 Is_playing = false;

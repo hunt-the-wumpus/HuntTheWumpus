@@ -29,7 +29,9 @@ namespace HuntTheWumpus
 
         public void UpDate()
         {
-           
+			state = 0;
+			model.minigame.TickTime();
+			model.minigame.DrawMiniGame(view.Grapchis);
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
