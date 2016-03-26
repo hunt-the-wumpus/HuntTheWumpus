@@ -30,8 +30,9 @@ namespace HuntTheWumpus
         public void UpDate()
         {
 			state = 0;
-			model.minigame.TickTime();
-			model.minigame.DrawMiniGame(view.Grapchis);
+			//model.minigame.TickTime();
+			//model.minigame.DrawMiniGame(view.Grapchis);
+			model.scores.DrawScores(view.Grapchis);
         }
 
         public void KeyDown(object sender, KeyEventArgs e)

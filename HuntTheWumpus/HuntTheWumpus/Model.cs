@@ -10,11 +10,13 @@ namespace HuntTheWumpus
     class Model
     {
         public MiniGame minigame { get; set; }
+		public Scores scores { get; set; }
 
         public Model(int width, int height)
         {
             minigame = new MiniGame(width, height);
-            minigame.InitializeMiniGame(2);
+			//minigame.InitializeMiniGame(3);
+			scores = new Scores(width, height);
         }
     }
 }
