@@ -9,15 +9,14 @@ namespace HuntTheWumpus
 {
     class View
     {
-        public System.Drawing.Graphics Grapchis { get; private set; }
+        public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
         public Form1 MainForm { get; private set; }
         
         public View(int width, int height, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
             Bitmap = new System.Drawing.Bitmap(width, height);
-            Grapchis = System.Drawing.Graphics.FromImage(Bitmap);
-            Grapchis.Clear(System.Drawing.Color.Blue);
+            Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             MainForm = new Form1(Drawing, KeyDown, MouseDown, MouseUp, MouseMove, width, height);
             MainForm.Show();
         }
@@ -25,7 +24,7 @@ namespace HuntTheWumpus
         public void DrawText(string str, int x, int y, int size_font)
         {
             var fn = new System.Drawing.Font("Arial", size_font);
-            Grapchis.DrawString(str, fn, System.Drawing.Brushes.Black, x, y);
+            Graphics.DrawString(str, fn, System.Drawing.Brushes.Black, x, y);
         }
 
         public void Drawing(System.Object sender, System.Windows.Forms.PaintEventArgs e)
@@ -35,12 +34,12 @@ namespace HuntTheWumpus
 
         public void Clear()
         {
-            Grapchis.Clear(System.Drawing.Color.White);
+            Graphics.Clear(System.Drawing.Color.White);
         }
 
         public void Clear(System.Drawing.Color cl)
         {
-            Grapchis.Clear(cl);
+            Graphics.Clear(cl);
         }
 
         public bool Created()

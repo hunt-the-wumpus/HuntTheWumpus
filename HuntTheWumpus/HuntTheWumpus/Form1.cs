@@ -16,7 +16,7 @@ namespace HuntTheWumpus
         {
             InitializeComponent();
             pictureBox1.Paint += DrawForm;
-            this.pictureBox1.KeyDown += KeyDown;
+            this.KeyDown += KeyDown;
             this.pictureBox1.MouseDown += MouseDown;
             this.pictureBox1.MouseMove += MouseMove;
             this.pictureBox1.MouseUp += MouseUp;
