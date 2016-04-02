@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace HuntTheWumpus
 {
-    class View
+    public class View
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;

@@ -7,13 +7,14 @@ using System.Windows.Forms;
 
 namespace HuntTheWumpus
 {
-    class Control
+    public class Control
     {
         enum ControlState
         {
             MainMenu,
             Cave,
-            LastWindow
+            LastWindow,
+            PickCave
         }
 
         private ControlState state = ControlState.Cave;
@@ -103,16 +104,19 @@ namespace HuntTheWumpus
             }
         }
 
+        void ContinueMenu()
+        {
+            state = OldState;
+            if (state == ControlState.Cave && minigame.Is_playing)
+                minigame.Pause(false);
+        }
+
         public void KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Escape)
             {
                 if (state == ControlState.MainMenu)
-                {
-                    state = OldState;
-                    if (state == ControlState.Cave && minigame.Is_playing)
-                        minigame.Pause(false);
-                }
+                    ContinueMenu();
                 else
                 {
                     if (state == ControlState.Cave)
@@ -134,6 +138,25 @@ namespace HuntTheWumpus
             if (state == ControlState.Cave && !MiniGameEnd)
             {
                 minigame.Down(e);
+            }
+            if  (state == ControlState.MainMenu)
+            {
+                int rg = 0;// = view.GetRegionMainMenu(e.X, e.Y);
+                if (rg == 1)//Новая игра
+                {
+                    state = ControlState.PickCave;
+                    //generate 5 cave.
+                    MiniGameEnd = true;
+                    //player = new player
+                }
+                if (rg == 2)//Продолжить
+                {
+                    ContinueMenu();
+                }
+                if (rg == 3)//Выход
+                {
+                    Application.Exit();
+                }
             }
         }
 

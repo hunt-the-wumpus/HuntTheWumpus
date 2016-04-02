@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace HuntTheWumpus
 {
-    class MiniGame
+    public class MiniGame
     {
         // This is TRUE, if player winner at last game, else it's FALSE
         public bool Is_Winner { get; private set; }
