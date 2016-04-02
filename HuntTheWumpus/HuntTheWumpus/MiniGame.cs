@@ -136,8 +136,9 @@ namespace HuntTheWumpus
                 return;
             }
             //* Clear window and drawing the points *//
-            g.Clear(Color.FromArgb(80, 0, 0, 0));
-			for (int i = 0; i < CircleCoordinateX.Count && !Is_Analytics; ++i)
+            g.FillRectangle(new SolidBrush(Color.FromArgb(80, 0, 0, 0)), 0, 0, CanvasWidth * 2, CanvasHeight * 2);
+           
+            for (int i = 0; i < CircleCoordinateX.Count && !Is_Analytics; ++i)
             {
                 g.DrawEllipse(Pens.White, new Rectangle(
                     (int)(CircleCoordinateX[i] * Scale_Distance) + CanvasWidth,

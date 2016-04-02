@@ -13,28 +13,29 @@ namespace HuntTheWumpus
         /// <summary>
 		/// Главная точка входа для приложения.
 		/// </summary>
-		[STAThread]
+		public const int FPS = 60;
+
+        [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;//double.Parse(str) use format a.b
             Control control = new Control(1024, 768);
-            long TimeDrawing = 0;
+            long TimeDrawing = 1;
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-            timer.Start();
             
             while (control.view.Created())
             {
+                timer.Start();
                 Application.DoEvents();
-                control.UpDate();
-
-                TimeDrawing += timer.ElapsedMilliseconds;
-                timer.Restart();
-                if (TimeDrawing >= 1000 / 60)
+                control.view.MainForm.DrawAll();
+                control.UpDate(TimeDrawing);
+                TimeDrawing = timer.ElapsedMilliseconds;
+                timer.Reset();
+                if (TimeDrawing < 1000 / FPS)
                 {
-                    TimeDrawing -= 1000 / 60;
-                    control.view.MainForm.DrawAll();
+                    Thread.Sleep((int)(1000 / FPS - TimeDrawing));
                 }
             }
         }
