@@ -19,14 +19,19 @@ namespace HuntTheWumpus
         public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
         
-        public View(int width, int height, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+        public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+        {
+            MainForm.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
+        }
+
+        public View(int width, int height)
         {
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             Width = width;
             Height = height;
             MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
-            MainForm = new Form1(Drawing, KeyDown, MouseDown, MouseUp, MouseMove, width, height);
+            MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
         }
         

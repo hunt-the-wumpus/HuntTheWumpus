@@ -35,7 +35,8 @@ namespace HuntTheWumpus
 
         public Control(int width, int height)
         {
-            view = new View(width, height, KeyDown, MouseDown, MouseUp, MouseMove);
+            view = new View(width, height);
+            view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             minigame = new MiniGame(width, height);
             minigame.InitializeMiniGame(3);
             score = new Scores(width, height);
@@ -79,19 +80,19 @@ namespace HuntTheWumpus
                 if (!CheckDanger)
                 {
                     CheckDanger = true;
-                    if (map.danger == 1)//яма
+                    if (map.danger == Danger.Pit)
                     {
-                        StoryMiniGame = map.danger;
+                        //StoryMiniGame = map.danger;
                         minigame.InitializeMiniGame(2);
                         MiniGameEnd = false;
                     }
-                    if (map.danger == 2)//мыши
+                    if (map.danger == Danger.Bat)
                     {
                         map.Respaw();
                     }
-                    if (map.danger == 3)//вампус
+                    if (map.danger == Danger.Wumpus)
                     {
-                        StoryMiniGame = map.danger;
+                        //StoryMiniGame = map.danger;
                         MiniGameEnd = false;
                         minigame.InitializeMiniGame(3);
                     }
@@ -102,7 +103,8 @@ namespace HuntTheWumpus
                     IsWin = true;
                 }
             }
-            view.DrawText((1000 / time).ToString(), 5, 5, 10);
+            if (time > 0)
+                view.DrawText((1000 / time).ToString(), 5, 5, 10);
         }
 
         void ContinueMenu()

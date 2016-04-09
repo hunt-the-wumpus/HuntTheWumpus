@@ -6,18 +6,56 @@ using System.Threading.Tasks;
 
 namespace HuntTheWumpus
 {
-    class Map
+    enum Danger
     {
+        Empty,
+        Bat,
+        Pit,
+        Wumpus
+    }
+
+    class Map : IMap
+    {
+        public Danger danger { get; private set; }
+        public int room { get; private set; }
+        public int turn { get; private set; }
+        public bool IsWin { get; private set; }
+
+        private List<int>[] graph;
+
+        public Map()
+        {
+            graph = new List<int>[30];
+
+        }
+
+        public void Move(int i)
+        {
+
+        }
+
+        public void PushArrow(int n)
+        {
+            
+        }
+        public void WumpusGoAway()
+        {
+
+        }
+        public void Respaw()
+        {
+
+        }
     }
 
     interface IMap
     {
-        int danger { get; set; }
-        int room { get; set; }//...
+        Danger danger { get;}
+        int room { get; }
         void Move(int i);
-        int turn { get; set; }
-        int PushArrow(int n);
-        bool IsWin { get; set; }
+        int turn { get; }
+        void PushArrow(int n);
+        bool IsWin { get; }
         void Respaw();
         void WumpusGoAway();
     }

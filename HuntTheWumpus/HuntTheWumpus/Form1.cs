@@ -12,19 +12,22 @@ namespace HuntTheWumpus
 {
     public partial class Form1 : Form
     {
-        public Form1(PaintEventHandler DrawForm, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove, int width, int height)
+        public Form1(PaintEventHandler DrawForm, int width, int height)
         {
             InitializeComponent();
             pictureBox1.Paint += DrawForm;
-            this.KeyDown += KeyDown;
-            this.pictureBox1.MouseDown += MouseDown;
-            this.pictureBox1.MouseMove += MouseMove;
-            this.pictureBox1.MouseUp += MouseUp;
             this.ClientSize = new Size(width, height);
             pictureBox1.Width = width;
             pictureBox1.Height = height;
         }
-        
+
+        public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+        {
+            this.pictureBox1.MouseDown += MouseDown;
+            this.pictureBox1.MouseMove += MouseMove;
+            this.pictureBox1.MouseUp += MouseUp;
+        }
+
         public void DrawAll()//принудительная перерисовка
         { 
            pictureBox1.Refresh(); 
