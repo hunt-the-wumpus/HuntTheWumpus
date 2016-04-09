@@ -32,7 +32,7 @@ namespace HuntTheWumpus {
 		private Stopwatch Event_timer = new Stopwatch();
 
 		private double AchievementDrawingPosition = 0;
-		private double SpeedChangeDrawingPosition = 40;
+		private double SpeedChangeDrawingPosition = 30;
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 
@@ -40,10 +40,12 @@ namespace HuntTheWumpus {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
-			Queue.Add("Sunduk.png/ДВЕНАДЦАТЬ ЧЕЛОВЕК#НА СУНДУК МЕРТВЕЦА");
-			Queue.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
-			Queue.Add("Demon.png/ПЕЙ И ДЬЯВОЛ#ДОВЕДЕТ#ТЕБЯ ДО КОНЦА");
-			Queue.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
+			List<string> bb = new List<string>();
+			bb.Add("Sunduk.png/ДВЕНАДЦАТЬ ЧЕЛОВЕК#НА СУНДУК МЕРТВЕЦА");
+			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
+			bb.Add("Demon.png/ПЕЙ И ДЬЯВОЛ#ДОВЕДЕТ#ТЕБЯ ДО КОНЦА");
+			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
+			getAchievement(bb);
 			Event_timer.Start();
 		}
 
@@ -54,8 +56,10 @@ namespace HuntTheWumpus {
 
 		public void getAchievement(List<string> achievements) {
 			for (int i = 0; i < achievements.Count; ++i) {
-				Queue.Add(achievements[i]);
-				WasAhievements.Add(achievements[i]);
+				if (WasAhievements.IndexOf(achievements[i]) == -1) {
+					Queue.Add(achievements[i]);
+					WasAhievements.Add(achievements[i]);
+				}
 			}
 		}
 
