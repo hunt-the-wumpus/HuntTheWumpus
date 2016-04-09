@@ -52,6 +52,7 @@ namespace HuntTheWumpus
         {
             Image img = Image.FromFile("data/Sprites/MainMenuBackground.png");
             Graphics.DrawImage(img, 0, 0);
+            //kekes
         }
     }
 }
