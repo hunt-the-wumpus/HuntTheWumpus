@@ -71,7 +71,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.MainMenu)
             {
-                //view.DrawMainMenu();
+                view.DrawMainMenu();
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {

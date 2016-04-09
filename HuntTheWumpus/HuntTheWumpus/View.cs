@@ -12,12 +12,20 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
+
+        private Image MainMenuImage;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
         
         public View(int width, int height, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
+            Width = width;
+            Height = height;
+            MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, KeyDown, MouseDown, MouseUp, MouseMove, width, height);
             MainForm.Show();
         }
@@ -50,8 +58,7 @@ namespace HuntTheWumpus
 
         public void DrawMainMenu()
         {
-            Image img = Image.FromFile("data/Sprites/MainMenuBackground.png");
-            Graphics.DrawImage(img, 0, 0);
+            Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
             //kekes
         }
     }
