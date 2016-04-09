@@ -37,13 +37,16 @@ namespace HuntTheWumpus
         {
             view = new View(width, height, KeyDown, MouseDown, MouseUp, MouseMove);
             minigame = new MiniGame(width, height);
-            minigame.InitializeMiniGame(3);
+            //minigame.InitializeMiniGame(3);
             score = new Scores(width, height);
         }
 
         public void UpDate(long time)
         {
-            if (state == ControlState.Cave)
+			view.Graphics.Clear(System.Drawing.Color.Black);
+			score.TickTime();
+			score.DrawScores(view.Graphics);
+            /*if (state == ControlState.Cave)
             {
                 view.Clear();
                 if (!MiniGameEnd)
@@ -102,7 +105,7 @@ namespace HuntTheWumpus
                     IsWin = true;
                 }
             }
-            view.DrawText((1000 / time).ToString(), 5, 5, 10);
+            view.DrawText((1000 / time).ToString(), 5, 5, 10);*/
         }
 
         void ContinueMenu()
