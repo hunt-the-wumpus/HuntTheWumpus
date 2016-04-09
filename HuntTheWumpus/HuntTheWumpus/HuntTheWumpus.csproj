@@ -113,6 +113,9 @@
     <Content Include="f4.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Sprites\MainMenuBackground.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="sqr.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
