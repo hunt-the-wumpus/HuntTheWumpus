@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace HuntTheWumpus
 {
@@ -45,6 +46,12 @@ namespace HuntTheWumpus
         public bool Created()
         {
             return MainForm.Created;
+        }
+
+        public void DrawMainMenu()
+        {
+            Image img = Image.FromFile("data/Sprites/MainMenuBackground.png");
+            Graphics.DrawImage(img, 0, 0);
         }
     }
 }
