@@ -32,7 +32,7 @@ namespace HuntTheWumpus {
 		private Stopwatch Event_timer = new Stopwatch();
 
 		private double AchievementDrawingPosition = 0;
-		private double SpeedChangeDrawingPosition = 30;
+		private double SpeedChangeDrawingPosition = 45;
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 
@@ -45,7 +45,7 @@ namespace HuntTheWumpus {
 			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
 			bb.Add("Demon.png/ПЕЙ И ДЬЯВОЛ#ДОВЕДЕТ#ТЕБЯ ДО КОНЦА");
 			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
-			getAchievement(bb);
+			//getAchievement(bb);
 			Event_timer.Start();
 		}
 
