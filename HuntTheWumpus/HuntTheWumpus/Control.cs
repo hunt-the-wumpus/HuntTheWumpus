@@ -39,7 +39,6 @@ namespace HuntTheWumpus
             minigame = new MiniGame(width, height);
             //minigame.InitializeMiniGame(3);
             score = new Scores(width, height);
-			score.Final = true;
         }
 
         public void UpDate(long time)
@@ -110,7 +109,7 @@ namespace HuntTheWumpus
 			//minigame.GetAchievement(ls);
 			//score.getAchievement(ls);
 			//score.DrawScores(view.Graphics);
-			score.DrawFinal(view.Graphics);
+			//score.DrawFinal(view.Graphics);
 		}
 
         void ContinueMenu()

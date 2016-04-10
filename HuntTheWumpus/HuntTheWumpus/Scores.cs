@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using Newtonsoft.Json;
+using System.Collections.Specialized;
 
 namespace HuntTheWumpus {
 	class Scores {
@@ -39,6 +41,8 @@ namespace HuntTheWumpus {
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 
+		private VKApi vk;
+
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
@@ -51,11 +55,6 @@ namespace HuntTheWumpus {
 			//getAchievement(bb);
 			Event_timer.Start();
 		}
-
-		private WebBrowser wb = null;
-
-		private string token = "";
-		private string user = "";
 
 		/// Adding score
 		public void AddScores(int add) {
@@ -72,8 +71,8 @@ namespace HuntTheWumpus {
 		}
 
 		public void TickTime() {
-			if (Final) {
-				Get_token();
+			if (Final && vk != null) {
+				vk.Access_authorize();
 				return;
 			}
 			long Milliseconds = Event_timer.ElapsedMilliseconds;
@@ -124,38 +123,14 @@ namespace HuntTheWumpus {
 		private string json;
 
 		public void DrawFinal(Graphics g) {
-			g.DrawString(json, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
+			//g.DrawString(user, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
 		}
 
 		public void MouseUp(MouseEventArgs e) {
 			if (Final) {
-				OauthAutorize();
+				vk = new VKApi();
+				vk.OauthAutorize();
 			}
-		}
-
-		private void Get_token() {
-			if (wb != null) {
-				if (wb.access_token != "" && wb.user_id != "") {
-					token = wb.access_token;
-					user = wb.user_id;
-					wb.Close();
-					wb = null;
-					SendVKApi("https://api.vk.com/method/");
-				}
-			}
-		}
-
-		private void SendVKApi(string send) {
-			var WebRgetURL = WebRequest.Create(send);
-			var objectStream = WebRgetURL.GetResponse().GetResponseStream();
-			var objReader = new StreamReader(objectStream);
-			json = objReader.ReadLine();
-			MessageBox.Show(json);
-		}
-
-		private void OauthAutorize() {
-			wb = new WebBrowser();
-			wb.Show();
 		}
 
 	}
