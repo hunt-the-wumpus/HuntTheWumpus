@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 
@@ -42,6 +44,37 @@ namespace UnitTest
             view.Created();
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
+            view.MainForm.DrawAll();
+        }
+
+        [TestMethod]
+        public void GoodMap()
+        {
+            var map = new HuntTheWumpus.Map();
+            bool[] b = new bool[30];
+            b[0] = true;
+            bool fl = true;
+            Queue<int> q = new Queue<int>();
+            q.Enqueue(0);
+            int step = 0;
+            while (q.Count > 0)
+            {
+                int top = q.Dequeue();
+                int cnt = 0;
+                ++step;
+                for (int i = 0; i < map.graph[i].Count; ++i)
+                    if (map.isActive[top][i])
+                    {
+                        ++cnt;
+                        if (!b[map.graph[top][i]])
+                        {
+                            b[map.graph[top][i]] = true;
+                            q.Enqueue(map.graph[top][i]);
+                        }
+                    }
+                Assert.IsTrue(cnt <= 3, "Degree > 3");
+            }
+            Assert.IsTrue(step == 30, "Graph isn't connected");
         }
     }
 }

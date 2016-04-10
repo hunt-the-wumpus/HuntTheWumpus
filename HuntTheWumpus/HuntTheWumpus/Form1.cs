@@ -23,6 +23,7 @@ namespace HuntTheWumpus
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
+            this.KeyDown += KeyDown;
             this.pictureBox1.MouseDown += MouseDown;
             this.pictureBox1.MouseMove += MouseMove;
             this.pictureBox1.MouseUp += MouseUp;
