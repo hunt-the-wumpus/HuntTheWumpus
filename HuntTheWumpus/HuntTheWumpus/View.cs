@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace HuntTheWumpus
 {
@@ -11,13 +12,26 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
+
+        private Image MainMenuImage;
+
+        public int Width { get; private set; }
+        public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
         
-        public View(int width, int height, KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+        public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+        {
+            MainForm.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
+        }
+
+        public View(int width, int height)
         {
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
-            MainForm = new Form1(Drawing, KeyDown, MouseDown, MouseUp, MouseMove, width, height);
+            Width = width;
+            Height = height;
+            MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
+            MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
         }
         
@@ -45,6 +59,12 @@ namespace HuntTheWumpus
         public bool Created()
         {
             return MainForm.Created;
+        }
+
+        public void DrawMainMenu()
+        {
+            Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
+            //kekes
         }
     }
 }

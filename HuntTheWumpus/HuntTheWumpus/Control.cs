@@ -17,17 +17,45 @@ namespace HuntTheWumpus
             PickCave
         }
 
-        private ControlState state = ControlState.Cave;
+        enum StoryMG
+        {
+            Empty,
+            Bat,
+            Pit,
+            Wumpus,
+            BuyArrow,
+            BuyHint
+        }
+
+        enum Hint
+        {
+            Wumpus,
+            Pit,
+            Bat,
+            NoLuck,
+            Empty
+        }
+
+        private ControlState state = ControlState.MainMenu;
         private ControlState OldState = ControlState.MainMenu;
+
+        private int Width, Height;
 
         private bool MiniGameEnd = false;
         private MiniGame minigame;
-        private bool CheckDanger = true;
-        private int StoryMiniGame;
+        private bool CheckDanger;
+        private StoryMG StoryMiniGame;
 
         private Scores score;
 
-        private IMap map;
+        private List<string> HintMessage;
+        private Hint NowHint;
+        private int HintData;
+
+        private Map[] MapForPcik;
+        private Map map;
+
+        private Random random = new Random();
 
         private bool IsWin;
 
@@ -35,82 +63,99 @@ namespace HuntTheWumpus
 
         public Control(int width, int height)
         {
-            view = new View(width, height, KeyDown, MouseDown, MouseUp, MouseMove);
-            minigame = new MiniGame(width, height);
-            //minigame.InitializeMiniGame(3);
-            score = new Scores(width, height);
+            view = new View(width, height);
+            view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
+            MapForPcik = new Map[5];
+            Width = width;
+            Height = height;
+            HintMessage = new List<string>();
+            HintMessage.Add("Wumpus in ");
+            HintMessage.Add("Pit in ");
+            HintMessage.Add("Bat in ");
+            HintMessage.Add("You have bad luck...");
+            NowHint = (Hint)HintMessage.Count;
         }
 
         public void UpDate(long time)
         {
 			//view.Graphics.Clear(System.Drawing.Color.Black);
-            /*if (state == ControlState.Cave)
+            if (state == ControlState.Cave)
             {
-                view.Clear();
+                view.Clear();//view.DrawCave(тут надо что-то дать)
+                if (NowHint != Hint.Empty)
+                {
+                    if (NowHint != Hint.NoLuck)
+                        ;// view.DrawHint(HintMessage[(int)NowHint] + HintData);
+                    else
+                        ;// view.DrawHint(HintMessage[(int)NowHint]);
+                }
                 if (!MiniGameEnd)
                 {
                     minigame.DrawMiniGame(view.Graphics);
                     minigame.TickTime();
                     if (!minigame.Is_playing)
                     {
-                        if (!minigame.Is_Winner && (StoryMiniGame != 1 || StoryMiniGame != 3))//не покупка 
+                        if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
                         {
                             IsWin = false;
                             state = ControlState.LastWindow;
                         }
-                        if (!minigame.Is_Winner && StoryMiniGame == 4)
+                        if (!minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
                         {
-                            //hint
+                            int rnd = random.Next() % HintMessage.Count;
+                            NowHint = (Hint)rnd;
+                            if (NowHint == Hint.Bat)
+                                HintData = map.GetBat();
+                            if (NowHint == Hint.Pit)
+                                HintData = map.GetPit();
+                            if (NowHint == Hint.Wumpus)
+                                HintData = map.Wumpus;
                         }
-                        if (!minigame.Is_Winner && StoryMiniGame == 5)
+                        if (!minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
-                            //стрелы
+                            //player.BuyArrow();
                         }
                         MiniGameEnd = true;
                     }
                 }
-            }
-            if (state == ControlState.MainMenu)
-            {
-                //view.DrawMainMenu();
-            }
-            if (state == ControlState.Cave && MiniGameEnd)
-            {
-                //view.DrawCave(тут надо что-то дать)
-                if (!CheckDanger)
+                else
                 {
-                    CheckDanger = true;
-                    if (map.danger == 1)//яма
+                    if (!CheckDanger)
                     {
-                        StoryMiniGame = map.danger;
-                        minigame.InitializeMiniGame(2);
-                        MiniGameEnd = false;
+                        CheckDanger = true;
+                        if (map.danger == Danger.Pit)
+                        {
+                            StoryMiniGame = StoryMG.Pit;
+                            minigame.InitializeMiniGame(2);
+                            MiniGameEnd = false;
+                        }
+                        if (map.danger == Danger.Bat)
+                        {
+                            map.Respaw();
+                        }
+                        if (map.danger == Danger.Wumpus)
+                        {
+                            StoryMiniGame = StoryMG.Wumpus;
+                            MiniGameEnd = false;
+                            minigame.InitializeMiniGame(3);
+                        }
                     }
-                    if (map.danger == 2)//мыши
+                    if (map.IsWin)
                     {
-                        map.Respaw();
-                    }
-                    if (map.danger == 3)//вампус
-                    {
-                        StoryMiniGame = map.danger;
-                        MiniGameEnd = false;
-                        minigame.InitializeMiniGame(3);
+                        state = ControlState.LastWindow;
+                        IsWin = true;
                     }
                 }
-               /* if (map.IsWin)
-                {
-                    state = ControlState.LastWindow;
-                    IsWin = true;
-                }*
-            }*/
-            //view.DrawText((1000 / time).ToString(), 5, 5, 10);
-			score.TickTime();
-			List<string> ls = new List<string>();
-			//minigame.GetAchievement(ls);
-			//score.getAchievement(ls);
-			//score.DrawScores(view.Graphics);
-			//score.DrawFinal(view.Graphics);
-		}
+            }
+            
+            if (state == ControlState.MainMenu)
+            {
+                view.DrawMainMenu();
+            }
+
+            if (time > 0)
+                view.DrawText((1000 / time).ToString(), 5, 5, 10);
+        }
 
         void ContinueMenu()
         {
@@ -119,8 +164,21 @@ namespace HuntTheWumpus
                 minigame.Pause(false);
         }
 
+        void NewGame()
+        {
+            for (int i = 0; i < 5; ++i)
+                MapForPcik[i] = new Map();
+            MiniGameEnd = true;
+            minigame = new MiniGame(Width, Height);
+            score = new Scores(Width, Height);
+            CheckDanger = true;
+            IsWin = false;
+            StoryMiniGame = StoryMG.Empty;
+        }
+
         public void KeyDown(object sender, KeyEventArgs e)
         {
+            NowHint = Hint.Empty;
             if (e.KeyCode == Keys.Escape)
             {
                 if (state == ControlState.MainMenu)
@@ -143,9 +201,31 @@ namespace HuntTheWumpus
 
         public void MouseDown(object sender, MouseEventArgs e)
         {
+            NowHint = Hint.Empty;
             if (state == ControlState.Cave && !MiniGameEnd)
             {
                 minigame.Down(e);
+            }
+            if (state == ControlState.Cave && MiniGameEnd)
+            {
+                int rg = 0;//view.GetRegionCave(e.X, e.Y);
+                if (rg >= 0 && rg < 6)//мы ходим
+                {
+                    map.Move(rg);
+                    CheckDanger = false;
+                }
+                if (rg == 6)//стрела
+                {
+                    StoryMiniGame = StoryMG.BuyArrow;
+                    MiniGameEnd = false;
+                    minigame.InitializeMiniGame(2);
+                }
+                if (rg == 7)//hint
+                {
+                    StoryMiniGame = StoryMG.BuyHint;
+                    MiniGameEnd = false;
+                    minigame.InitializeMiniGame(2);
+                }
             }
             if (state == ControlState.MainMenu)
             {
@@ -153,8 +233,7 @@ namespace HuntTheWumpus
                 if (rg == 1)//Новая игра
                 {
                     state = ControlState.PickCave;
-                    //generate 5 cave.
-                    MiniGameEnd = true;
+                    NewGame();
                     //player = new player
                 }
                 if (rg == 2)//Продолжить
