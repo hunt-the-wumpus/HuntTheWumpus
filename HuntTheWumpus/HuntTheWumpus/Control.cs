@@ -37,14 +37,15 @@ namespace HuntTheWumpus
         {
             view = new View(width, height, KeyDown, MouseDown, MouseUp, MouseMove);
             minigame = new MiniGame(width, height);
-            minigame.InitializeMiniGame(3);
+            //minigame.InitializeMiniGame(3);
             score = new Scores(width, height);
+			score.Final = true;
         }
 
         public void UpDate(long time)
         {
 			//view.Graphics.Clear(System.Drawing.Color.Black);
-            if (state == ControlState.Cave)
+            /*if (state == ControlState.Cave)
             {
                 view.Clear();
                 if (!MiniGameEnd)
@@ -101,14 +102,15 @@ namespace HuntTheWumpus
                 {
                     state = ControlState.LastWindow;
                     IsWin = true;
-                }*/
-            }
-            view.DrawText((1000 / time).ToString(), 5, 5, 10);
+                }*
+            }*/
+            //view.DrawText((1000 / time).ToString(), 5, 5, 10);
 			score.TickTime();
 			List<string> ls = new List<string>();
-			minigame.GetAchievement(ls);
-			score.getAchievement(ls);
-			score.DrawScores(view.Graphics);
+			//minigame.GetAchievement(ls);
+			//score.getAchievement(ls);
+			//score.DrawScores(view.Graphics);
+			score.DrawFinal(view.Graphics);
 		}
 
         void ContinueMenu()
@@ -173,6 +175,7 @@ namespace HuntTheWumpus
             {
                 minigame.Up(e);
             }
+			score.MouseUp(e);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)

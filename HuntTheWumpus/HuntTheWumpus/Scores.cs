@@ -7,11 +7,14 @@ using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
 
 namespace HuntTheWumpus {
 	class Scores {
 		// Player score
 		public int Score { get; private set; }
+		public bool Final { get; set; }
 
 		private int CanvasWidth;
 		private int CanvasHeight;
@@ -49,6 +52,11 @@ namespace HuntTheWumpus {
 			Event_timer.Start();
 		}
 
+		private WebBrowser wb = null;
+
+		private string token = "";
+		private string user = "";
+
 		/// Adding score
 		public void AddScores(int add) {
 			Score += add;
@@ -64,6 +72,10 @@ namespace HuntTheWumpus {
 		}
 
 		public void TickTime() {
+			if (Final) {
+				Get_token();
+				return;
+			}
 			long Milliseconds = Event_timer.ElapsedMilliseconds;
 			if (Queue.Count > 0 && activeImage == null) {
 				activeImage = Image.FromFile("data/Achievements/" + Queue[0].Split('/')[0]);
@@ -108,5 +120,43 @@ namespace HuntTheWumpus {
 				}
 			}
 		}
+
+		private string json;
+
+		public void DrawFinal(Graphics g) {
+			g.DrawString(json, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
+		}
+
+		public void MouseUp(MouseEventArgs e) {
+			if (Final) {
+				OauthAutorize();
+			}
+		}
+
+		private void Get_token() {
+			if (wb != null) {
+				if (wb.access_token != "" && wb.user_id != "") {
+					token = wb.access_token;
+					user = wb.user_id;
+					wb.Close();
+					wb = null;
+					SendVKApi("https://api.vk.com/method/");
+				}
+			}
+		}
+
+		private void SendVKApi(string send) {
+			var WebRgetURL = WebRequest.Create(send);
+			var objectStream = WebRgetURL.GetResponse().GetResponseStream();
+			var objReader = new StreamReader(objectStream);
+			json = objReader.ReadLine();
+			MessageBox.Show(json);
+		}
+
+		private void OauthAutorize() {
+			wb = new WebBrowser();
+			wb.Show();
+		}
+
 	}
 }
