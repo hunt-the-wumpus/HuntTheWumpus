@@ -37,12 +37,12 @@ namespace HuntTheWumpus
             Empty
         }
 
-        private ControlState state = ControlState.MainMenu;
+        private ControlState state = ControlState.Cave;
         private ControlState OldState = ControlState.MainMenu;
 
         private int Width, Height;
 
-        private bool MiniGameEnd = false;
+        private bool MiniGameEnd = true;
         private MiniGame minigame;
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
@@ -53,7 +53,7 @@ namespace HuntTheWumpus
         private Hint NowHint;
         private int HintData;
 
-        private Map[] MapForPcik;
+        private Map[] MapForPiсk;
         private Map map;
 
         private Random random = new Random();
@@ -66,8 +66,9 @@ namespace HuntTheWumpus
         {
             view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
-            MapForPcik = new Map[5];
+            MapForPiсk = new Map[5];
             score = new Scores(width, height);
+            map = new Map();
             Width = width;
             Height = height;
             HintMessage = new List<string>();
@@ -82,13 +83,13 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.Clear();//view.DrawCave(тут надо что-то дать)
+                view.DrawCave(map.graph, map.isActive, map.danger);
                 if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
-                        ;// view.DrawHint(HintMessage[(int)NowHint] + HintData);
+                        view.DrawHint(HintMessage[(int)NowHint] + HintData);
                     else
-                        ;// view.DrawHint(HintMessage[(int)NowHint]);
+                        view.DrawHint(HintMessage[(int)NowHint]);
                 }
                 if (!MiniGameEnd)
                 {
@@ -170,7 +171,7 @@ namespace HuntTheWumpus
 
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
-            score.DrawScores(view.Graphics);
+            //score.DrawScores(view.Graphics);
         }
 
         void ContinueMenu()
@@ -183,7 +184,7 @@ namespace HuntTheWumpus
         void NewGame()
         {
             for (int i = 0; i < 5; ++i)
-                MapForPcik[i] = new Map();
+                MapForPiсk[i] = new Map();
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
             score = new Scores(Width, Height);
@@ -222,7 +223,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {
-                int rg = 0;//view.GetRegionCave(e.X, e.Y);
+                int rg = view.GetRegionCave(e.X, e.Y);
                 if (rg >= 0 && rg < 6)//мы ходим
                 {
                     map.Move(rg);
@@ -243,7 +244,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.MainMenu)
             {
-                int rg = 0;// = view.GetRegionMainMenu(e.X, e.Y);
+                int rg = view.GetRegionMainMenu(e.X, e.Y);
                 if (rg == 1)//Новая игра
                 {
                     state = ControlState.PickCave;

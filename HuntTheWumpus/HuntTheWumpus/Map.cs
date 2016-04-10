@@ -27,6 +27,7 @@ namespace HuntTheWumpus
 
         public List<int>[] graph;
         public List<bool>[] isActive;
+
         private System.Random random;
 
         Tuple<int, int> cell(int x, int y)
