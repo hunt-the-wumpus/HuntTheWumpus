@@ -230,6 +230,23 @@ namespace HuntTheWumpus
                 return PitRoom.Item1;
             return PitRoom.Item2;
         }
+        public Danger GetDanger(int room)
+        {
+            if (Wumpus == room)
+                return Danger.Wumpus;
+            if (BatRoom.Item1 == room || BatRoom.Item2 == room)
+                return Danger.Bat;
+            if (PitRoom.Item1 == room || PitRoom.Item2 == room)
+                return Danger.Pit;
+            return Danger.Empty;
+        }
+        public List<Danger> GetDangerList()
+        {
+            var ans = new List<Danger>();
+            for (int i = 0; i < 6; ++i)
+                ans.Add(GetDanger(graph[Room][i]));
+            return ans;
+        }
     }
 
     interface IMap

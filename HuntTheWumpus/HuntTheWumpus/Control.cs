@@ -83,7 +83,7 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.DrawCave(map.graph, map.isActive, map.danger);
+                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
                 if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
@@ -124,33 +124,30 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                else
+                if (!CheckDanger)
                 {
-                    if (!CheckDanger)
+                    CheckDanger = true;
+                    if (map.danger == Danger.Pit)
                     {
-                        CheckDanger = true;
-                        if (map.danger == Danger.Pit)
-                        {
-                            StoryMiniGame = StoryMG.Pit;
-                            minigame.InitializeMiniGame(2);
-                            MiniGameEnd = false;
-                        }
-                        if (map.danger == Danger.Bat)
-                        {
-                            map.Respaw();
-                        }
-                        if (map.danger == Danger.Wumpus)
-                        {
-                            StoryMiniGame = StoryMG.Wumpus;
-                            MiniGameEnd = false;
-                            minigame.InitializeMiniGame(3);
-                        }
+                        StoryMiniGame = StoryMG.Pit;
+                        minigame.InitializeMiniGame(2);
+                        MiniGameEnd = false;
                     }
-                    if (map.IsWin)
+                    if (map.danger == Danger.Bat)
                     {
-                        state = ControlState.LastWindow;
-                        IsWin = true;
+                        map.Respaw();
                     }
+                    if (map.danger == Danger.Wumpus)
+                    {
+                        StoryMiniGame = StoryMG.Wumpus;
+                        MiniGameEnd = false;
+                        minigame.InitializeMiniGame(3);
+                    }
+                }
+                if (map.IsWin)
+                {
+                    state = ControlState.LastWindow;
+                    IsWin = true;
                 }
             }
 

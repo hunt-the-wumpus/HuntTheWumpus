@@ -71,7 +71,7 @@ namespace HuntTheWumpus
             return -1;//тут бы enum
         }
 
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, Danger danger)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
         {
             Clear(Color.Aqua);
         }
