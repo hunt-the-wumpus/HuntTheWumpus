@@ -13,6 +13,13 @@ using Newtonsoft.Json;
 using System.Collections.Specialized;
 
 namespace HuntTheWumpus {
+
+	enum StateFinal {
+		Result,
+		VKcomWaiting,
+		FaceBookWaiting
+	}
+
 	class Scores {
 		// Player score
 		public int Score { get; private set; }
@@ -40,7 +47,7 @@ namespace HuntTheWumpus {
 		private double SpeedChangeDrawingPosition = 45;
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
-
+		private StateFinal state;
 		private VKApi vk;
 
 		public Scores(int Width, int Height) {
@@ -124,6 +131,9 @@ namespace HuntTheWumpus {
 
 		public void DrawFinal(Graphics g) {
 			//g.DrawString(user, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
+			if (state = StateFinal.VKcomWaiting) {
+
+			}
 		}
 
 		public void MouseUp(MouseEventArgs e) {

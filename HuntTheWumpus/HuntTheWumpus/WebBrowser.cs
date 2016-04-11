@@ -59,9 +59,9 @@ namespace HuntTheWumpus {
 						//break;
 					}
 				}
-				MessageBox.Show("Авторизация пройдена! Можете закрыть окно браузера");
 				access_token = access_token_luck;
 				user_id = luck_user_id;
+				MessageBox.Show("Авторизация пройдена! Можете закрыть окно браузера");
 			}
 		}
 	}

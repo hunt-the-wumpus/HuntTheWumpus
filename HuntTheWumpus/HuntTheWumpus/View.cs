@@ -18,7 +18,9 @@ namespace HuntTheWumpus
         public int Width { get; private set; }
         public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
-        
+
+		private Image room;
+
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
             MainForm.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
@@ -30,7 +32,8 @@ namespace HuntTheWumpus
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             Width = width;
             Height = height;
-            MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
+			room = Image.FromFile("data/Cave/TestRoom.png");
+			MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
         }
@@ -64,7 +67,14 @@ namespace HuntTheWumpus
         public void DrawMainMenu()
         {
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
-            //kekes
         }
-    }
+
+		public void DrawCave(List<int>[] cave, List<int>[] graph) {
+			/*int drawingX = Width / 4;
+			int drawingY = (Height - Width / 2) / 2;
+			Graphics.DrawImage(room, new Rectangle(drawingX, drawingY, Width / 2, Width / 2));
+			Graphics.DrawImage(room, new Rectangle(drawingX - Width / 2, drawingY, Width / 2, Width / 2));
+			Graphics.DrawImage(room, new Rectangle(drawingX + Width / 2, drawingY, Width / 2, Width / 2));*/
+		}
+	}
 }

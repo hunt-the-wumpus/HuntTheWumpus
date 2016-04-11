@@ -46,6 +46,7 @@ namespace HuntTheWumpus
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
 
+		//private Cave cave;
         private Scores score;
 
         private List<string> HintMessage;
@@ -74,14 +75,18 @@ namespace HuntTheWumpus
             HintMessage.Add("Bat in ");
             HintMessage.Add("You have bad luck...");
             NowHint = (Hint)HintMessage.Count;
+			score = new Scores(width, height);
+			score.Final = true;
         }
 
         public void UpDate(long time)
         {
-			//view.Graphics.Clear(System.Drawing.Color.Black);
-            if (state == ControlState.Cave)
+			//view.Graphics.Clear(System.Drawing.Color.White);
+			//view.DrawCave(view.Graphics);
+			/*if (state == ControlState.Cave)
             {
-                view.Clear();//view.DrawCave(тут надо что-то дать)
+				view.Graphics.Clear(System.Drawing.Color.White);
+				cave.DrawCave(view.Graphics);
                 if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
@@ -154,7 +159,9 @@ namespace HuntTheWumpus
             }
 
             if (time > 0)
-                view.DrawText((1000 / time).ToString(), 5, 5, 10);
+                view.DrawText((1000 / time).ToString(), 5, 5, 10);*/
+			score.TickTime();
+			score.DrawFinal(view.Graphics);
         }
 
         void ContinueMenu()
@@ -201,7 +208,7 @@ namespace HuntTheWumpus
 
         public void MouseDown(object sender, MouseEventArgs e)
         {
-            NowHint = Hint.Empty;
+			NowHint = Hint.Empty;
             if (state == ControlState.Cave && !MiniGameEnd)
             {
                 minigame.Down(e);
@@ -229,13 +236,13 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.MainMenu)
             {
-                int rg = 0;// = view.GetRegionMainMenu(e.X, e.Y);
+				int rg = 0;// = view.GetRegionMainMenu(e.X, e.Y);
                 if (rg == 1)//Новая игра
                 {
                     state = ControlState.PickCave;
-                    NewGame();
-                    //player = new player
-                }
+					NewGame();
+					//player = new player
+				}
                 if (rg == 2)//Продолжить
                 {
                     ContinueMenu();
