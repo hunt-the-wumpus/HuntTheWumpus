@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace HuntTheWumpus
 {
@@ -84,7 +85,9 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
+				ef.TickTime();
                 view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+				ef.Draw(view.Graphics);
                 if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)

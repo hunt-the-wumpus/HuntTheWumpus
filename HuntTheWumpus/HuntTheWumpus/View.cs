@@ -22,6 +22,7 @@ namespace HuntTheWumpus
         public Form1 MainForm { get; private set; }
 
 		private Image img = Image.FromFile("data/Cave/TestRoom2.png");
+		private Image bar = Image.FromFile("data/Sprites/InfoBar.png");
 		private Image room;
 
 		public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
@@ -79,17 +80,20 @@ namespace HuntTheWumpus
 
 		public void DrawRoom(int x, int y, Danger danger, int length) {
 			Graphics.DrawImage(img, new Rectangle(x, y, length, length));
+			if (danger == Danger.Empty) {
+				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
+			}
 		}
 
 		public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey) {
 			int length = Height * 10 / 12;
 			DrawRoom(basex, basey, danger, length);
-			DrawRoom(basex - length, basey, DangerList[2], length);
-			DrawRoom(basex - length / 2, basey - length * 2 / 3, DangerList[0], length);
-			DrawRoom(basex + length / 2, basey - length * 2 / 3, DangerList[1], length);
-			DrawRoom(basex + length, basey, DangerList[3], length);
-			DrawRoom(basex - length / 2, basey + length * 2 / 3, DangerList[4], length);
-			DrawRoom(basex + length / 2, basey + length * 2 / 3, DangerList[5], length);
+			DrawRoom(basex, basey - length, DangerList[0], length);
+			DrawRoom(basex, basey + length, DangerList[3], length);
+			DrawRoom(basex + length * 2 / 3, basey - length / 2, DangerList[5], length);
+			DrawRoom(basex - length * 2 / 3, basey - length / 2, DangerList[1], length);
+			DrawRoom(basex + length * 2 / 3, basey + length / 2, DangerList[4], length);
+			DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length);
 		}
 
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
@@ -97,6 +101,7 @@ namespace HuntTheWumpus
 			//Clear(Color.Aqua);
 			int length = Height * 10 / 12;
 			DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
+			Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
         }
 
         public void DrawHint(string s)
