@@ -95,5 +95,36 @@ namespace UnitTest
                 Assert.IsTrue(bat != pit, "Bat in pit");
             }
         }
+
+        [TestMethod]
+        public void PlayerTest()
+        {
+            var player = new HuntTheWumpus.Player();
+            int mem = player.Coins;
+            player.AddCoins(100);
+            player.AddCoins(0);
+            Assert.IsTrue(mem + 100 == player.Coins, "AddCoins isn't correct");
+            mem += 100;
+            player.BuyArrow();
+            Assert.IsTrue(mem > player.Coins, "BuyArrow isn't correct");
+            mem = player.Coins;
+            player.BuyHint();
+            Assert.IsTrue(mem > player.Coins, "BuyHint isn't correct");
+            int ch = 0;
+            while (player.CanBuyArrow() && ch < 1000)
+            {
+                player.BuyArrow();
+                ++ch;
+            }
+            Assert.IsTrue(ch < 1000, "CanBuyArrow isn't correct");
+            player.AddCoins(100);
+            ch = 0;
+            while (player.CanBuyHint() && ch < 1000)
+            {
+                player.BuyHint();
+                ++ch;
+            }
+            Assert.IsTrue(ch < 1000, "CanBuyHint isn't correct");
+        }
     }
 }

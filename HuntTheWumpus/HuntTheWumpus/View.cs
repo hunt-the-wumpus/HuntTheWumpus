@@ -8,6 +8,20 @@ using System.Drawing;
 
 namespace HuntTheWumpus
 {
+    public enum RegionCave
+    {
+        Up,
+        UpLeft,
+        UpDown,
+        Down,
+        DownRight,
+        UpRight,
+        BuyArrow,
+        BuyHint,
+        Empty
+        //need PsuhArrow
+    }
+
     public class View
     {
         public System.Drawing.Graphics Graphics { get; private set; }
@@ -71,7 +85,7 @@ namespace HuntTheWumpus
             return -1;//тут бы enum
         }
 
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int coins, int arrow)
         {
             Clear(Color.Aqua);
         }
@@ -79,9 +93,9 @@ namespace HuntTheWumpus
         {
             //
         }
-        public int GetRegionCave(int x, int y)
+        public RegionCave GetRegionCave(int x, int y)
         {
-            return -1;//тут бы тоже enum
+            return RegionCave.Empty;
         }
     }
 }

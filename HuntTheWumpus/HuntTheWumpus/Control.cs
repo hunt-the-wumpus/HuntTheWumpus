@@ -59,6 +59,7 @@ namespace HuntTheWumpus
         private Random random = new Random();
 
         private bool IsWin;
+        public Player player;
 
         public View view;
 
@@ -69,6 +70,7 @@ namespace HuntTheWumpus
             MapForPiсk = new Map[5];
             score = new Scores(width, height);
             map = new Map();
+            player = new Player();
             Width = width;
             Height = height;
             HintMessage = new List<string>();
@@ -83,7 +85,7 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
                 if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
@@ -104,6 +106,7 @@ namespace HuntTheWumpus
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
                         {
+                            player.BuyHint();
                             int rnd = random.Next() % HintMessage.Count;
                             NowHint = (Hint)rnd;
                             if (NowHint == Hint.Bat)
@@ -115,7 +118,7 @@ namespace HuntTheWumpus
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
-                            //player.BuyArrow();
+                            player.BuyArrow();
                         }
                         if (minigame.Is_Winner && StoryMG.Wumpus == StoryMiniGame)
                         {
@@ -220,19 +223,19 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {
-                int rg = view.GetRegionCave(e.X, e.Y);
-                if (rg >= 0 && rg < 6)//мы ходим
+                RegionCave rg = view.GetRegionCave(e.X, e.Y);
+                if ((int)rg >= 0 && (int)rg < 6)//мы ходим
                 {
-                    map.Move(rg);
+                    map.Move((int)rg);
                     CheckDanger = false;
                 }
-                if (rg == 6)//стрела
+                if (rg == RegionCave.BuyArrow && player.CanBuyArrow())
                 {
                     StoryMiniGame = StoryMG.BuyArrow;
                     MiniGameEnd = false;
                     minigame.InitializeMiniGame(2);
                 }
-                if (rg == 7)//hint
+                if (rg == RegionCave.BuyHint && player.CanBuyHint())
                 {
                     StoryMiniGame = StoryMG.BuyHint;
                     MiniGameEnd = false;
