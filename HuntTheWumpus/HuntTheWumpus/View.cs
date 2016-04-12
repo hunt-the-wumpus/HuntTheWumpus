@@ -12,6 +12,8 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
+		public bool IsAnimated { get; set; }
+		public int AnimatedProgress { get; set; }
 
         private Image MainMenuImage;
 
@@ -19,9 +21,10 @@ namespace HuntTheWumpus
         public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
 
+		private Image img = Image.FromFile("data/Cave/TestRoom2.png");
 		private Image room;
 
-        public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
+		public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
             MainForm.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
         }
@@ -74,14 +77,33 @@ namespace HuntTheWumpus
             return -1;//тут бы enum
         }
 
+		public void DrawRoom(int x, int y, Danger danger, int length) {
+			Graphics.DrawImage(img, new Rectangle(x, y, length, length));
+		}
+
+		public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey) {
+			int length = Height * 10 / 12;
+			DrawRoom(basex, basey, danger, length);
+			DrawRoom(basex - length, basey, DangerList[2], length);
+			DrawRoom(basex - length / 2, basey - length * 2 / 3, DangerList[0], length);
+			DrawRoom(basex + length / 2, basey - length * 2 / 3, DangerList[1], length);
+			DrawRoom(basex + length, basey, DangerList[3], length);
+			DrawRoom(basex - length / 2, basey + length * 2 / 3, DangerList[4], length);
+			DrawRoom(basex + length / 2, basey + length * 2 / 3, DangerList[5], length);
+		}
+
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
         {
-            Clear(Color.Aqua);
+			//Clear(Color.Aqua);
+			int length = Height * 10 / 12;
+			DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
         }
+
         public void DrawHint(string s)
         {
             //
         }
+
         public int GetRegionCave(int x, int y)
         {
             return -1;//тут бы тоже enum
