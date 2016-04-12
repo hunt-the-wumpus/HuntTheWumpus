@@ -14,6 +14,7 @@ namespace HuntTheWumpus
             MainMenu,
             Cave,
             LastWindow,
+            ScoreList,
             PickCave
         }
 
@@ -36,12 +37,12 @@ namespace HuntTheWumpus
             Empty
         }
 
-        private ControlState state = ControlState.MainMenu;
+        private ControlState state = ControlState.Cave;
         private ControlState OldState = ControlState.MainMenu;
 
         private int Width, Height;
 
-        private bool MiniGameEnd = false;
+        private bool MiniGameEnd = true;
         private MiniGame minigame;
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
@@ -53,7 +54,7 @@ namespace HuntTheWumpus
         private Hint NowHint;
         private int HintData;
 
-        private Map[] MapForPcik;
+        private Map[] MapForPiсk;
         private Map map;
 
         private Random random = new Random();
@@ -66,7 +67,9 @@ namespace HuntTheWumpus
         {
             view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
-            MapForPcik = new Map[5];
+            MapForPiсk = new Map[5];
+            score = new Scores(width, height);
+            map = new Map();
             Width = width;
             Height = height;
             HintMessage = new List<string>();
@@ -79,6 +82,94 @@ namespace HuntTheWumpus
 
         public void UpDate(long time)
         {
+            if (state == ControlState.Cave)
+            {
+                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+                if (NowHint != Hint.Empty)
+                {
+                    if (NowHint != Hint.NoLuck)
+                        view.DrawHint(HintMessage[(int)NowHint] + HintData);
+                    else
+                        view.DrawHint(HintMessage[(int)NowHint]);
+                }
+                if (!MiniGameEnd)
+                {
+                    minigame.DrawMiniGame(view.Graphics);
+                    minigame.TickTime();
+                    if (!minigame.Is_playing)
+                    {
+                        if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
+                        {
+                            IsWin = false;
+                            state = ControlState.LastWindow;
+                        }
+                        if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
+                        {
+                            int rnd = random.Next() % HintMessage.Count;
+                            NowHint = (Hint)rnd;
+                            if (NowHint == Hint.Bat)
+                                HintData = map.GetBat();
+                            if (NowHint == Hint.Pit)
+                                HintData = map.GetPit();
+                            if (NowHint == Hint.Wumpus)
+                                HintData = map.Wumpus;
+                        }
+                        if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
+                        {
+                            //player.BuyArrow();
+                        }
+                        if (minigame.Is_Winner && StoryMG.Wumpus == StoryMiniGame)
+                        {
+                            map.WumpusGoAway();
+                        }
+                        MiniGameEnd = true;
+                    }
+                }
+                if (!CheckDanger)
+                {
+                    CheckDanger = true;
+                    if (map.danger == Danger.Pit)
+                    {
+                        StoryMiniGame = StoryMG.Pit;
+                        minigame.InitializeMiniGame(2);
+                        MiniGameEnd = false;
+                    }
+                    if (map.danger == Danger.Bat)
+                    {
+                        map.Respaw();
+                    }
+                    if (map.danger == Danger.Wumpus)
+                    {
+                        StoryMiniGame = StoryMG.Wumpus;
+                        MiniGameEnd = false;
+                        minigame.InitializeMiniGame(3);
+                    }
+                }
+                if (map.IsWin)
+                {
+                    state = ControlState.LastWindow;
+                    IsWin = true;
+                }
+            }
+
+            if (state == ControlState.MainMenu)
+            {
+                view.DrawMainMenu();
+            }
+
+            if (state == ControlState.LastWindow)
+            {
+                //score.DrawFinal();
+            }
+
+            if (state == ControlState.ScoreList)
+            {
+                //score.DrawScoreList();
+            }
+
+            if (time > 0)
+                view.DrawText((1000 / time).ToString(), 5, 5, 10);
+            //score.DrawScores(view.Graphics);
         }
 
         void ContinueMenu()
@@ -91,7 +182,7 @@ namespace HuntTheWumpus
         void NewGame()
         {
             for (int i = 0; i < 5; ++i)
-                MapForPcik[i] = new Map();
+                MapForPiсk[i] = new Map();
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
             score = new Scores(Width, Height);
@@ -107,19 +198,17 @@ namespace HuntTheWumpus
             {
                 if (state == ControlState.MainMenu)
                     ContinueMenu();
-                else
+                else if (state == ControlState.Cave)
                 {
-                    if (state == ControlState.Cave)
-                    {
-                        OldState = ControlState.Cave;
-                        state = ControlState.MainMenu;
-                        if (minigame.Is_playing)
-                            minigame.Pause(true);
-                        return;
-                    }
-                    if (state == ControlState.LastWindow)
-                        OldState = state = ControlState.MainMenu;
+                    OldState = ControlState.Cave;
+                    state = ControlState.MainMenu;
+                    if (minigame.Is_playing)
+                        minigame.Pause(true);
                 }
+                else if (state == ControlState.LastWindow)
+                    state = ControlState.ScoreList;
+                else if (state == ControlState.ScoreList)
+                    OldState = state = ControlState.MainMenu;
             }
         }
 
@@ -132,7 +221,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {
-                int rg = 0;//view.GetRegionCave(e.X, e.Y);
+                int rg = view.GetRegionCave(e.X, e.Y);
                 if (rg >= 0 && rg < 6)//мы ходим
                 {
                     map.Move(rg);
@@ -153,7 +242,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.MainMenu)
             {
-				int rg = 0;// = view.GetRegionMainMenu(e.X, e.Y);
+                int rg = view.GetRegionMainMenu(e.X, e.Y);
                 if (rg == 1)//Новая игра
                 {
                     state = ControlState.PickCave;

@@ -53,7 +53,6 @@ namespace UnitTest
             var map = new HuntTheWumpus.Map();
             bool[] b = new bool[30];
             b[0] = true;
-            bool fl = true;
             Queue<int> q = new Queue<int>();
             q.Enqueue(0);
             int step = 0;
@@ -75,6 +74,26 @@ namespace UnitTest
                 Assert.IsTrue(cnt <= 3, "Degree > 3");
             }
             Assert.IsTrue(step == 30, "Graph isn't connected");
+        }
+
+        [TestMethod]
+        public void MapTest()
+        {
+            var map = new HuntTheWumpus.Map();
+            int mem = map.Wumpus;
+            map.WumpusGoAway();
+            Assert.IsFalse(mem == map.Wumpus, "Wumpus come back");
+            for (int i = 0; i < 6; ++i)
+                map.PushArrow(i);
+            for (int i = 0; i < 6; ++i)
+                map.Move(i);
+            map.Respaw();
+            for (int i = 0; i < 10; ++i)
+            {
+                var bat = map.GetBat();
+                var pit = map.GetPit();
+                Assert.IsTrue(bat != pit, "Bat in pit");
+            }
         }
     }
 }

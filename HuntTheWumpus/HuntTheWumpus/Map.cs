@@ -27,6 +27,7 @@ namespace HuntTheWumpus
 
         public List<int>[] graph;
         public List<bool>[] isActive;
+
         private System.Random random;
 
         Tuple<int, int> cell(int x, int y)
@@ -173,7 +174,7 @@ namespace HuntTheWumpus
                 else if (Room == Wumpus)
                     danger = Danger.Wumpus;
                 else
-                    danger = Danger.Empty;                
+                    danger = Danger.Empty;
             }
         }
         public void PushArrow(int i)
@@ -183,7 +184,20 @@ namespace HuntTheWumpus
         }
         public void WumpusGoAway()
         {
-            //in next relize
+            int mem = Wumpus;
+            int rnd = random.Next() % 6;
+            while (!isActive[mem][rnd])
+                rnd = random.Next() % 6;
+            Wumpus = graph[mem][rnd];
+            rnd = random.Next() % 6;
+            int cnt = 0;
+            while ((!isActive[Wumpus][rnd] || graph[Wumpus][rnd] == mem || RoomIsDanger(graph[Wumpus][rnd])) && cnt < 100)
+            {
+                rnd = random.Next() % 6;
+                ++cnt;
+            }
+            if (cnt < 100)
+                Wumpus = graph[Wumpus][rnd];
         }
         public void Respaw()
         {
@@ -215,6 +229,23 @@ namespace HuntTheWumpus
             if (rnd % 2 == 0)
                 return PitRoom.Item1;
             return PitRoom.Item2;
+        }
+        public Danger GetDanger(int room)
+        {
+            if (Wumpus == room)
+                return Danger.Wumpus;
+            if (BatRoom.Item1 == room || BatRoom.Item2 == room)
+                return Danger.Bat;
+            if (PitRoom.Item1 == room || PitRoom.Item2 == room)
+                return Danger.Pit;
+            return Danger.Empty;
+        }
+        public List<Danger> GetDangerList()
+        {
+            var ans = new List<Danger>();
+            for (int i = 0; i < 6; ++i)
+                ans.Add(GetDanger(graph[Room][i]));
+            return ans;
         }
     }
 

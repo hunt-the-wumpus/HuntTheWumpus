@@ -69,12 +69,22 @@ namespace HuntTheWumpus
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
         }
 
-		public void DrawCave(List<int>[] cave, List<int>[] graph) {
-			/*int drawingX = Width / 4;
-			int drawingY = (Height - Width / 2) / 2;
-			Graphics.DrawImage(room, new Rectangle(drawingX, drawingY, Width / 2, Width / 2));
-			Graphics.DrawImage(room, new Rectangle(drawingX - Width / 2, drawingY, Width / 2, Width / 2));
-			Graphics.DrawImage(room, new Rectangle(drawingX + Width / 2, drawingY, Width / 2, Width / 2));*/
-		}
-	}
+        public int GetRegionMainMenu(int x, int y)
+        {
+            return -1;//тут бы enum
+        }
+
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
+        {
+            Clear(Color.Aqua);
+        }
+        public void DrawHint(string s)
+        {
+            //
+        }
+        public int GetRegionCave(int x, int y)
+        {
+            return -1;//тут бы тоже enum
+        }
+    }
 }
