@@ -85,10 +85,8 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-				ef.TickTime();
-                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
-				ef.Draw(view.Graphics);
-                if (NowHint != Hint.Empty)
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+				if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
                         view.DrawHint(HintMessage[(int)NowHint] + HintData);
