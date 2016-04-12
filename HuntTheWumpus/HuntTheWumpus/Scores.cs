@@ -131,13 +131,15 @@ namespace HuntTheWumpus {
 
 		public void DrawFinal(Graphics g) {
 			//g.DrawString(user, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
-			if (state = StateFinal.VKcomWaiting) {
-
+			if (state == StateFinal.VKcomWaiting) {
+				Image img = Image.FromFile("data/vklogo.jpg");
+				g.DrawImage(img, new Rectangle(0, 0, CanvasWidth, CanvasHeight));
 			}
 		}
 
 		public void MouseUp(MouseEventArgs e) {
 			if (Final) {
+				state = StateFinal.VKcomWaiting;
 				vk = new VKApi();
 				vk.OauthAutorize();
 			}

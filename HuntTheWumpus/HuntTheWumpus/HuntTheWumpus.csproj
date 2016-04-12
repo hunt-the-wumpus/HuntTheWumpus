@@ -134,6 +134,9 @@
     <Content Include="data\Cave\TestRoom.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\vklogo.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Difficulties1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

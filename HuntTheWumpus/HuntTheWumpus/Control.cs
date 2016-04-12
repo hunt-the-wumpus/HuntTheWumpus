@@ -75,93 +75,10 @@ namespace HuntTheWumpus
             HintMessage.Add("Bat in ");
             HintMessage.Add("You have bad luck...");
             NowHint = (Hint)HintMessage.Count;
-			score = new Scores(width, height);
-			score.Final = true;
         }
 
         public void UpDate(long time)
         {
-			//view.Graphics.Clear(System.Drawing.Color.White);
-			//view.DrawCave(view.Graphics);
-			/*if (state == ControlState.Cave)
-            {
-				view.Graphics.Clear(System.Drawing.Color.White);
-				cave.DrawCave(view.Graphics);
-                if (NowHint != Hint.Empty)
-                {
-                    if (NowHint != Hint.NoLuck)
-                        ;// view.DrawHint(HintMessage[(int)NowHint] + HintData);
-                    else
-                        ;// view.DrawHint(HintMessage[(int)NowHint]);
-                }
-                if (!MiniGameEnd)
-                {
-                    minigame.DrawMiniGame(view.Graphics);
-                    minigame.TickTime();
-                    if (!minigame.Is_playing)
-                    {
-                        if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
-                        {
-                            IsWin = false;
-                            state = ControlState.LastWindow;
-                        }
-                        if (!minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
-                        {
-                            int rnd = random.Next() % HintMessage.Count;
-                            NowHint = (Hint)rnd;
-                            if (NowHint == Hint.Bat)
-                                HintData = map.GetBat();
-                            if (NowHint == Hint.Pit)
-                                HintData = map.GetPit();
-                            if (NowHint == Hint.Wumpus)
-                                HintData = map.Wumpus;
-                        }
-                        if (!minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
-                        {
-                            //player.BuyArrow();
-                        }
-                        MiniGameEnd = true;
-                    }
-                }
-                else
-                {
-                    if (!CheckDanger)
-                    {
-                        CheckDanger = true;
-                        if (map.danger == Danger.Pit)
-                        {
-                            StoryMiniGame = StoryMG.Pit;
-                            minigame.InitializeMiniGame(2);
-                            MiniGameEnd = false;
-                        }
-                        if (map.danger == Danger.Bat)
-                        {
-                            map.Respaw();
-                        }
-                        if (map.danger == Danger.Wumpus)
-                        {
-                            StoryMiniGame = StoryMG.Wumpus;
-                            MiniGameEnd = false;
-                            minigame.InitializeMiniGame(3);
-                        }
-                    }
-                    if (map.IsWin)
-                    {
-                        state = ControlState.LastWindow;
-                        IsWin = true;
-                    }
-                }
-            }
-            
-            if (state == ControlState.MainMenu)
-            {
-                view.DrawMainMenu();
-            }
-
-            if (time > 0)
-                view.DrawText((1000 / time).ToString(), 5, 5, 10);*/
-			score.TickTime();
-			score.DrawFinal(view.Graphics);
         }
 
         void ContinueMenu()
@@ -260,7 +177,6 @@ namespace HuntTheWumpus
             {
                 minigame.Up(e);
             }
-			score.MouseUp(e);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
