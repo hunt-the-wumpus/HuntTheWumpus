@@ -63,10 +63,10 @@ namespace HuntTheWumpus
         private bool IsWin;
 
         public View view;
-
+		
         public Control(int width, int height)
         {
-            view = new View(width, height);
+			view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             MapForPiсk = new Map[5];
             score = new Scores(width, height);

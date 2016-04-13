@@ -10,7 +10,8 @@ namespace HuntTheWumpus {
 	enum TypeAnimation {
 		Move,
 		QueueMove,
-		Refresh,
+		Maximization,
+		ManyMaximizations,
 		None
 	}
 
@@ -21,6 +22,12 @@ namespace HuntTheWumpus {
 		public int TimeNewEffect { get; set; }
 		public int ImageWidth { get; set; }
 		public int ImageHeight { get; set; }
+		public int EndMaximization { get; set; }
+		public bool RandomPositions { get; set; }
+		public int RandomX { get; set; }
+		public int RandomY { get; set; }
+		public bool Different { get; set; }
+		public int frequency { get; set; }
 		public TypeAnimation effect { get; set; }
 
 		public List<Image> cadr { get; set; }
@@ -30,6 +37,8 @@ namespace HuntTheWumpus {
 		public double EndPositionX { get; set; }
 		public double EndPositionY { get; set; }
 
+		private List<double> Sizes;
+		private double Size = 1.0f;
 		private double NowPositionX;
 		private double NowPositionY;
 		private double MoveSpeedX;
@@ -37,6 +46,7 @@ namespace HuntTheWumpus {
 		private List<double> ImagePositionsX;
 		private List<double> ImagePositionsY;
 		private int TimeNext = 0;
+		private Random range = new Random();
 
 		public ParticleEffect() {
 			LongTime = 1000;
@@ -44,6 +54,7 @@ namespace HuntTheWumpus {
 			cadr = new List<Image>();
 			ImagePositionsX = new List<double>();
 			ImagePositionsY = new List<double>();
+			Sizes = new List<double>();
 			timer = new Stopwatch();
 		}
 
@@ -54,6 +65,11 @@ namespace HuntTheWumpus {
 				NowPositionY = StartPositionY;
 				MoveSpeedX = (EndPositionX - StartPositionX) * 1000 / LongTime;
 				MoveSpeedY = (EndPositionY - StartPositionY) * 1000 / LongTime;
+			}
+			if (effect == TypeAnimation.Maximization || effect == TypeAnimation.ManyMaximizations) {
+				NowPositionX = StartPositionX;
+				NowPositionY = StartPositionY;
+				MoveSpeedX = EndMaximization * 1000 / LongTime;
 			}
 		}
 
@@ -66,6 +82,14 @@ namespace HuntTheWumpus {
 					g.DrawImage(particle, new Rectangle((int)ImagePositionsX[i], (int)ImagePositionsY[i], ImageWidth, ImageHeight));
 				}
 			}
+			if (effect == TypeAnimation.Maximization) {
+				g.DrawImage(particle, new Rectangle((int)NowPositionX - (int)Size / 2, (int)NowPositionY - (int)Size / 2, (int)Size, (int)Size));
+			}
+			if (effect == TypeAnimation.ManyMaximizations) {
+				for (int i = 0; i < Sizes.Count; ++i) {
+					g.DrawImage(particle, new Rectangle((int)(ImagePositionsX[i] - Sizes[i] / 2), (int)(ImagePositionsY[i] - Sizes[i] / 2), (int)Sizes[i], (int)Sizes[i]));
+				}
+			}
 		}
 
 		public void TickTime() {
@@ -75,8 +99,13 @@ namespace HuntTheWumpus {
 				NowPositionX += MoveSpeedX * Milliseconds / LongTime;
 				NowPositionY += MoveSpeedY * Milliseconds / LongTime;
 				if (NowPositionX > EndPositionX || NowPositionY > EndPositionY) {
-					NowPositionX = StartPositionX;
-					NowPositionY = StartPositionY;
+					if (!RandomPositions) {
+						NowPositionX = StartPositionX;
+						NowPositionY = StartPositionY;
+					} else {
+						NowPositionX = range.Next((int)StartPositionX, (int)StartPositionX + RandomX);
+						NowPositionY = range.Next((int)StartPositionY, (int)StartPositionY + RandomY);
+					}
 				}
 			}
 			if (effect == TypeAnimation.QueueMove) {
@@ -91,12 +120,68 @@ namespace HuntTheWumpus {
 				}
 				if (TimeNewEffect < TimeNext) {
 					TimeNext = 0;
-					ImagePositionsX.Add(StartPositionX);
-					ImagePositionsY.Add(StartPositionY);
+					if (!RandomPositions) {
+						ImagePositionsX.Add(StartPositionX);
+						ImagePositionsY.Add(StartPositionY);
+					} else {
+						ImagePositionsX.Add(range.Next((int)StartPositionX, (int)StartPositionX + RandomX));
+						ImagePositionsY.Add(range.Next((int)StartPositionY, (int)StartPositionY + RandomY));
+					}
 				}
 				if (maxX > EndPositionX || maxY > EndPositionY) {
 					ImagePositionsX.Remove(maxX);
 					ImagePositionsY.Remove(maxY);
+				}
+			}
+			if (effect == TypeAnimation.Maximization) {
+				Size += MoveSpeedX * Milliseconds / LongTime;
+				if (Size > EndMaximization) {
+					Size = 1.0f;
+					if (RandomPositions) {
+						NowPositionX = range.Next((int)StartPositionX, (int)StartPositionX + RandomX);
+						NowPositionY = range.Next((int)StartPositionY, (int)StartPositionY + RandomY);
+					}
+				}
+			}
+			if (effect == TypeAnimation.ManyMaximizations) {
+				TimeNext += (int)(Milliseconds);
+				double Maximal = 0;
+				double posX = -1;
+				double posY = -1;
+				for (int i = 0; i < Sizes.Count; ++i) {
+					Sizes[i] += MoveSpeedX * Milliseconds / LongTime;
+					if (Maximal < Sizes[i]) {
+						Maximal = Sizes[i];
+						posX = ImagePositionsX[i];
+						posY = ImagePositionsY[i];
+					}
+				}
+				if (Maximal > EndMaximization) {
+					Sizes.Remove(Maximal);
+					ImagePositionsX.Remove(posX);
+					ImagePositionsY.Remove(posY);
+				}
+				if (TimeNext > TimeNewEffect && !Different) {
+					if (!RandomPositions) {
+						ImagePositionsX.Add(StartPositionX);
+						ImagePositionsY.Add(StartPositionY);
+						Sizes.Add(1);
+					} else {
+						ImagePositionsX.Add(range.Next((int)StartPositionX, (int)StartPositionX + RandomX));
+						ImagePositionsY.Add(range.Next((int)StartPositionX, (int)StartPositionY + RandomY));
+						Sizes.Add(1);
+					}
+				}
+				if (Different && range.Next(0, frequency) == 0) {
+					if (!RandomPositions) {
+						ImagePositionsX.Add(StartPositionX);
+						ImagePositionsY.Add(StartPositionY);
+						Sizes.Add(1);
+					} else {
+						ImagePositionsX.Add(range.Next((int)StartPositionX, (int)StartPositionX + RandomX));
+						ImagePositionsY.Add(range.Next((int)StartPositionX, (int)StartPositionY + RandomY));
+						Sizes.Add(1);
+					}
 				}
 			}
 			timer.Restart();
