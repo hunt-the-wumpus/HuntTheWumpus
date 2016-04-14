@@ -21,9 +21,11 @@ namespace HuntTheWumpus
         public int Height { get; private set; }
         public Form1 MainForm { get; private set; }
 
-		private Image img = Image.FromFile("data/Cave/TestRoom2.png");
+		private CompressionImage cave_room;
 		private Image bar = Image.FromFile("data/Sprites/InfoBar.png");
-		private Image[] room = new Image[6];
+		private CompressionImage[] room = new CompressionImage[6];
+		private List<float> StownPosX = new List<float>();
+		private List<float> StownPosY = new List<float>();
 
 		public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
@@ -36,9 +38,30 @@ namespace HuntTheWumpus
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             Width = width;
             Height = height;
+			#region setted images
 			for (int i = 0; i < 6; ++i) {
-				room[i] = Image.FromFile("data/Cave/" + i.ToString() + ".png");
+				room[i] = new CompressionImage("data/Cave/" + i.ToString() + ".png", height * 10 / 12 / 3, height * 10 / 12 / 2);
+				room[i].ScreenWidth = width;
+				room[i].ScreenHeight = height;
 			}
+			cave_room = new CompressionImage("data/Cave/TestRoom2.png", height * 10 / 12, height * 10 / 12);
+			cave_room.ScreenWidth = width;
+			cave_room.ScreenHeight = height;
+			#endregion
+			#region setted constants
+			StownPosX.Add(1.0f / 3.0f); // 0 item
+			StownPosY.Add(0);
+			StownPosX.Add(0);			// 1 item
+			StownPosY.Add(0);
+			StownPosX.Add(0);			// 2 item
+			StownPosY.Add(0.5f);		
+			StownPosX.Add(1 / 3.0f);	// 3 item
+			StownPosY.Add(0.5f);
+			StownPosX.Add(2 / 3.0f);	// 4 item
+			StownPosY.Add(0.5f);
+			StownPosX.Add(2 / 3.0f);    // 5 item
+			StownPosY.Add(0);
+			#endregion
 			MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
@@ -82,14 +105,16 @@ namespace HuntTheWumpus
 
 		public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active) {
 			//Graphics.DrawImage(img, new Rectangle(x, y, length, length));
+			//cave_room.Draw(Graphics, x, y);
 			for (int i = 0; i < 6; i++) {
 				if (!Active[number][i]) {
-					Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
+					//Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
+					room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
 				}
 			}
-			if (danger == Danger.Empty) {
+			/*if (danger == Danger.Empty) {
 				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
-			}
+			}*/
 		}
 
 		public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey) {
@@ -106,7 +131,7 @@ namespace HuntTheWumpus
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
         {
 			//Clear(Color.White);
-			Clear();
+			//Clear();
 			int length = Height * 10 / 12;
 			DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
 			//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));

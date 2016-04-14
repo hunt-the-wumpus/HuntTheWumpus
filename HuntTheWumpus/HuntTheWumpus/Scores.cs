@@ -127,8 +127,6 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		private string json;
-
 		public void DrawFinal(Graphics g) {
 			//g.DrawString(user, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
 			if (state == StateFinal.VKcomWaiting) {

@@ -63,9 +63,27 @@ namespace HuntTheWumpus
         private bool IsWin;
 
         public View view;
-		
+		private ParticleEffect ef;
+
         public Control(int width, int height)
         {
+			ef = new ParticleEffect();
+			ef.effect = TypeAnimation.QueueMove;
+			ef.TimeNewEffect = 100;
+			ef.EndPositionX = 300;
+			ef.EndPositionY = 400;
+			ef.ImageHeight = 50;
+			ef.ImageWidth = 50;
+			ef.StartPositionY = 250;
+			ef.StartPositionX = 250;
+			//ef.RandomPositions = true;
+			ef.RandomX = 200;
+			ef.RandomY = 200;
+			ef.frequency = 1;
+			ef.particle = Image.FromFile("data/Achievements/test.png");
+			ef.LongTime = 1000;
+			ef.EndMaximization = 100;
+			ef.Start();
 			view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             MapForPiсk = new Map[5];
@@ -85,7 +103,10 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
+				view.Clear();
 				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+				//ef.TickTime();
+				//ef.Draw(view.Graphics);
 				if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
