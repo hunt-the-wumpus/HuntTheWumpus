@@ -126,6 +126,8 @@ namespace HuntTheWumpus
 					room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
 				}
 			}
+
+            Graphics.DrawImage(room[0].CompressedImage, 0, 0, new Rectangle(10, 10, 10, 10), GraphicsUnit.Pixel);
 			/*if (danger == Danger.Empty) {
 				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
 			}*/
@@ -142,22 +144,56 @@ namespace HuntTheWumpus
 			DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length, graph[CurrentRoom][2], graph, isActive);
 		}
 
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
 			//Clear(Color.White);
 			//Clear();
 			int length = Height * 10 / 12;
 			DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
-			//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
+            //Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
+            DrawInterface(Coins, Arrows, DangerList);
         }
-
-        public void DrawHint(string s)
+        public void DrawInterface(int coins, int arrows, List<Danger> DangerList)
         {
-            //
+            int yup = Height - 150;
+            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 150);
+            DrawText("Arrows " + arrows, 20, yup + 20, 20);
+            DrawText("Coins " + coins, 20, yup + 80, 20);
+            DrawText("Buy Hint", 820, yup + 20, 20);
+            DrawText("Buy Arrows", 820, yup + 80, 20);
+            int midx = Width * 2 / 3;
+            int midy = Height - 75;
+            int size = 60;
+            int hght = (int)(size * 1.732);//sqrt(3)*hgth
+            Pen pen = new Pen(Color.Black);
+            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy - hght / 2);
+            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx + size, midy);
+            Graphics.DrawLine(pen, midx + size, midy, midx + size / 2, midy + hght / 2);
+            Graphics.DrawLine(pen, midx + size / 2, midy + hght / 2, midx - size / 2, midy + hght / 2);
+            Graphics.DrawLine(pen, midx - size / 2, midy + hght / 2, midx - size, midy);
+            Graphics.DrawLine(pen, midx - size, midy, midx - size / 2, midy - hght / 2);
+            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy + hght / 2);
+            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx - size / 2, midy + hght / 2);
+            Graphics.DrawLine(pen, midx - size, midy, midx + size, midy);
         }
-
+    
         public RegionCave GetRegionCave(int x, int y)
         {
+            int yup = Height - 150;
+            if (y < yup)
+                return RegionCave.Empty;
+            if (x > 820 && y - yup < 50)
+                return RegionCave.BuyHint;
+            if (x > 820 && y - yup > 50)
+                return RegionCave.BuyArrow;
+            int midx = Width * 2 / 3;
+            int size = 60;
+            int midy = Height - 75;
+            if (x >= midx - size && x <= midx + size)
+            {
+                int angle = (int)Math.Floor(Math.Atan2(y - midy, x - midx) / Math.PI * 3);
+                return (RegionCave)((angle + 5) % 6);       
+            }
             return RegionCave.Empty;
         }
     }

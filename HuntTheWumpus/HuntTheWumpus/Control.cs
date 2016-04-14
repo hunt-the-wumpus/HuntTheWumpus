@@ -88,14 +88,14 @@ namespace HuntTheWumpus
             if (state == ControlState.Cave)
             {
 				view.Clear();
-				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
-				if (NowHint != Hint.Empty)
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
+				/*if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
                         view.DrawHint(HintMessage[(int)NowHint] + HintData);
                     else
                         view.DrawHint(HintMessage[(int)NowHint]);
-                }
+                }*/
                 if (!MiniGameEnd)
                 {
                     minigame.DrawMiniGame(view.Graphics);
