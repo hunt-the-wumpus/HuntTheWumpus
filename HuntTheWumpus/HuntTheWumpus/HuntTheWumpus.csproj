@@ -167,9 +167,6 @@
     <Content Include="data\Achievements\Sunduk.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\Achievements\test.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="data\Particles\water.JPG">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
