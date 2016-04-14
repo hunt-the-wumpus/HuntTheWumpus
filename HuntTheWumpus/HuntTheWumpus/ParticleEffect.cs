@@ -28,8 +28,10 @@ namespace HuntTheWumpus {
 		public int RandomY { get; set; }
 		public bool Different { get; set; }
 		public int frequency { get; set; }
+		public bool OptimizeFPS { get; set; }
 		public TypeAnimation effect { get; set; }
 
+		private CompressionImage img;
 		public List<Image> cadr { get; set; }
 		private Stopwatch timer;
 		public double StartPositionX { get; set; }
@@ -61,6 +63,7 @@ namespace HuntTheWumpus {
 		public void Start() {
 			timer.Start();
 			if (effect == TypeAnimation.Move || effect == TypeAnimation.QueueMove) {
+				img = new CompressionImage(particle, ImageWidth, ImageHeight);
 				NowPositionX = StartPositionX;
 				NowPositionY = StartPositionY;
 				MoveSpeedX = (EndPositionX - StartPositionX) * 1000 / LongTime;
@@ -75,11 +78,20 @@ namespace HuntTheWumpus {
 
 		public void Draw(Graphics g) {
 			if (effect == TypeAnimation.Move) {
-				g.DrawImage(particle, new Rectangle((int)NowPositionX, (int)NowPositionY, ImageWidth, ImageHeight));
+				img.Draw(g, (int)NowPositionX, (int)NowPositionY);
+				//g.DrawImage(particle, new Rectangle((int)NowPositionX, (int)NowPositionY, ImageWidth, ImageHeight));
 			}
 			if (effect == TypeAnimation.QueueMove) {
-				for (int i = 0; i < ImagePositionsX.Count; ++i) {
-					g.DrawImage(particle, new Rectangle((int)ImagePositionsX[i], (int)ImagePositionsY[i], ImageWidth, ImageHeight));
+				bool drawed = true;
+				for (int i = ImagePositionsX.Count - 1; i >= 0; --i) {
+					if (drawed && OptimizeFPS && i < ImagePositionsX.Count - 1 && Math.Abs(ImagePositionsX[i] - ImagePositionsX[i + 1]) < ImageWidth / 5 && Math.Abs(ImagePositionsY[i] - ImagePositionsY[i + 1]) < ImageHeight / 5) {
+						drawed = false;
+						continue;
+					} else {
+						drawed = true;
+					}
+					img.Draw(g, (int)ImagePositionsX[i], (int)ImagePositionsY[i]);
+					//g.DrawImage(particle, new Rectangle((int)ImagePositionsX[i], (int)ImagePositionsY[i], ImageWidth, ImageHeight));
 				}
 			}
 			if (effect == TypeAnimation.Maximization) {

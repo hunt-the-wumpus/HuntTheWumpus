@@ -69,20 +69,20 @@ namespace HuntTheWumpus
         {
 			ef = new ParticleEffect();
 			ef.effect = TypeAnimation.QueueMove;
-			ef.TimeNewEffect = 100;
-			ef.EndPositionX = 300;
-			ef.EndPositionY = 400;
-			ef.ImageHeight = 50;
-			ef.ImageWidth = 50;
+			ef.TimeNewEffect = 250;
+			ef.EndPositionX = 500;
+			ef.EndPositionY = 500;
+			ef.ImageHeight = 30;
+			ef.ImageWidth = 30;
 			ef.StartPositionY = 250;
 			ef.StartPositionX = 250;
-			//ef.RandomPositions = true;
-			ef.RandomX = 200;
-			ef.RandomY = 200;
+			ef.RandomPositions = true;
+			ef.RandomX = 5;
+			ef.RandomY = 5;
 			ef.frequency = 1;
-			ef.particle = Image.FromFile("data/Achievements/test.png");
-			ef.LongTime = 1000;
-			ef.EndMaximization = 100;
+			ef.particle = Image.FromFile("data/Particles/water2.jpg");
+			ef.LongTime = 5000;
+			ef.EndMaximization = 200;
 			ef.Start();
 			view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
@@ -105,8 +105,8 @@ namespace HuntTheWumpus
             {
 				view.Clear();
 				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
-				//ef.TickTime();
-				//ef.Draw(view.Graphics);
+				ef.TickTime();
+				ef.Draw(view.Graphics);
 				if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)

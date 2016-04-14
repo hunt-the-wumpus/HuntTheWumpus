@@ -19,6 +19,12 @@ namespace HuntTheWumpus {
 			ScreenHeight = 100000;
 		}
 
+		public CompressionImage(Image img, int width, int height) {
+			CompressedImage = ScaleImage(img, width, height);
+			ScreenWidth = 100000;
+			ScreenHeight = 100000;
+		}
+
 		public void Draw(Graphics g, int x, int y) {
 			if (x > ScreenWidth && y > ScreenHeight) {
 				return;
