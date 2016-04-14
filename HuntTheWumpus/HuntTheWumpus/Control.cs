@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace HuntTheWumpus
 {
@@ -47,6 +48,7 @@ namespace HuntTheWumpus
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
 
+		//private Cave cave;
         private Scores score;
 
         private List<string> HintMessage;
@@ -65,7 +67,7 @@ namespace HuntTheWumpus
 
         public Control(int width, int height)
         {
-            view = new View(width, height);
+			view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             MapForPiсk = new Map[5];
             score = new Scores(width, height);
@@ -85,8 +87,9 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
-                if (NowHint != Hint.Empty)
+				view.Clear();
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
+				if (NowHint != Hint.Empty)
                 {
                     if (NowHint != Hint.NoLuck)
                         view.DrawHint(HintMessage[(int)NowHint] + HintData);
@@ -216,7 +219,7 @@ namespace HuntTheWumpus
 
         public void MouseDown(object sender, MouseEventArgs e)
         {
-            NowHint = Hint.Empty;
+			NowHint = Hint.Empty;
             if (state == ControlState.Cave && !MiniGameEnd)
             {
                 minigame.Down(e);
@@ -248,9 +251,9 @@ namespace HuntTheWumpus
                 if (rg == 1)//Новая игра
                 {
                     state = ControlState.PickCave;
-                    NewGame();
-                    //player = new player
-                }
+					NewGame();
+					//player = new player
+				}
                 if (rg == 2)//Продолжить
                 {
                     ContinueMenu();
