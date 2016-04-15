@@ -163,7 +163,6 @@ namespace HuntTheWumpus
                 DrawText("Push", 530, yup + 50, 25);
             else
                 DrawText("Move", 530, yup + 50, 25);
-            DrawText(room + "", 20, 20, 20);
             for (int i = ConsoleList.Count - 1; i > ConsoleList.Count - 3 && i >= 0; --i)
                 DrawText((i + 1) + ": " + ConsoleList[i], 170, yup + 10 + (ConsoleList.Count - i - 1) * 50, 20);
             int midx = Width * 2 / 3;
