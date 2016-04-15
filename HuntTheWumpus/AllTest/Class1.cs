@@ -1,41 +1,40 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.XPath;
+using HuntTheWumpus;
+using Xunit;
 
-namespace UnitTest
+namespace xUnit.Tests
 {
-    [TestClass]
-    public class UnitTest1
+    public class Tests
     {
-        [TestMethod]
-        public void TestMethod1()
-        {
-        }
-
-        [TestMethod]
+        [Fact]
         public void MiniGameTest()
         {
             var minigame = new HuntTheWumpus.MiniGame(1024, 768);
             minigame.InitializeMiniGame(1);
-            Assert.AreEqual(minigame.Is_playing, true);
+            Assert.True(minigame.Is_playing);
             minigame.InitializeMiniGame(2);
-            Assert.AreEqual(minigame.Is_playing, true);
+            Assert.True(minigame.Is_playing);
             minigame.InitializeMiniGame(3);
-            Assert.AreEqual(minigame.Is_playing, true);
+            Assert.True(minigame.Is_playing);
         }
 
-        [TestMethod]
+        [Fact]
         public void ControlTest()
         {
             var control = new HuntTheWumpus.Control(1024, 768);
             control.UpDate(0);
-            control.UpDate(1000000000);
+            control.UpDate(100000000);
             control.UpDate(100);
         }
 
-        [TestMethod]
+        [Fact]
         public void DrawTest()
         {
             var view = new HuntTheWumpus.View(1024, 768);
@@ -47,7 +46,7 @@ namespace UnitTest
             view.MainForm.DrawAll();
         }
 
-        [TestMethod]
+        [Fact]
         public void GoodMap()
         {
             var map = new HuntTheWumpus.Map();
@@ -71,18 +70,18 @@ namespace UnitTest
                             q.Enqueue(map.graph[top][i]);
                         }
                     }
-                Assert.IsTrue(cnt <= 3, "Degree > 3");
+                Assert.True(cnt <= 3, "Degree > 3");
             }
-            Assert.IsTrue(step == 30, "Graph isn't connected");
+            Assert.True(step == 30, "Graph isn't connected");
         }
 
-        [TestMethod]
+        [Fact]
         public void MapTest()
         {
             var map = new HuntTheWumpus.Map();
             int mem = map.Wumpus;
             map.WumpusGoAway();
-            Assert.IsFalse(mem == map.Wumpus, "Wumpus come back");
+            Assert.False(mem == map.Wumpus, "Wumpus come back");
             for (int i = 0; i < 6; ++i)
                 map.PushArrow(i);
             for (int i = 0; i < 6; ++i)
@@ -92,31 +91,31 @@ namespace UnitTest
             {
                 var bat = map.GetBat();
                 var pit = map.GetPit();
-                Assert.IsTrue(bat != pit, "Bat in pit");
+                Assert.True(bat != pit, "Bat in pit");
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void PlayerTest()
         {
             var player = new HuntTheWumpus.Player();
             int mem = player.Coins;
             player.AddCoins(100);
             player.AddCoins(0);
-            Assert.IsTrue(mem + 100 == player.Coins, "AddCoins isn't correct");
+            Assert.True(mem + 100 == player.Coins, "AddCoins isn't correct");
             mem += 100;
             player.BuyArrow();
-            Assert.IsTrue(mem > player.Coins, "BuyArrow isn't correct");
+            Assert.True(mem > player.Coins, "BuyArrow isn't correct");
             mem = player.Coins;
             player.BuyHint();
-            Assert.IsTrue(mem > player.Coins, "BuyHint isn't correct");
+            Assert.True(mem > player.Coins, "BuyHint isn't correct");
             int ch = 0;
             while (player.CanBuyArrow() && ch < 1000)
             {
                 player.BuyArrow();
                 ++ch;
             }
-            Assert.IsTrue(ch < 1000, "CanBuyArrow isn't correct");
+            Assert.True(ch < 1000, "CanBuyArrow isn't correct");
             player.AddCoins(100);
             ch = 0;
             while (player.CanBuyHint() && ch < 1000)
@@ -124,7 +123,7 @@ namespace UnitTest
                 player.BuyHint();
                 ++ch;
             }
-            Assert.IsTrue(ch < 1000, "CanBuyHint isn't correct");
+            Assert.True(ch < 1000, "CanBuyHint isn't correct");
         }
     }
 }

@@ -17,6 +17,9 @@ namespace HuntTheWumpus
         // This is TRUE, if now game initialized and playing, else it's FALSE
         public bool Is_playing { get; private set; }
 
+		// This difficult of last game
+		public int Difficult { get; private set; }
+
         // If now analytics method is running it's TRUE
         // for locking mouse events
         private bool Is_Analytics = false;
@@ -78,6 +81,14 @@ namespace HuntTheWumpus
 		private int NowChange = -1;
 		private const int SpeedChangeNegative = 250;
 
+		private bool Faster = false;
+		private bool Reactivity = false;
+		private bool Zinger = false;
+
+		private bool Accurate = false;
+		private bool NoName76 = false;
+		private bool Sniper = false;
+
         /// Class constructor, say me window's width and height
         public MiniGame(int DrawingWidth, int DrawingHeight)
         {
@@ -110,6 +121,7 @@ namespace HuntTheWumpus
         /// Call this method for create new game
         public void InitializeMiniGame(int difficult)
         {
+			Difficult = difficult;
 			//* Read info about game level and set random figure *//
 			LifeTimer = MaxLife;
             files_Difficulties.Clear();
@@ -229,7 +241,13 @@ namespace HuntTheWumpus
 			ProgressBarSettedAngle = Math.Min(ProgressBarSettedAngle, 360);
 			if (PlayerPoints <= 0)
             {
-                Is_playing = false;
+				Faster = Faster || (Difficult == 1 && LifeTimer >= 0);
+				Reactivity = Reactivity || (Difficult == 2 && LifeTimer >= 0);
+				Zinger = Zinger || (Difficult == 3 && LifeTimer >= 0);
+				Accurate = Accurate || (Difficult == 1 && points >= 500 && PlayerPoints == 500 - points);
+				NoName76 = NoName76 || (Difficult == 2 && points >= 500 && PlayerPoints == 500 - points);
+				Sniper = Sniper || (Difficult == 3 && points >= 500 && PlayerPoints == 500 - points);
+				Is_playing = false;
                 Is_Winner = true;
             }
             else {
@@ -275,5 +293,26 @@ namespace HuntTheWumpus
 			MousePositionsX.Add(e.X);
 			MousePositionsY.Add(e.Y);
         }
+
+		public void GetAchievement(List<string> acv) {
+			if (Faster) {
+				acv.Add("Bottle.png/БЫСТРЫЙ#Пройти миниигру#на 1 уровне#сложности менее чем#за 7 секунд");
+			}
+			if (Reactivity) {
+				acv.Add("Sunduk.png/РЕАКТИВНЫЙ#Пройти миниигру#на 2 уровне#сложности менее чем#за 7 секунд");
+			}
+			if (Zinger) {
+				acv.Add("Demon.png/ЖИВЧИК#Пройти миниигру#на 3 уровне#сложности менее чем#за 7 секунд");
+			}
+			if (Accurate) {
+				acv.Add("Bottle.png/ТОЧНЫЙ#Завершить миниигру#на 1 уровне#сложности нарисовав#одну фигуру");
+			}
+			if (NoName76) {
+				acv.Add("Sunduk.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
+			}
+			if (Sniper) {
+				acv.Add("Demon.png/СНАЙПЕР#Завершить миниигру#на 3 уровне#сложности нарисовав#одну фигуру");
+			}
+		}
     }
 }
