@@ -107,7 +107,7 @@ namespace HuntTheWumpus
             MousePositionsX.Clear();
             MousePositionsY.Clear();
             //* ...and read info about new figure */
-            StreamReader file = new StreamReader(@"" + filename);
+            StreamReader file = new StreamReader(@"./data/MiniGame/" + filename);
             string line = "";
             while ((line = file.ReadLine()) != null)
             {
@@ -126,7 +126,7 @@ namespace HuntTheWumpus
 			LifeTimer = MaxLife;
             files_Difficulties.Clear();
             Is_playing = true;
-            StreamReader file = new StreamReader(@"Difficulties" + difficult.ToString() + ".txt");
+            StreamReader file = new StreamReader(@"./data/MiniGame/Difficulties" + difficult.ToString() + ".txt");
             string line = "";
             while ((line = file.ReadLine()) != null)
             {
