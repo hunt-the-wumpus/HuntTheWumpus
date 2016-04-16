@@ -8,6 +8,12 @@ using System.Drawing;
 
 namespace HuntTheWumpus
 {
+    public enum ModeUserControl
+    {
+        Move,
+        Push
+    }
+
     public class Control
     {
         enum ControlState
@@ -38,6 +44,7 @@ namespace HuntTheWumpus
             Empty
         }
 
+        
         private ControlState state = ControlState.Cave;
         private ControlState OldState = ControlState.MainMenu;
 
@@ -47,22 +54,20 @@ namespace HuntTheWumpus
         private MiniGame minigame;
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
-
-		//private Cave cave;
+        
         private Scores score;
 
         private List<string> HintMessage;
-        private Hint NowHint;
-        private int HintData;
-
+       
         private Map[] MapForPiсk;
         private Map map;
 
         private Random random = new Random();
 
         private bool IsWin;
+        private ModeUserControl NowMode;
         public Player player;
-
+        
         public View view;
 		private long timer = 0;
 		private int FPS = 0;
@@ -74,6 +79,7 @@ namespace HuntTheWumpus
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             MapForPiсk = new Map[5];
             score = new Scores(width, height);
+            minigame = new MiniGame(width, height);
             map = new Map();
             player = new Player();
             Width = width;
@@ -83,7 +89,6 @@ namespace HuntTheWumpus
             HintMessage.Add("Pit in ");
             HintMessage.Add("Bat in ");
             HintMessage.Add("You have bad luck...");
-            NowHint = (Hint)HintMessage.Count;
         }
 
         public void UpDate(long time)
@@ -92,20 +97,16 @@ namespace HuntTheWumpus
             if (state == ControlState.Cave)
             {
 				view.Clear();
-				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
-				if (NowHint != Hint.Empty)
-                {
-                    if (NowHint != Hint.NoLuck)
-                        view.DrawHint(HintMessage[(int)NowHint] + HintData);
-                    else
-                        view.DrawHint(HintMessage[(int)NowHint]);
-                }
-                if (!MiniGameEnd)
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow, NowMode);
+				if (!MiniGameEnd)
                 {
                     minigame.DrawMiniGame(view.Graphics);
                     minigame.TickTime();
                     if (!minigame.Is_playing)
                     {
+                        List<string> listachiv = new List<string>();
+                        minigame.GetAchievement(listachiv);
+                        score.getAchievement(listachiv);
                         if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
                         {
                             IsWin = false;
@@ -115,13 +116,18 @@ namespace HuntTheWumpus
                         {
                             player.BuyHint();
                             int rnd = random.Next() % HintMessage.Count;
-                            NowHint = (Hint)rnd;
+                            Hint NowHint = (Hint)rnd;
+                            int HintData = 0;
                             if (NowHint == Hint.Bat)
                                 HintData = map.GetBat();
                             if (NowHint == Hint.Pit)
                                 HintData = map.GetPit();
                             if (NowHint == Hint.Wumpus)
                                 HintData = map.Wumpus;
+                            if (NowHint != Hint.NoLuck)
+                                view.AddComand(HintMessage[(int)NowHint] + HintData);
+                            else
+                                view.AddComand(HintMessage[(int)NowHint]);
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
@@ -139,6 +145,7 @@ namespace HuntTheWumpus
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
                     {
+                        minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Pit;
                         minigame.InitializeMiniGame(2);
                         MiniGameEnd = false;
@@ -149,16 +156,25 @@ namespace HuntTheWumpus
                     }
                     if (map.danger == Danger.Wumpus)
                     {
+                        minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Wumpus;
                         MiniGameEnd = false;
                         minigame.InitializeMiniGame(3);
                     }
+                    Danger dangerabout = map.GetDangerAbout();
+                    if (dangerabout == Danger.Bat)
+                        view.AddComand("Bats Nearby");
+                    if (dangerabout == Danger.Pit)
+                        view.AddComand("I feel a draft");
+                    if (dangerabout == Danger.Wumpus)
+                        view.AddComand("I smell a Wumpus!");
                 }
                 if (map.IsWin)
                 {
                     state = ControlState.LastWindow;
                     IsWin = true;
                 }
+                score.DrawScores(view.Graphics);
             }
 
             if (state == ControlState.MainMenu)
@@ -176,6 +192,7 @@ namespace HuntTheWumpus
                 //score.DrawScoreList();
             }
 
+<<<<<<< HEAD
 			if (timer > 1000) {
 				timer -= 1000;
 				nFPS = FPS;
@@ -184,6 +201,12 @@ namespace HuntTheWumpus
 			FPS++;
             view.DrawText(nFPS.ToString(), 5, 5, 10);
             //score.DrawScores(view.Graphics);
+=======
+            if (time > 0)
+                view.DrawText((1000 / time).ToString(), 5, 5, 10);
+            score.DrawScores(view.Graphics);
+            score.TickTime();
+>>>>>>> 0bbd5e106877f2c8248d383a816de2f938950442
         }
 
         void ContinueMenu()
@@ -207,7 +230,6 @@ namespace HuntTheWumpus
 
         public void KeyDown(object sender, KeyEventArgs e)
         {
-            NowHint = Hint.Empty;
             if (e.KeyCode == Keys.Escape)
             {
                 if (state == ControlState.MainMenu)
@@ -228,30 +250,53 @@ namespace HuntTheWumpus
 
         public void MouseDown(object sender, MouseEventArgs e)
         {
-			NowHint = Hint.Empty;
-            if (state == ControlState.Cave && !MiniGameEnd)
+			if (state == ControlState.Cave && !MiniGameEnd)
             {
                 minigame.Down(e);
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {
                 RegionCave rg = view.GetRegionCave(e.X, e.Y);
-                if ((int)rg >= 0 && (int)rg < 6)//мы ходим
+                if ((int)rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
-                    map.Move((int)rg);
-                    CheckDanger = false;
+                    if (NowMode == ModeUserControl.Move)
+                    {
+                        map.Move((int)rg);
+                        CheckDanger = false;
+                    }
+                    else
+                    {
+                        player.PushArrow();
+                        map.PushArrow((int)rg);
+                        if (map.IsWin)
+                        {
+                            IsWin = true;
+                            state = ControlState.LastWindow;
+                        }
+                        else if (player.Arrow == 0)
+                        {
+                            IsWin = false;
+                            state = ControlState.LastWindow;
+                        }
+                    }
                 }
                 if (rg == RegionCave.BuyArrow && player.CanBuyArrow())
                 {
                     StoryMiniGame = StoryMG.BuyArrow;
                     MiniGameEnd = false;
+                    minigame = new MiniGame(Width, Height);
                     minigame.InitializeMiniGame(2);
                 }
                 if (rg == RegionCave.BuyHint && player.CanBuyHint())
                 {
                     StoryMiniGame = StoryMG.BuyHint;
                     MiniGameEnd = false;
+                    minigame = new MiniGame(Width, Height);
                     minigame.InitializeMiniGame(2);
+                }
+                if (rg == RegionCave.ChangeMode)
+                {
+                    NowMode = (ModeUserControl)(((int)NowMode + 1) % 2);
                 }
             }
             if (state == ControlState.MainMenu)

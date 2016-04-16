@@ -26,14 +26,17 @@ namespace HuntTheWumpus {
 		}
 
 		public void Draw(Graphics g, int x, int y) {
-			if (x > ScreenWidth && y > ScreenHeight) {
+			if (x > ScreenWidth || y > ScreenHeight) {
 				return;
 			}
-			if (x + CompressedImage.Width < 0 && y + CompressedImage.Height < 0) {
+			if (x + CompressedImage.Width < 0 || y + CompressedImage.Height < 0) {
 				return;
 			}
-			g.DrawImage(CompressedImage, x, y);
-		}
+            g.DrawImage(CompressedImage, Math.Max(0, x), Math.Max(0, y), new Rectangle(Math.Max(0, -x), Math.Max(0, -y), 
+                Math.Min(CompressedImage.Width, ScreenWidth - x) - Math.Max(0, -x), 
+                Math.Min(CompressedImage.Height, ScreenHeight - y) - Math.Max(0, -y)), GraphicsUnit.Pixel);
+            //g.DrawImage(CompressedImage, x, y, new Rectangle(0, 0, 0 + CompressedImage.Width, 0 + CompressedImage.Height), GraphicsUnit.Pixel);
+        }
 
 		private Image ScaleImage(Image source, int width, int height) {
 			Image dest = new Bitmap(width, height);

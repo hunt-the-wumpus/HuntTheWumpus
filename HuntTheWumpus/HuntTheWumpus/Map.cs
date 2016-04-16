@@ -240,11 +240,22 @@ namespace HuntTheWumpus
                 return Danger.Pit;
             return Danger.Empty;
         }
+        public Danger GetDangerAbout()
+        {
+            Danger ans = Danger.Empty;
+            for (int i = 0; i < 6; i++)
+            {
+                ans = (Danger)Math.Max((int)ans, (int)GetDanger(graph[Room][i]));
+            }
+            return ans;
+        }
         public List<Danger> GetDangerList()
         {
-            var ans = new List<Danger>();
-            for (int i = 0; i < 6; ++i)
+            List<Danger> ans = new List<Danger>();
+            for (int i = 0; i < 6; i++)
+            {
                 ans.Add(GetDanger(graph[Room][i]));
+            }
             return ans;
         }
     }

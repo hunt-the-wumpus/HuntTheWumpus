@@ -18,7 +18,8 @@ namespace HuntTheWumpus
         {
             CostArrow = 3;
             CostHint = 5;
-            Arrow = 0;
+            Coins = 5;
+            Arrow = 3;
         }
 
         public bool CanBuyArrow()
@@ -29,6 +30,10 @@ namespace HuntTheWumpus
         {
             Arrow = 3;
             Coins -= CostArrow;
+        }
+        public void PushArrow()
+        {
+            --Arrow;
         }
         public bool CanBuyHint()
         {

@@ -20,7 +20,7 @@ namespace HuntTheWumpus {
 		FaceBookWaiting
 	}
 
-	class Scores {
+	public class Scores {
 		// Player score
 		public int Score { get; private set; }
 		public bool Final { get; set; }
@@ -113,7 +113,7 @@ namespace HuntTheWumpus {
 		public void DrawScores(Graphics g) {
 			Font f = new Font("Arial", 15);
 			Brush brush = new SolidBrush(Color.Yellow);
-			g.DrawString("Score: " + Score.ToString(), f, brush, 0, 20);
+			//g.DrawString("Score: " + Score.ToString(), f, brush, 0, 20);
 			int width = CanvasWidth / 5; //6
 			int height = CanvasHeight / 8; //10
 			if (activeImage != null) {
@@ -124,7 +124,8 @@ namespace HuntTheWumpus {
 				for (int i = 0; i < strings.Length; ++i) {
 					g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height / 3 + i * 12);
 				}
-			}
+            }
+            
 		}
 
 		public void DrawFinal(Graphics g) {
