@@ -18,6 +18,7 @@ namespace HuntTheWumpus
         {
             CostArrow = 3;
             CostHint = 5;
+            Coins = 5;
             Arrow = 3;
         }
 

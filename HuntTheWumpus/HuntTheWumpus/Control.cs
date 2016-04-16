@@ -94,19 +94,15 @@ namespace HuntTheWumpus
             {
 				view.Clear();
 				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow, NowMode);
-				/*if (NowHint != Hint.Empty)
-                {
-                    if (NowHint != Hint.NoLuck)
-                        view.DrawHint(HintMessage[(int)NowHint] + HintData);
-                    else
-                        view.DrawHint(HintMessage[(int)NowHint]);
-                }*/
-                if (!MiniGameEnd)
+				if (!MiniGameEnd)
                 {
                     minigame.DrawMiniGame(view.Graphics);
                     minigame.TickTime();
                     if (!minigame.Is_playing)
                     {
+                        List<string> listachiv = new List<string>();
+                        minigame.GetAchievement(listachiv);
+                        score.getAchievement(listachiv);
                         if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
                         {
                             IsWin = false;
@@ -174,6 +170,7 @@ namespace HuntTheWumpus
                     state = ControlState.LastWindow;
                     IsWin = true;
                 }
+                score.DrawScores(view.Graphics);
             }
 
             if (state == ControlState.MainMenu)
@@ -193,7 +190,8 @@ namespace HuntTheWumpus
 
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
-            //score.DrawScores(view.Graphics);
+            score.DrawScores(view.Graphics);
+            score.TickTime();
         }
 
         void ContinueMenu()
