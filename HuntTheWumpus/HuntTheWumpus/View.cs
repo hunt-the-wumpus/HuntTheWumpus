@@ -12,7 +12,7 @@ namespace HuntTheWumpus
     {
         Up,
         UpLeft,
-        UpDown,
+        DownLeft,
         Down,
         DownRight,
         UpRight,
@@ -123,7 +123,7 @@ namespace HuntTheWumpus
             //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
             cave_room.Draw(Graphics, x, y);
             for (int i = 0; i < 6; i++) {
-                if (!Active[number][i]) {
+                if (Active[number][i]) {
                     //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
                 }
@@ -196,7 +196,7 @@ namespace HuntTheWumpus
             if (x >= midx - size && x <= midx + size)
             {
                 int angle = (int)Math.Floor(Math.Atan2(y - midy, x - midx) / Math.PI * 3);
-                return (RegionCave)((angle + 5) % 6);
+                return (RegionCave)((-angle + 4) % 6);
             }
             if (Math.Pow(x - midx + size + 20, 2) + Math.Pow(y - yup - 25, 2) <= 400)
                 return RegionCave.ChangeMode;

@@ -140,5 +140,25 @@ namespace xUnit.Tests
             score.getAchievement(ls);
             score.DrawScores(view.Graphics);
         }
+
+        [Fact]
+        public void TestNavigator()
+        {
+            var view = new View(1024, 768);
+            int midx = 1024 * 2 / 3;
+            int midy = 768 - 60;
+            var rg = view.GetRegionCave(midx + 10, midy + 5);
+            Assert.True(rg == RegionCave.DownRight, "Bad region 4");
+            rg = view.GetRegionCave(midx, midy + 5);
+            Assert.True(rg == RegionCave.Down, "Bad region 3");
+            rg = view.GetRegionCave(midx - 10, midy + 5);
+            Assert.True(rg == RegionCave.DownLeft, "Bad region 2");
+            rg = view.GetRegionCave(midx - 10, midy - 5);
+            Assert.True(rg == RegionCave.UpLeft, "Bad region 1");
+            rg = view.GetRegionCave(midx, midy - 5);
+            Assert.True(rg == RegionCave.Up, "Bad region 0");
+            rg = view.GetRegionCave(midx + 10, midy - 5);
+            Assert.True(rg == RegionCave.UpRight, "Bad region 5");
+        }
     }
 }
