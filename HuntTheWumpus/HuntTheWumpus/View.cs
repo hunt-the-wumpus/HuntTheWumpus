@@ -18,7 +18,8 @@ namespace HuntTheWumpus
         UpRight,
         BuyArrow,
         BuyHint,
-        ChangeMode,
+        UpConsole,
+        DownConsole,
         Empty
     }
 
@@ -40,7 +41,9 @@ namespace HuntTheWumpus
         private CompressionImage[] room = new CompressionImage[6];
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
+
         private List<string> ConsoleList;
+        private int IndexConsole = 0;
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
@@ -86,6 +89,12 @@ namespace HuntTheWumpus
         public void DrawText(string str, int x, int y, int size_font)
         {
             Font fn = new Font("Arial", size_font);
+            Graphics.DrawString(str, fn, Brushes.Black, x, y);
+        }
+
+        public void DrawText(string str, int x, int y, int size_font, string typefont)
+        {
+            Font fn = new Font(typefont, size_font);
             Graphics.DrawString(str, fn, Brushes.Black, x, y);
         }
 
@@ -142,73 +151,68 @@ namespace HuntTheWumpus
             DrawRoom(basex + length * 2 / 3, basey + length / 2, DangerList[4], length, graph[CurrentRoom][4], graph, isActive);
             DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length, graph[CurrentRoom][2], graph, isActive);
         }
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows, ModeUserControl NowMode)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
             //Clear(Color.White);
             //Clear();
             int length = Height * 10 / 12;
             DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
             //Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
-            DrawInterface(Coins, Arrows, CurrentRoom, NowMode);
+            DrawInterface(Coins, Arrows, CurrentRoom);
         }
-        public void DrawInterface(int coins, int arrows, int room, ModeUserControl nowmode)
+        public void DrawInterface(int coins, int arrows, int room)
         {
             int yup = Height - 120;
-            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 150);
+            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 120);
+            Point[] pn = new Point[3];
+            Graphics.DrawLine(Pens.Black, 150, yup, 150, Height);
             DrawText("Arrows " + arrows, 20, yup + 10, 20);
             DrawText("Coins " + coins, 20, yup + 60, 20);
-            DrawText("Buy Hint", 820, yup + 10, 20);
-            DrawText("Buy Arrows", 820, yup + 60, 20);
-            if (nowmode == ModeUserControl.Push)
-                DrawText("Push", 530, yup + 50, 25);
-            else
-                DrawText("Move", 530, yup + 50, 25);
-            for (int i = ConsoleList.Count - 1; i > ConsoleList.Count - 3 && i >= 0; --i)
-                DrawText((i + 1) + ": " + ConsoleList[i], 170, yup + 10 + (ConsoleList.Count - i - 1) * 50, 20);
-            int midx = Width * 2 / 3;
-            int midy = Height - 60;
-            int size = 60;
-            int hght = (int)(size * 1.732);//sqrt(3)*hgth
-            Pen pen = new Pen(Color.Black);
-            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy - hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx + size, midy);
-            Graphics.DrawLine(pen, midx + size, midy, midx + size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy + hght / 2, midx - size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx - size / 2, midy + hght / 2, midx - size, midy);
-            Graphics.DrawLine(pen, midx - size, midy, midx - size / 2, midy - hght / 2);
-            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx - size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx - size, midy, midx + size, midy);
-            Graphics.FillEllipse(Brushes.Red, midx - size - 40, yup + 5, 40, 40);
+            DrawText("Buy Arrows", 170, yup + 10, 20);
+            DrawText("Buy Hint", 170, yup + 60, 20);
+            for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
+                DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas");
+            DrawText("^", 704, yup + 37, 23);
+            DrawText("v", 705, yup + 52, 20);
         }
         public RegionCave GetRegionCave(int x, int y)
         {
             int yup = Height - 120;
             if (y < yup)
                 return RegionCave.Empty;
-            if (x > 820 && y - yup < 60)
+            if (x > 170 && x < 340 && y - yup > 60)
                 return RegionCave.BuyHint;
-            if (x > 820 && y - yup > 60)
+            if (x > 170 && x < 340 && y - yup < 60)
                 return RegionCave.BuyArrow;
-            int midx = Width * 2 / 3;
-            int size = 60;
-            int midy = Height - 60;
-            if (x >= midx - size && x <= midx + size)
-            {
-                int angle = (int)Math.Floor(Math.Atan2(y - midy, x - midx) / Math.PI * 3);
-                return (RegionCave)((-angle + 4) % 6);
-            }
-            if (Math.Pow(x - midx + size + 20, 2) + Math.Pow(y - yup - 25, 2) <= 400)
-                return RegionCave.ChangeMode;
+            if (x >= 705 && x < 730 && y > yup + 37 && y < yup + 55)
+                return RegionCave.UpConsole;
+            if (x >= 705 && x < 730 && y > yup + 55 && y < yup + 85)
+                return RegionCave.DownConsole;
             return RegionCave.Empty;
         }
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
+            AddComand("Left mouse bottom for#moving");
+            AddComand("Right mouse bottom for#shot arrow");
+            IndexConsole = ConsoleList.Count - 1;
         }
         public void AddComand(string s)
         {
-            ConsoleList.Add(s);
+            if (IndexConsole == ConsoleList.Count - 1)
+                ++IndexConsole;
+            string[] strs = s.Split('#');
+            for (int i = strs.Length - 1; i >= 0; i--)
+                ConsoleList.Add(strs[i]);
+        }
+        public void ChangeIndex(int up)
+        {
+            if (ConsoleList.Count <= 5)
+                return;
+            if (up > 0)
+                IndexConsole = Math.Min(IndexConsole + up, ConsoleList.Count - 1);
+            else
+                IndexConsole = Math.Max(IndexConsole + up, 4);
         }
     }
 }

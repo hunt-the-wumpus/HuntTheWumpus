@@ -8,12 +8,6 @@ using System.Drawing;
 
 namespace HuntTheWumpus
 {
-    public enum ModeUserControl
-    {
-        Move,
-        Push
-    }
-
     public class Control
     {
         enum ControlState
@@ -24,7 +18,6 @@ namespace HuntTheWumpus
             ScoreList,
             PickCave
         }
-
         enum StoryMG
         {
             Empty,
@@ -34,7 +27,6 @@ namespace HuntTheWumpus
             BuyArrow,
             BuyHint
         }
-
         enum Hint
         {
             Wumpus,
@@ -43,7 +35,6 @@ namespace HuntTheWumpus
             NoLuck,
             Empty
         }
-
         
         private ControlState state = ControlState.Cave;
         private ControlState OldState = ControlState.MainMenu;
@@ -65,7 +56,6 @@ namespace HuntTheWumpus
         private Random random = new Random();
 
         private bool IsWin;
-        private ModeUserControl NowMode;
         public Player player;
         
         public View view;
@@ -74,6 +64,7 @@ namespace HuntTheWumpus
         {
 			view = new View(width, height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
+            view.ClearConsole();
             MapForPiсk = new Map[5];
             score = new Scores(width, height);
             minigame = new MiniGame(width, height);
@@ -93,7 +84,7 @@ namespace HuntTheWumpus
             if (state == ControlState.Cave)
             {
 				view.Clear();
-				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow, NowMode);
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
 				if (!MiniGameEnd)
                 {
                     minigame.DrawMiniGame(view.Graphics);
@@ -244,7 +235,7 @@ namespace HuntTheWumpus
                 RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if ((int)rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
-                    if (NowMode == ModeUserControl.Move)
+                    if (e.Button == MouseButtons.Left)
                     {
                         map.Move((int)rg);
                         CheckDanger = false;
@@ -279,10 +270,10 @@ namespace HuntTheWumpus
                     minigame = new MiniGame(Width, Height);
                     minigame.InitializeMiniGame(2);
                 }
-                if (rg == RegionCave.ChangeMode)
-                {
-                    NowMode = (ModeUserControl)(((int)NowMode + 1) % 2);
-                }
+                if (rg == RegionCave.UpConsole)
+                    view.ChangeIndex(1);
+                if (rg == RegionCave.DownConsole)
+                    view.ChangeIndex(-1);
             }
             if (state == ControlState.MainMenu)
             {
