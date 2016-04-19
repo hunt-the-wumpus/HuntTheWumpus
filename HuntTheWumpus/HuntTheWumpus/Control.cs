@@ -36,7 +36,7 @@ namespace HuntTheWumpus
             Empty
         }
         
-        private ControlState state = ControlState.Cave;
+        private ControlState state = ControlState.PickCave;
         private ControlState OldState = ControlState.MainMenu;
 
         private int Width, Height;
@@ -49,7 +49,8 @@ namespace HuntTheWumpus
         private Scores score;
 
         private List<string> HintMessage;
-       
+
+        int num = 0;
         private Map[] MapForPiсk;
         private Map map;
 
@@ -68,8 +69,8 @@ namespace HuntTheWumpus
             MapForPiсk = new Map[5];
             score = new Scores(width, height);
             minigame = new MiniGame(width, height);
-            map = new Map();
             player = new Player();
+            NewGame();
             Width = width;
             Height = height;
             HintMessage = new List<string>();
@@ -169,6 +170,11 @@ namespace HuntTheWumpus
                 view.DrawMainMenu();
             }
 
+            if (state == ControlState.PickCave)
+            {
+                view.DrawPickCave(MapForPiсk[num].graph, MapForPiсk[num].isActive, num);
+            }
+
             if (state == ControlState.LastWindow)
             {
                 //score.DrawFinal();
@@ -195,13 +201,15 @@ namespace HuntTheWumpus
         void NewGame()
         {
             for (int i = 0; i < 5; ++i)
-                MapForPiсk[i] = new Map();
+                MapForPiсk[i] = new Map(random.Next());
+            num = 0;
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
             score = new Scores(Width, Height);
             CheckDanger = true;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;
+
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
@@ -291,6 +299,19 @@ namespace HuntTheWumpus
                 if (rg == 3)//Выход
                 {
                     Application.Exit();
+                }
+            }
+            if (state == ControlState.PickCave)
+            {
+                RegionPickCave rg = view.GetRegionPickCave(e.X, e.Y);
+                if ((int)rg < 5)
+                {
+                    num = (int)rg;
+                }
+                if (rg == RegionPickCave.Play)
+                {
+                    map = MapForPiсk[num];
+                    state = ControlState.Cave;
                 }
             }
         }

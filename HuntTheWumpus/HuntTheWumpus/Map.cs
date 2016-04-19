@@ -149,9 +149,9 @@ namespace HuntTheWumpus
         {
             return (i == BatRoom.Item1) || (i == BatRoom.Item2) || (i == PitRoom.Item2) || (i == PitRoom.Item1) || (i == Wumpus);
         }
-        public Map()
+        public Map(int seed)
         {
-            random = new Random();
+            random = new Random(seed);
             graph = new List<int>[30];
             isActive = new List<bool>[30];
             GenGraph();

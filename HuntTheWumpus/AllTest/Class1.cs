@@ -43,13 +43,15 @@ namespace xUnit.Tests
             view.Created();
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
+            var map = new HuntTheWumpus.Map(123);
+            view.DrawPickCave(map.graph, map.isActive, 0);
             view.MainForm.DrawAll();
         }
 
         [Fact]
         public void GoodMap()
         {
-            var map = new HuntTheWumpus.Map();
+            var map = new HuntTheWumpus.Map(123);
             bool[] b = new bool[30];
             b[0] = true;
             Queue<int> q = new Queue<int>();
@@ -78,7 +80,7 @@ namespace xUnit.Tests
         [Fact]
         public void MapTest()
         {
-            var map = new HuntTheWumpus.Map();
+            var map = new HuntTheWumpus.Map(321);
             int mem = map.Wumpus;
             map.WumpusGoAway();
             Assert.False(mem == map.Wumpus, "Wumpus come back");

@@ -22,6 +22,16 @@ namespace HuntTheWumpus
         DownConsole,
         Empty
     }
+    public enum RegionPickCave
+    {
+        Cave0,
+        Cave1,
+        Cave2,
+        Cave3,
+        Cave4,
+        Play,
+        Empty
+    }
 
     public class View
     {
@@ -55,10 +65,11 @@ namespace HuntTheWumpus
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             ConsoleList = new List<string>();
-            Width = width; 
+            Width = width;
             Height = height;
             #region setted images
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < 6; ++i)
+            {
                 room[i] = new CompressionImage("data/Cave/" + i.ToString() + ".png", height * 10 / 12 / 3, height * 10 / 12 / 2);
                 room[i].ScreenWidth = width;
                 room[i].ScreenHeight = height;
@@ -122,17 +133,19 @@ namespace HuntTheWumpus
         {
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
         }
-
         public int GetRegionMainMenu(int x, int y)
         {
             return -1;//тут бы enum
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active) {
+        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active)
+        {
             //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
             cave_room.Draw(Graphics, x, y);
-            for (int i = 0; i < 6; i++) {
-                if (Active[number][i]) {
+            for (int i = 0; i < 6; i++)
+            {
+                if (Active[number][i])
+                {
                     //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
                 }
@@ -141,7 +154,8 @@ namespace HuntTheWumpus
 				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
 			}*/
         }
-        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey) {
+        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey)
+        {
             int length = Height * 10 / 12;
             DrawRoom(basex, basey, danger, length, CurrentRoom, graph, isActive);
             DrawRoom(basex, basey - length, DangerList[0], length, graph[CurrentRoom][0], graph, isActive);
@@ -213,6 +227,56 @@ namespace HuntTheWumpus
                 IndexConsole = Math.Min(IndexConsole + up, ConsoleList.Count - 1);
             else
                 IndexConsole = Math.Max(IndexConsole + up, 4);
+        }
+
+        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
+        {
+            Clear(Color.LightGreen);
+            int size = 55;
+            int d = 5;
+            int hght = (int)(size * 1.732);
+            for (int i = 0; i < 6; ++i)
+                for (int j = 0; j < 5; ++j)
+                {
+                    int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * hght / 2 + 50 + j * d;
+                    Point[] pn = new Point[6];
+                    pn[0] = new Point(lx + size / 2, ly);
+                    pn[1] = new Point(lx, ly + hght / 2);
+                    pn[2] = new Point(lx + size / 2, ly + hght);
+                    pn[3] = new Point(lx + size * 3 / 2, ly + hght);
+                    pn[4] = new Point(lx + size * 2, ly + hght / 2);
+                    pn[5] = new Point(lx + size * 3 / 2, ly);
+                    Graphics.FillPolygon(Brushes.BlueViolet, pn);
+                    Pen pen = new Pen(Color.Brown, 9);
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        int v = i + j * 6;
+                        if (isActive[v][k])
+                        {
+                            if (k == 0)
+                                Graphics.DrawLine(pen, lx + size, ly + hght / 3, lx + size, ly - hght / 3 - d);
+                            if (k == 1)
+                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght / 3, lx - size / 3, ly);
+                            if (k == 2)
+                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght * 2 / 3, lx - size / 3, ly + hght);
+                        }
+                    }
+                }
+            for (int i = 0; i < 5; ++i)
+            {
+                if (i > 0)
+                    Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, i * Width / 5, Height);
+                DrawText((i + 1).ToString(), i * Width / 5 + 60, Height - 100, 40);
+            }
+            DrawText("GO!!", 850, 550, 40);
+        }
+        public RegionPickCave GetRegionPickCave(int x, int y)
+        {
+            if (y > Height - 120)
+                return (RegionPickCave)(x * 5 / Width);
+            if (y > 550 && x > 850)
+                return RegionPickCave.Play;
+            return RegionPickCave.Empty;
         }
     }
 }
