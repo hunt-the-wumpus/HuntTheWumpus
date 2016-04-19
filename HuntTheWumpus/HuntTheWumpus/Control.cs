@@ -237,7 +237,7 @@ namespace HuntTheWumpus
                 {
                     if (e.Button == MouseButtons.Left)
                     {
-                        map.Move((int)rg);
+                        player.AddCoins(map.Move((int)rg));
                         CheckDanger = false;
                     }
                     else
