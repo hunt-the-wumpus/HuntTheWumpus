@@ -141,10 +141,10 @@ namespace HuntTheWumpus
         public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active)
         {
             //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
-            cave_room.Draw(Graphics, x, y);
+            //cave_room.Draw(Graphics, x, y);
             for (int i = 0; i < 6; i++)
             {
-                if (Active[number][i])
+                if (!Active[number][i])
                 {
                     //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));

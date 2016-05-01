@@ -60,22 +60,18 @@ namespace HuntTheWumpus
         public Player player;
         
         public View view;
-		private long timer = 0;
-		private int FPS = 0;
-		private int nFPS = 0;
 
         public Control(int width, int height)
         {
 			view = new View(width, height);
-            view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
+			Width = width;
+			Height = height;
+			view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             view.ClearConsole();
             MapForPiсk = new Map[5];
-            score = new Scores(width, height);
             minigame = new MiniGame(width, height);
             player = new Player();
             NewGame();
-            Width = width;
-            Height = height;
             HintMessage = new List<string>();
             HintMessage.Add("Wumpus in ");
             HintMessage.Add("Pit in ");
@@ -85,7 +81,6 @@ namespace HuntTheWumpus
 
         public void UpDate(long time)
         {
-			timer += time;
             if (state == ControlState.Cave)
             {
 				view.Clear();
@@ -189,21 +184,10 @@ namespace HuntTheWumpus
                 //score.DrawScoreList();
             }
 
-<<<<<<< HEAD
-			if (timer > 1000) {
-				timer -= 1000;
-				nFPS = FPS;
-				FPS = 0;
-			}
-			FPS++;
-            view.DrawText(nFPS.ToString(), 5, 5, 10);
-            //score.DrawScores(view.Graphics);
-=======
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
             score.DrawScores(view.Graphics);
             score.TickTime();
->>>>>>> 0bbd5e106877f2c8248d383a816de2f938950442
         }
 
         void ContinueMenu()

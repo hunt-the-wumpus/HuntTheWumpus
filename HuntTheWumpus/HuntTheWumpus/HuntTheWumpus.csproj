@@ -164,6 +164,9 @@
     <Content Include="data\Achievements\Sunduk.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Final.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\MiniGame\Difficulties1.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

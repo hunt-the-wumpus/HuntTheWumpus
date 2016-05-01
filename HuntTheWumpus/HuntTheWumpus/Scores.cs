@@ -30,10 +30,11 @@ namespace HuntTheWumpus {
 
 		// Queue at draw achievements
 		private List<string> Queue = new List<string>();
-		private List<string> WasAhievements = new List<string>();
+		private List<string> WasAchievements = new List<string>();
 
 		private Image activeImage = null;
 		private Image BackGround = null;
+		private Image FinalPicture = null;
 
 		private const double BeginDrawingPosition = -100;
 		private const double EndDrawingPosition = 0;
@@ -49,17 +50,14 @@ namespace HuntTheWumpus {
 		private int NowChange = 1;
 		private StateFinal state;
 		private VKApi vk;
+		private bool Winner = false;
 
 		public Scores(int Width, int Height) {
+			Score = 228;
 			CanvasWidth = Width;
 			CanvasHeight = Height;
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
 			List<string> bb = new List<string>();
-			bb.Add("Sunduk.png/ДВЕНАДЦАТЬ ЧЕЛОВЕК#НА СУНДУК МЕРТВЕЦА");
-			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
-			bb.Add("Demon.png/ПЕЙ И ДЬЯВОЛ#ДОВЕДЕТ#ТЕБЯ ДО КОНЦА");
-			bb.Add("Bottle.png/ЙО-ХО-ХО!#И БУТЫЛКА РОМА");
-			//getAchievement(bb);
 			Event_timer.Start();
 		}
 
@@ -70,9 +68,9 @@ namespace HuntTheWumpus {
 
 		public void getAchievement(List<string> achievements) {
 			for (int i = 0; i < achievements.Count; ++i) {
-				if (WasAhievements.IndexOf(achievements[i]) == -1) {
+				if (WasAchievements.IndexOf(achievements[i]) == -1) {
 					Queue.Add(achievements[i]);
-					WasAhievements.Add(achievements[i]);
+					WasAchievements.Add(achievements[i]);
 				}
 			}
 		}
@@ -128,8 +126,35 @@ namespace HuntTheWumpus {
             
 		}
 
+		public void SetFinalState(bool isWinner) {
+			Winner = isWinner;
+			FinalPicture = Image.FromFile("data/Final.png");
+		}
+
 		public void DrawFinal(Graphics g) {
-			//g.DrawString(user, new Font("Arial", 15), new SolidBrush(Color.Black), 10, 50);
+			g.DrawImage(FinalPicture, 0, 0);
+			string WinStatus = "";
+			Brush StatusBrush;
+			if (Winner) {
+				WinStatus = "Победа";
+				StatusBrush = new SolidBrush(Color.Green);
+			} else {
+				WinStatus = "Поражение";
+				StatusBrush = new SolidBrush(Color.Red);
+			}
+			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
+			g.DrawString("Очков набрано " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			int activestring = 0;
+			int drawachivements = 0;
+			for (int i = 0; i < WasAchievements.Count; ++i) {
+				if (drawachivements >= 3) {
+					++activestring;
+					drawachivements = 0;
+				}
+				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('#')[0]);
+				g.DrawImage(img, 80 + drawachivements * 140, 430 + activestring * 46, 140, 46);
+				++drawachivements;
+			}
 			if (state == StateFinal.VKcomWaiting) {
 				Image img = Image.FromFile("data/vklogo.jpg");
 				g.DrawImage(img, new Rectangle(0, 0, CanvasWidth, CanvasHeight));

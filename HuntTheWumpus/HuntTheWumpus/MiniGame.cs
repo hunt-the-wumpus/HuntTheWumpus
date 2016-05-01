@@ -124,6 +124,9 @@ namespace HuntTheWumpus
 			Difficult = difficult;
 			//* Read info about game level and set random figure *//
 			LifeTimer = MaxLife;
+			ProgressBarDrawingAngle = 0;
+			ProgressBarSettedAngle = 0;
+			PlayerPoints = 500;
             files_Difficulties.Clear();
             Is_playing = true;
             StreamReader file = new StreamReader(@"./data/MiniGame/Difficulties" + difficult.ToString() + ".txt");
@@ -205,6 +208,11 @@ namespace HuntTheWumpus
 
         private void Analytics()
         {
+			if (!Is_Analytics) {
+				MousePositionsX.Clear();
+				MousePositionsY.Clear();
+				return;
+			}
 			Event_timer.Stop();
             int points = MaxPointsFromOneFigure;
             List<int> EndCoordinatsX = new List<int>();
@@ -215,7 +223,8 @@ namespace HuntTheWumpus
                 EndCoordinatsX.Add((int)(CircleCoordinateX[i] * Scale_Distance) + CanvasWidth);
                 EndCoordinatsY.Add((int)(CircleCoordinateY[i] * Scale_Distance) + CanvasHeight);
             }
-            /* Get how good drawing the figure */
+			/* Get how good drawing the figure */
+			bool AddOne = false;
             for (int i = 0; i < EndCoordinatsX.Count; ++i)
             {
                 double minimal_distance = 100000.0f;
@@ -229,14 +238,17 @@ namespace HuntTheWumpus
                     points -= MaxPointsFromOneFigure / EndCoordinatsX.Count;
                 }
                 else {
+					AddOne = true;
                     points -= (int)(MaxPointsFromOneFigure * (minimal_distance / radius) / EndCoordinatsX.Count);
                 }
             }
-            /* "Added" points 
+			/* "Added" points 
 				if points bigger than zero
 				create new figure
 			*/
-            PlayerPoints -= points;
+			if (AddOne) {
+				PlayerPoints -= points;
+			}
 			ProgressBarSettedAngle = 360 * (500 - PlayerPoints) / 500;
 			ProgressBarSettedAngle = Math.Min(ProgressBarSettedAngle, 360);
 			if (PlayerPoints <= 0)
@@ -278,6 +290,9 @@ namespace HuntTheWumpus
 
         public void Up(MouseEventArgs e)
         {
+			if (Is_Pause || Is_Analytics || !Is_playing) {
+				return;
+			}
 			MousePositionsX.Add(e.X);
 			MousePositionsY.Add(e.Y);
 			Is_Analytics = true;
