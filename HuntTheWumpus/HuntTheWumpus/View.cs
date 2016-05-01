@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace HuntTheWumpus
 {
@@ -37,6 +38,7 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
+		public bool AnimatedMoving { get; set; }
         public bool IsAnimated { get; set; }
         public int AnimatedProgress { get; set; }
 
@@ -52,9 +54,18 @@ namespace HuntTheWumpus
 		private CompressionImage Bat;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
+		private List<float> ScaleRoomX = new List<float>();
+		private List<float> ScaleRoomY = new List<float>();
 
         private List<string> ConsoleList;
         private int IndexConsole = 0;
+
+		private float Progress = 0.0f;
+		private List<bool>[] isActiveLast;
+		private List<Danger> DangerListLast;
+		private Danger dangerLast;
+		private int CurrentRoomLast;
+		private int numberstone = 0;
 
 		private int deltaY = 0;
 
@@ -95,8 +106,21 @@ namespace HuntTheWumpus
             StownPosY.Add(0.5f);
             StownPosX.Add(2 / 3.0f);    // 5 item
             StownPosY.Add(0);
-            #endregion
-            MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
+			// for animation
+			ScaleRoomX.Add(0);          // 0 item
+			ScaleRoomY.Add(-1);
+			ScaleRoomX.Add(-0.67f);     // 1 item
+			ScaleRoomY.Add(-0.5f);
+			ScaleRoomX.Add(-0.67f);     // 2 item
+			ScaleRoomY.Add(0.5f);
+			ScaleRoomX.Add(0);          // 3 item
+			ScaleRoomY.Add(1);
+			ScaleRoomX.Add(0.67f);      // 4 item
+			ScaleRoomY.Add(0.5f);
+			ScaleRoomX.Add(0.67f);      // 5 item
+			ScaleRoomY.Add(-0.5f);
+			#endregion
+			MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
 			deltaY = height / 36;
@@ -173,16 +197,44 @@ namespace HuntTheWumpus
             DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length, graph[CurrentRoom][2], graph, isActive);
         }
 
+		private Stopwatch sw;
+
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
 			//Clear(Color.White);
 			//Clear();
-            int length = Height * 10 / 12;
-            DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12 - deltaY);
-			//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
-            DrawInterface(Coins, Arrows, CurrentRoom);
-			Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
-			Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
+			int length = Height * 10 / 12;	
+			if (!IsAnimated) {
+				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12 - deltaY);
+				//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
+				DrawInterface(Coins, Arrows, CurrentRoom);
+				//Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
+				//Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
+				isActiveLast = isActive;
+				DangerListLast = DangerList;
+				dangerLast = danger;
+				CurrentRoomLast = CurrentRoom;
+			} else {
+				long Milliseconds = sw.ElapsedMilliseconds;
+				Progress = Milliseconds / 2500.0f;
+				int TargetCenterX = Width / 2 - length / 2;
+				int TargetCenterY = Height / 12 - deltaY;
+				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawInterface(Coins, Arrows, CurrentRoom);
+				if (Progress >= 1.0f) {
+					Progress = 0.0f;
+					sw.Stop();
+					IsAnimated = false;
+				}
+			}
+		}
+
+		public void StartMoveAnimation(int direction) {
+			Progress = 0.0f;
+			numberstone = direction;
+			IsAnimated = true;
+			sw = new Stopwatch();
+			sw.Start();
 		}
 
         public void DrawInterface(int coins, int arrows, int room)
