@@ -12,13 +12,24 @@ namespace HuntTheWumpus
     {
         Up,
         UpLeft,
-        UpDown,
+        DownLeft,
         Down,
         DownRight,
         UpRight,
         BuyArrow,
         BuyHint,
-        ChangeMode,
+        UpConsole,
+        DownConsole,
+        Empty
+    }
+    public enum RegionPickCave
+    {
+        Cave0,
+        Cave1,
+        Cave2,
+        Cave3,
+        Cave4,
+        Play,
         Empty
     }
 
@@ -40,7 +51,9 @@ namespace HuntTheWumpus
         private CompressionImage[] room = new CompressionImage[6];
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
+
         private List<string> ConsoleList;
+        private int IndexConsole = 0;
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
@@ -52,10 +65,11 @@ namespace HuntTheWumpus
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             ConsoleList = new List<string>();
-            Width = width; 
+            Width = width;
             Height = height;
             #region setted images
-            for (int i = 0; i < 6; ++i) {
+            for (int i = 0; i < 6; ++i)
+            {
                 room[i] = new CompressionImage("data/Cave/" + i.ToString() + ".png", height * 10 / 12 / 3, height * 10 / 12 / 2);
                 room[i].ScreenWidth = width;
                 room[i].ScreenHeight = height;
@@ -89,6 +103,12 @@ namespace HuntTheWumpus
             Graphics.DrawString(str, fn, Brushes.Black, x, y);
         }
 
+        public void DrawText(string str, int x, int y, int size_font, string typefont)
+        {
+            Font fn = new Font(typefont, size_font);
+            Graphics.DrawString(str, fn, Brushes.Black, x, y);
+        }
+
         public void Drawing(System.Object sender, System.Windows.Forms.PaintEventArgs e)
         {
             e.Graphics.DrawImage(Bitmap, 0, 0);
@@ -113,17 +133,19 @@ namespace HuntTheWumpus
         {
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
         }
-
         public int GetRegionMainMenu(int x, int y)
         {
             return -1;//тут бы enum
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active) {
+        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active)
+        {
             //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
             cave_room.Draw(Graphics, x, y);
-            for (int i = 0; i < 6; i++) {
-                if (!Active[number][i]) {
+            for (int i = 0; i < 6; i++)
+            {
+                if (Active[number][i])
+                {
                     //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
                 }
@@ -132,7 +154,8 @@ namespace HuntTheWumpus
 				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
 			}*/
         }
-        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey) {
+        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey)
+        {
             int length = Height * 10 / 12;
             DrawRoom(basex, basey, danger, length, CurrentRoom, graph, isActive);
             DrawRoom(basex, basey - length, DangerList[0], length, graph[CurrentRoom][0], graph, isActive);
@@ -142,73 +165,118 @@ namespace HuntTheWumpus
             DrawRoom(basex + length * 2 / 3, basey + length / 2, DangerList[4], length, graph[CurrentRoom][4], graph, isActive);
             DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length, graph[CurrentRoom][2], graph, isActive);
         }
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows, ModeUserControl NowMode)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
             //Clear(Color.White);
             //Clear();
             int length = Height * 10 / 12;
             DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
             //Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
-            DrawInterface(Coins, Arrows, CurrentRoom, NowMode);
+            DrawInterface(Coins, Arrows, CurrentRoom);
         }
-        public void DrawInterface(int coins, int arrows, int room, ModeUserControl nowmode)
+        public void DrawInterface(int coins, int arrows, int room)
         {
             int yup = Height - 120;
-            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 150);
+            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 120);
+            Point[] pn = new Point[3];
+            Graphics.DrawLine(Pens.Black, 150, yup, 150, Height);
             DrawText("Arrows " + arrows, 20, yup + 10, 20);
             DrawText("Coins " + coins, 20, yup + 60, 20);
-            DrawText("Buy Hint", 820, yup + 10, 20);
-            DrawText("Buy Arrows", 820, yup + 60, 20);
-            if (nowmode == ModeUserControl.Push)
-                DrawText("Push", 530, yup + 50, 25);
-            else
-                DrawText("Move", 530, yup + 50, 25);
-            for (int i = ConsoleList.Count - 1; i > ConsoleList.Count - 3 && i >= 0; --i)
-                DrawText((i + 1) + ": " + ConsoleList[i], 170, yup + 10 + (ConsoleList.Count - i - 1) * 50, 20);
-            int midx = Width * 2 / 3;
-            int midy = Height - 60;
-            int size = 60;
-            int hght = (int)(size * 1.732);//sqrt(3)*hgth
-            Pen pen = new Pen(Color.Black);
-            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy - hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx + size, midy);
-            Graphics.DrawLine(pen, midx + size, midy, midx + size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy + hght / 2, midx - size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx - size / 2, midy + hght / 2, midx - size, midy);
-            Graphics.DrawLine(pen, midx - size, midy, midx - size / 2, midy - hght / 2);
-            Graphics.DrawLine(pen, midx - size / 2, midy - hght / 2, midx + size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx + size / 2, midy - hght / 2, midx - size / 2, midy + hght / 2);
-            Graphics.DrawLine(pen, midx - size, midy, midx + size, midy);
-            Graphics.FillEllipse(Brushes.Red, midx - size - 40, yup + 5, 40, 40);
+            DrawText("Buy Arrows", 170, yup + 10, 20);
+            DrawText("Buy Hint", 170, yup + 60, 20);
+            for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
+                DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas");
+            DrawText("^", 704, yup + 37, 23);
+            DrawText("v", 705, yup + 52, 20);
         }
         public RegionCave GetRegionCave(int x, int y)
         {
             int yup = Height - 120;
             if (y < yup)
                 return RegionCave.Empty;
-            if (x > 820 && y - yup < 60)
+            if (x > 170 && x < 340 && y - yup > 60)
                 return RegionCave.BuyHint;
-            if (x > 820 && y - yup > 60)
+            if (x > 170 && x < 340 && y - yup < 60)
                 return RegionCave.BuyArrow;
-            int midx = Width * 2 / 3;
-            int size = 60;
-            int midy = Height - 60;
-            if (x >= midx - size && x <= midx + size)
-            {
-                int angle = (int)Math.Floor(Math.Atan2(y - midy, x - midx) / Math.PI * 3);
-                return (RegionCave)((angle + 5) % 6);
-            }
-            if (Math.Pow(x - midx + size + 20, 2) + Math.Pow(y - yup - 25, 2) <= 400)
-                return RegionCave.ChangeMode;
+            if (x >= 705 && x < 730 && y > yup + 37 && y < yup + 55)
+                return RegionCave.UpConsole;
+            if (x >= 705 && x < 730 && y > yup + 55 && y < yup + 85)
+                return RegionCave.DownConsole;
             return RegionCave.Empty;
         }
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
+            AddComand("Left mouse bottom for#moving");
+            AddComand("Right mouse bottom for#shot arrow");
+            IndexConsole = ConsoleList.Count - 1;
         }
         public void AddComand(string s)
         {
-            ConsoleList.Add(s);
+            if (IndexConsole == ConsoleList.Count - 1)
+                ++IndexConsole;
+            string[] strs = s.Split('#');
+            for (int i = strs.Length - 1; i >= 0; i--)
+                ConsoleList.Add(strs[i]);
+        }
+        public void ChangeIndex(int up)
+        {
+            if (ConsoleList.Count <= 5)
+                return;
+            if (up > 0)
+                IndexConsole = Math.Min(IndexConsole + up, ConsoleList.Count - 1);
+            else
+                IndexConsole = Math.Max(IndexConsole + up, 4);
+        }
+
+        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
+        {
+            Clear(Color.LightGreen);
+            int size = 55;
+            int d = 5;
+            int hght = (int)(size * 1.732);
+            for (int i = 0; i < 6; ++i)
+                for (int j = 0; j < 5; ++j)
+                {
+                    int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * hght / 2 + 50 + j * d;
+                    Point[] pn = new Point[6];
+                    pn[0] = new Point(lx + size / 2, ly);
+                    pn[1] = new Point(lx, ly + hght / 2);
+                    pn[2] = new Point(lx + size / 2, ly + hght);
+                    pn[3] = new Point(lx + size * 3 / 2, ly + hght);
+                    pn[4] = new Point(lx + size * 2, ly + hght / 2);
+                    pn[5] = new Point(lx + size * 3 / 2, ly);
+                    Graphics.FillPolygon(Brushes.BlueViolet, pn);
+                    Pen pen = new Pen(Color.Brown, 9);
+                    for (int k = 0; k < 3; ++k)
+                    {
+                        int v = i + j * 6;
+                        if (isActive[v][k])
+                        {
+                            if (k == 0)
+                                Graphics.DrawLine(pen, lx + size, ly + hght / 3, lx + size, ly - hght / 3 - d);
+                            if (k == 1)
+                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght / 3, lx - size / 3, ly);
+                            if (k == 2)
+                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght * 2 / 3, lx - size / 3, ly + hght);
+                        }
+                    }
+                }
+            for (int i = 0; i < 5; ++i)
+            {
+                if (i > 0)
+                    Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, i * Width / 5, Height);
+                DrawText((i + 1).ToString(), i * Width / 5 + 60, Height - 100, 40);
+            }
+            DrawText("GO!!", 850, 550, 40);
+        }
+        public RegionPickCave GetRegionPickCave(int x, int y)
+        {
+            if (y > Height - 120)
+                return (RegionPickCave)(x * 5 / Width);
+            if (y > 550 && x > 850)
+                return RegionPickCave.Play;
+            return RegionPickCave.Empty;
         }
     }
 }

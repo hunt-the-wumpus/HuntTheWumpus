@@ -43,13 +43,15 @@ namespace xUnit.Tests
             view.Created();
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
+            var map = new HuntTheWumpus.Map(123);
+            view.DrawPickCave(map.graph, map.isActive, 0);
             view.MainForm.DrawAll();
         }
 
         [Fact]
         public void GoodMap()
         {
-            var map = new HuntTheWumpus.Map();
+            var map = new HuntTheWumpus.Map(123);
             bool[] b = new bool[30];
             b[0] = true;
             Queue<int> q = new Queue<int>();
@@ -78,7 +80,7 @@ namespace xUnit.Tests
         [Fact]
         public void MapTest()
         {
-            var map = new HuntTheWumpus.Map();
+            var map = new HuntTheWumpus.Map(321);
             int mem = map.Wumpus;
             map.WumpusGoAway();
             Assert.False(mem == map.Wumpus, "Wumpus come back");
@@ -139,6 +141,27 @@ namespace xUnit.Tests
             minigame.GetAchievement(ls);
             score.getAchievement(ls);
             score.DrawScores(view.Graphics);
+        }
+
+        [Fact]
+        public void TestNavigator()
+        {
+            /*var view = new View(1024, 768);
+            int midx = 1024 * 2 / 3;
+            int midy = 768 - 60;
+            var rg = view.GetRegionCave(midx + 10, midy + 5);
+            Assert.True(rg == RegionCave.DownRight, "Bad region 4");
+            rg = view.GetRegionCave(midx, midy + 5);
+            Assert.True(rg == RegionCave.Down, "Bad region 3");
+            rg = view.GetRegionCave(midx - 10, midy + 5);
+            Assert.True(rg == RegionCave.DownLeft, "Bad region 2");
+            rg = view.GetRegionCave(midx - 10, midy - 5);
+            Assert.True(rg == RegionCave.UpLeft, "Bad region 1");
+            rg = view.GetRegionCave(midx, midy - 5);
+            Assert.True(rg == RegionCave.Up, "Bad region 0");
+            rg = view.GetRegionCave(midx + 10, midy - 5);
+            Assert.True(rg == RegionCave.UpRight, "Bad region 5");
+            */
         }
     }
 }

@@ -25,6 +25,7 @@ namespace HuntTheWumpus
         private Tuple<int, int> PitRoom;
         public int Wumpus { get; private set; }
 
+        private List<int>[] coins;
         public List<int>[] graph;
         public List<bool>[] isActive;
 
@@ -122,27 +123,35 @@ namespace HuntTheWumpus
                     ++ctv[fin];
                 }
             }
+            coins = new List<int>[30];
             for (int i = 0; i < 30; ++i)
             {
+                coins[i] = new List<int>();
                 isActive[i] = new List<bool>();
                 graph[i] = new List<int>();
                 for (int j = 0; j < 6; j++)
                 {
                     graph[i].Add(g[i][j].Item1);
+                    if (j < 3)
+                        coins[i].Add(random.Next() % 4 + 1);
+                    else coins[i].Add(0);
                     if (ok[i, g[i][j].Item1] == 1)
                         isActive[i].Add(true);
                     else
                         isActive[i].Add(false);
                 }
             }
+            for (int i = 0; i < 30; ++i)
+                for (int j = 0; j < 3; ++j)
+                    coins[graph[i][j]][j + 3] = coins[i][j];
         }
         bool RoomIsDanger(int i)
         {
             return (i == BatRoom.Item1) || (i == BatRoom.Item2) || (i == PitRoom.Item2) || (i == PitRoom.Item1) || (i == Wumpus);
         }
-        public Map()
+        public Map(int seed)
         {
-            random = new Random();
+            random = new Random(seed);
             graph = new List<int>[30];
             isActive = new List<bool>[30];
             GenGraph();
@@ -161,11 +170,14 @@ namespace HuntTheWumpus
             IsWin = false;
             danger = Danger.Empty;
         }
-        public void Move(int i)
+        public int Move(int i)
         {
+            int ans = -1;
             if (isActive[Room][i])
             {
                 ++Turn;
+                ans = coins[Room][i];
+                coins[Room][i] = 0;                
                 Room = graph[Room][i];
                 if (Room == BatRoom.Item1 || Room == BatRoom.Item2)
                     danger = Danger.Bat;
@@ -174,8 +186,9 @@ namespace HuntTheWumpus
                 else if (Room == Wumpus)
                     danger = Danger.Wumpus;
                 else
-                    danger = Danger.Empty;
+                    danger = Danger.Empty;                
             }
+            return ans;
         }
         public void PushArrow(int i)
         {
@@ -264,7 +277,7 @@ namespace HuntTheWumpus
     {
         Danger danger { get; }
         int Room { get; }
-        void Move(int i);
+        int Move(int i);
         int Turn { get; }
         void PushArrow(int n);
         bool IsWin { get; }
