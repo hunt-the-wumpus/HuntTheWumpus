@@ -239,7 +239,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd)
             {
-                RegionCave rg = view.GetRegionCave(e.X, e.Y);
+				RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if ((int)rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
                     if (e.Button == MouseButtons.Left)

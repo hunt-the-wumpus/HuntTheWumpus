@@ -53,7 +53,6 @@ namespace HuntTheWumpus {
 		private bool Winner = false;
 
 		public Scores(int Width, int Height) {
-			Score = 228;
 			CanvasWidth = Width;
 			CanvasHeight = Height;
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");

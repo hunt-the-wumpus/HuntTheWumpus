@@ -49,11 +49,14 @@ namespace HuntTheWumpus
         private CompressionImage cave_room;
         private Image bar = Image.FromFile("data/Sprites/InfoBar.png");
         private CompressionImage[] room = new CompressionImage[6];
+		private CompressionImage Bat;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
 
         private List<string> ConsoleList;
         private int IndexConsole = 0;
+
+		private int deltaY = 0;
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
@@ -77,9 +80,10 @@ namespace HuntTheWumpus
             cave_room = new CompressionImage("data/Cave/TestRoom2.png", height * 10 / 12, height * 10 / 12);
             cave_room.ScreenWidth = width;
             cave_room.ScreenHeight = height;
-            #endregion
-            #region setted constants
-            StownPosX.Add(1.0f / 3.0f); // 0 item
+			Bat = new CompressionImage("data/Cave/Bat.png", height / 12 * 10, height / 12 * 10);
+			#endregion
+			#region setted constants
+			StownPosX.Add(1.0f / 3.0f); // 0 item
             StownPosY.Add(0);
             StownPosX.Add(0);           // 1 item
             StownPosY.Add(0);
@@ -95,6 +99,7 @@ namespace HuntTheWumpus
             MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
+			deltaY = height / 36;
         }
 
         public void DrawText(string str, int x, int y, int size_font)
@@ -133,16 +138,20 @@ namespace HuntTheWumpus
         {
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
         }
-        public int GetRegionMainMenu(int x, int y)
+
+		public int GetRegionMainMenu(int x, int y)
         {
             return -1;//тут бы enum
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active)
+        public void DrawRoom(int x, int y, Danger danger, int length, int number, List<int>[] graph, List<bool>[] Active, bool DrawDanger = false)
         {
-            //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
-            //cave_room.Draw(Graphics, x, y);
-            for (int i = 0; i < 6; i++)
+			//Graphics.DrawImage(img, new Rectangle(x, y, length, length));
+			//cave_room.Draw(Graphics, x, y);
+			if (danger == Danger.Bat && DrawDanger) {
+				Bat.Draw(Graphics, x, y);
+			}
+			for (int i = 0; i < 6; i++)
             {
                 if (!Active[number][i])
                 {
@@ -150,14 +159,12 @@ namespace HuntTheWumpus
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
                 }
             }
-            /*if (danger == Danger.Empty) {
-				Graphics.DrawRectangle(Pens.Blue, new Rectangle(x + length / 2 - 100, y + length / 2 - 100, 200, 200));
-			}*/
         }
+
         public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey)
         {
             int length = Height * 10 / 12;
-            DrawRoom(basex, basey, danger, length, CurrentRoom, graph, isActive);
+            DrawRoom(basex, basey, danger, length, CurrentRoom, graph, isActive, true);
             DrawRoom(basex, basey - length, DangerList[0], length, graph[CurrentRoom][0], graph, isActive);
             DrawRoom(basex, basey + length, DangerList[3], length, graph[CurrentRoom][3], graph, isActive);
             DrawRoom(basex + length * 2 / 3, basey - length / 2, DangerList[5], length, graph[CurrentRoom][5], graph, isActive);
@@ -165,15 +172,19 @@ namespace HuntTheWumpus
             DrawRoom(basex + length * 2 / 3, basey + length / 2, DangerList[4], length, graph[CurrentRoom][4], graph, isActive);
             DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], length, graph[CurrentRoom][2], graph, isActive);
         }
+
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
-            //Clear(Color.White);
-            //Clear();
+			//Clear(Color.White);
+			//Clear();
             int length = Height * 10 / 12;
-            DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12);
-            //Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
+            DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, Height / 12 - deltaY);
+			//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
             DrawInterface(Coins, Arrows, CurrentRoom);
-        }
+			Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
+			Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
+		}
+
         public void DrawInterface(int coins, int arrows, int room)
         {
             int yup = Height - 120;
@@ -189,21 +200,96 @@ namespace HuntTheWumpus
             DrawText("^", 704, yup + 37, 23);
             DrawText("v", 705, yup + 52, 20);
         }
-        public RegionCave GetRegionCave(int x, int y)
-        {
-            int yup = Height - 120;
-            if (y < yup)
-                return RegionCave.Empty;
-            if (x > 170 && x < 340 && y - yup > 60)
-                return RegionCave.BuyHint;
-            if (x > 170 && x < 340 && y - yup < 60)
-                return RegionCave.BuyArrow;
-            if (x >= 705 && x < 730 && y > yup + 37 && y < yup + 55)
-                return RegionCave.UpConsole;
-            if (x >= 705 && x < 730 && y > yup + 55 && y < yup + 85)
-                return RegionCave.DownConsole;
-            return RegionCave.Empty;
+
+		private bool isLeftUpper(int x1, int y1, int x2, int y2, int ix, int iy) {
+			int proectionX = x2;
+			int proectionY = iy;
+			int BigSizeX = x1 - x2;
+			int BigSizeY = y2 - y1;
+			int SmallSizeY = y2 - iy;
+			float k = (float)(SmallSizeY) / BigSizeY;
+			float HipotinuzeX = proectionX + (int)(BigSizeX * k);
+			return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
+		}
+
+		private bool isRightUpper(int x1, int y1, int x2, int y2, int ix, int iy) {
+			int proectionX = x2;
+			int proectionY = iy;
+			int BigSizeX = x2 - x1;
+			int BigSizeY = y2 - y1;
+			int SmallSizeY = y2 - iy;
+			float k = (float)(SmallSizeY) / BigSizeY;
+			float HipotinuzeX = x2 - (int)(BigSizeX * k);
+			return (ix - HipotinuzeX > 0 && iy > y1 && iy < y2);
+		}
+
+		private bool isLeftDown(int x1, int y1, int x2, int y2, int ix, int iy) {
+			int proectionX = x1;
+			int proectionY = iy;
+			int BigSizeX = x2 - x1;
+			int BigSizeY = y2 - y1;
+			int SmallSizeY = iy - y1;
+			float k = (float)(SmallSizeY) / BigSizeY;
+			float HipotinuzeX = proectionX + (int)(BigSizeX * k);
+			return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
+		}
+
+		private bool isRightDown(int x1, int y1, int x2, int y2, int ix, int iy) {
+			int proectionX = x1;
+			int proectionY = iy;
+			int BigSizeX = x1 - x2;
+			int BigSizeY = y2 - y1;
+			int SmallSizeY = iy - y1;
+			float k = (float)(SmallSizeY) / BigSizeY;
+			float HipotinuzeX = proectionX - (int)(BigSizeX * k);
+			return (ix  - HipotinuzeX > 0 && iy > y1 && iy < y2);
+		}
+
+		private bool isUnder(int x1, int x2, int y12, int x, int y) {
+			return (y < y12 && x1 < x && x2 > x);
+		}
+
+		private bool isDown(int x1, int x2, int y12, int x, int y) {
+			return (y > y12 && x1 < x && x2 > x);
+		}
+
+		public RegionCave GetRegionCave(int x, int y) {
+			RegionCave result = RegionCave.Empty;
+			int yup = Height - 120;
+			int length = Height / 12 * 10;
+			if (isLeftUpper(Width / 2 - length / 2 + length / 3, Height / 12 - deltaY, Width / 2 - length / 2, Height / 12 + length / 2 - deltaY, x, y)) {
+				return RegionCave.UpLeft;
+			}
+			if (isRightUpper(Width / 2 + length / 2 - length / 3, Height / 12 - deltaY, Width / 2 + length / 2, Height / 12 + length / 2 - deltaY, x, y)) {
+				return RegionCave.UpRight;
+			}
+			if (isLeftDown(Width / 2 - length / 2, Height / 12 + length / 2 - deltaY, Width / 2 - length / 2 + length / 3, Height / 12 + length - deltaY, x, y)) {
+				return RegionCave.DownLeft;
+			}
+			if (isRightDown(Width / 2 + length / 2, Height / 12 + length / 2 - deltaY, Width / 2 + length / 2 - length / 3, Height / 12 + length - deltaY, x, y)) {
+				return RegionCave.DownRight;
+			}
+			if (isUnder(Width / 2 - length / 2 + length / 3, Width / 2 + length / 2 - length / 3, Height / 12 - deltaY, x, y)) {
+				return RegionCave.Up;
+			}
+			if (isDown(Width / 2 - length / 2 + length / 3, Width / 2 + length / 2 - length / 3, Height / 12 + length - deltaY, x, y)) {
+				return RegionCave.Down;
+			}
+			if (x > 170 && x < 340 && y - yup > 60) {
+				return RegionCave.BuyHint;
+			}
+			if (x > 170 && x < 340 && y - yup < 60) {
+				return RegionCave.BuyArrow;
+			}
+			if (x >= 705 && x < 730 && y > yup + 37 && y < yup + 55) {
+				return RegionCave.UpConsole;
+			}
+			if (x >= 705 && x < 730 && y > yup + 55 && y < yup + 85) {
+				return RegionCave.DownConsole;
+			}
+            return result;
         }
+
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
@@ -211,7 +297,8 @@ namespace HuntTheWumpus
             AddComand("Right mouse bottom for#shot arrow");
             IndexConsole = ConsoleList.Count - 1;
         }
-        public void AddComand(string s)
+
+		public void AddComand(string s)
         {
             if (IndexConsole == ConsoleList.Count - 1)
                 ++IndexConsole;
@@ -219,7 +306,8 @@ namespace HuntTheWumpus
             for (int i = strs.Length - 1; i >= 0; i--)
                 ConsoleList.Add(strs[i]);
         }
-        public void ChangeIndex(int up)
+
+		public void ChangeIndex(int up)
         {
             if (ConsoleList.Count <= 5)
                 return;
@@ -229,7 +317,7 @@ namespace HuntTheWumpus
                 IndexConsole = Math.Max(IndexConsole + up, 4);
         }
 
-        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
+		public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
         {
             Clear(Color.LightGreen);
             int size = 55;
@@ -270,7 +358,8 @@ namespace HuntTheWumpus
             }
             DrawText("GO!!", 850, 550, 40);
         }
-        public RegionPickCave GetRegionPickCave(int x, int y)
+
+		public RegionPickCave GetRegionPickCave(int x, int y)
         {
             if (y > Height - 120)
                 return (RegionPickCave)(x * 5 / Width);
