@@ -225,6 +225,7 @@ namespace HuntTheWumpus
             }
             BatRoom = Tuple.Create(a[0], a[1]);
             Room = a[2];
+            danger = Danger.Empty;
         }
         public int GetBat()
         {

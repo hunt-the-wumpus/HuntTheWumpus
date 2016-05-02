@@ -44,6 +44,8 @@ namespace HuntTheWumpus
         private bool MiniGameEnd = true;
         private MiniGame minigame;
         private bool CheckDanger;
+        private System.Diagnostics.Stopwatch BatTimer;
+        private bool WaitBat;
         private StoryMG StoryMiniGame;
         
         private Scores score;
@@ -53,8 +55,6 @@ namespace HuntTheWumpus
         int num = 0;
         private Map[] MapForPiсk;
         private Map map;
-
-        private Random random = new Random();
 
         private bool IsWin;
         public Player player;
@@ -68,9 +68,8 @@ namespace HuntTheWumpus
 			Height = height;
 			view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             view.ClearConsole();
+            BatTimer = new System.Diagnostics.Stopwatch();
             MapForPiсk = new Map[5];
-            minigame = new MiniGame(width, height);
-            player = new Player();
             NewGame();
             HintMessage = new List<string>();
             HintMessage.Add("Wumpus in ");
@@ -127,7 +126,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger)
+                if (!CheckDanger && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 3000))
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -140,6 +139,8 @@ namespace HuntTheWumpus
                     if (map.danger == Danger.Bat)
                     {
                         map.Respaw();
+                        WaitBat = false;
+                        BatTimer.Reset();
                     }
                     if (map.danger == Danger.Wumpus)
                     {
@@ -195,6 +196,8 @@ namespace HuntTheWumpus
             state = OldState;
             if (state == ControlState.Cave && minigame.Is_playing)
                 minigame.Pause(false);
+            if (state == ControlState.Cave)
+                BatTimer.Start();
         }
 
         void NewGame()
@@ -204,11 +207,13 @@ namespace HuntTheWumpus
             num = 0;
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
+            player = new Player();
             score = new Scores(Width, Height);
-            CheckDanger = true;
+            CheckDanger = false;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;
-
+            BatTimer.Reset();
+            WaitBat = false;
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
@@ -223,6 +228,7 @@ namespace HuntTheWumpus
                     state = ControlState.MainMenu;
                     if (minigame.Is_playing)
                         minigame.Pause(true);
+                    BatTimer.Stop();
                 }
                 else if (state == ControlState.LastWindow)
                     state = ControlState.ScoreList;
@@ -237,14 +243,20 @@ namespace HuntTheWumpus
             {
                 minigame.Down(e);
             }
-            if (state == ControlState.Cave && MiniGameEnd)
+            if (state == ControlState.Cave && MiniGameEnd && !view.IsAnimated && !WaitBat)
             {
 				RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if ((int)rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
                     if (e.Button == MouseButtons.Left)
                     {
-						player.AddCoins(map.Move((int)rg));
+                        player.AddCoins(map.Move((int)rg));
+                        if (map.danger == Danger.Bat)
+                        {
+                            BatTimer.Restart();
+                            WaitBat = true;
+                            view.AddComand("You met BAT");
+                        }
 						view.StartMoveAnimation((int)rg);
 						CheckDanger = false;
                     }
@@ -290,7 +302,6 @@ namespace HuntTheWumpus
                 {
                     state = ControlState.PickCave;
 					NewGame();
-					//player = new player
 				}
                 if (rg == 2)//Продолжить
                 {

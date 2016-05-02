@@ -38,10 +38,8 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
-		public bool AnimatedMoving { get; set; }
-        public bool IsAnimated { get; set; }
-        public int AnimatedProgress { get; set; }
-
+		public bool IsAnimated { get; set; }
+        
         private Image MainMenuImage;
 
         public int Width { get; private set; }
@@ -378,7 +376,7 @@ namespace HuntTheWumpus
             for (int i = 0; i < 6; ++i)
                 for (int j = 0; j < 5; ++j)
                 {
-                    int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * hght / 2 + 50 + j * d;
+                    int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * (hght + d) / 2 + 50 + j * d;
                     Point[] pn = new Point[6];
                     pn[0] = new Point(lx + size / 2, ly);
                     pn[1] = new Point(lx, ly + hght / 2);
