@@ -29,11 +29,9 @@ namespace HuntTheWumpus
         public List<int>[] graph;
         public List<bool>[] isActive;
 
-        private System.Random random;
-
         Tuple<int, int> cell(int x, int y)
         {
-            return Tuple.Create((x + 6) % 6 + 6 * ((y + 5) % 5), random.Next() % 100000);
+            return Tuple.Create((x + 6) % 6 + 6 * ((y + 5) % 5), Utily.Next() % 100000);
         }
 
         void GenGraph()
@@ -70,7 +68,7 @@ namespace HuntTheWumpus
                     ok[i, j] = 0;
             int[] ctv = new int[30];
             SortedSet<Tuple<int, int, int>> st = new SortedSet<Tuple<int, int, int>>();
-            int startvert = random.Next() % 30;
+            int startvert = Utily.Next() % 30;
             st.Add(Tuple.Create(0, startvert, startvert));
             bool[] b = new bool[30];
             for (int i = 0; i < 30; ++i)
@@ -100,7 +98,7 @@ namespace HuntTheWumpus
                 for (int j = 0; j < g[start].Count; ++j)
                     if (!b[g[start][j].Item1])
                     {
-                        int rn = random.Next() % cnt;
+                        int rn = Utily.Next() % cnt;
                         if (rn < 3 - okcnt)
                         {
                             ++okcnt;
@@ -112,7 +110,7 @@ namespace HuntTheWumpus
             int cntfail = 0;
             while (cntfail < 10)
             {
-                int v = random.Next() % 30, i = random.Next() % 6;
+                int v = Utily.Next() % 30, i = Utily.Next() % 6;
                 int fin = g[v][i].Item1;
                 if (ctv[v] == 3 || ctv[fin] == 3 || ok[v, fin] == 1)
                     ++cntfail;
@@ -133,7 +131,7 @@ namespace HuntTheWumpus
                 {
                     graph[i].Add(g[i][j].Item1);
                     if (j < 3)
-                        coins[i].Add(random.Next() % 4 + 1);
+                        coins[i].Add(Utily.Next() % 4 + 1);
                     else coins[i].Add(0);
                     if (ok[i, g[i][j].Item1] == 1)
                         isActive[i].Add(true);
@@ -149,9 +147,8 @@ namespace HuntTheWumpus
         {
             return (i == BatRoom.Item1) || (i == BatRoom.Item2) || (i == PitRoom.Item2) || (i == PitRoom.Item1) || (i == Wumpus);
         }
-        public Map(int seed)
+        public Map()
         {
-            random = new Random(seed);
             graph = new List<int>[30];
             isActive = new List<bool>[30];
             GenGraph();
@@ -159,8 +156,8 @@ namespace HuntTheWumpus
             for (int i = 0; i < 30; i++)
             {
                 a[i] = i;
-                int rnd = random.Next() % (i + 1);
-                Program.Swap<int>(ref a[rnd], ref a[i]);
+                int rnd = Utily.Next() % (i + 1);
+                Utily.Swap<int>(ref a[rnd], ref a[i]);
             }
             BatRoom = Tuple.Create(a[0], a[1]);
             PitRoom = Tuple.Create(a[2], a[3]);
@@ -198,15 +195,15 @@ namespace HuntTheWumpus
         public void WumpusGoAway()
         {
             int mem = Wumpus;
-            int rnd = random.Next() % 6;
+            int rnd = Utily.Next() % 6;
             while (!isActive[mem][rnd])
-                rnd = random.Next() % 6;
+                rnd = Utily.Next() % 6;
             Wumpus = graph[mem][rnd];
-            rnd = random.Next() % 6;
+            rnd = Utily.Next() % 6;
             int cnt = 0;
             while ((!isActive[Wumpus][rnd] || graph[Wumpus][rnd] == mem || RoomIsDanger(graph[Wumpus][rnd])) && cnt < 100)
             {
-                rnd = random.Next() % 6;
+                rnd = Utily.Next() % 6;
                 ++cnt;
             }
             if (cnt < 100)
@@ -221,8 +218,8 @@ namespace HuntTheWumpus
                 if (i != PitRoom.Item1 && i != PitRoom.Item2 && i != Wumpus)
                 {
                     a[j] = i;
-                    int rnd = random.Next() % (j + 1);
-                    Program.Swap<int>(ref a[rnd], ref a[j]);
+                    int rnd = Utily.Next() % (j + 1);
+                    Utily.Swap<int>(ref a[rnd], ref a[j]);
                     ++j;
                 }
             }
@@ -231,14 +228,14 @@ namespace HuntTheWumpus
         }
         public int GetBat()
         {
-            int rnd = random.Next();
+            int rnd = Utily.Next();
             if (rnd % 2 == 0)
                 return BatRoom.Item1;
             return BatRoom.Item2;
         }
         public int GetPit()
         {
-            int rnd = random.Next();
+            int rnd = Utily.Next();
             if (rnd % 2 == 0)
                 return PitRoom.Item1;
             return PitRoom.Item2;

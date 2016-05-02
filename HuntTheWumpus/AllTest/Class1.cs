@@ -43,7 +43,7 @@ namespace xUnit.Tests
             view.Created();
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
-            var map = new HuntTheWumpus.Map(123);
+            var map = new HuntTheWumpus.Map();
             view.DrawPickCave(map.graph, map.isActive, 0);
             view.MainForm.DrawAll();
         }
@@ -51,7 +51,7 @@ namespace xUnit.Tests
         [Fact]
         public void GoodMap()
         {
-            var map = new HuntTheWumpus.Map(123);
+            var map = new HuntTheWumpus.Map();
             bool[] b = new bool[30];
             b[0] = true;
             Queue<int> q = new Queue<int>();
@@ -80,7 +80,7 @@ namespace xUnit.Tests
         [Fact]
         public void MapTest()
         {
-            var map = new HuntTheWumpus.Map(321);
+            var map = new HuntTheWumpus.Map();
             int mem = map.Wumpus;
             map.WumpusGoAway();
             Assert.False(mem == map.Wumpus, "Wumpus come back");
@@ -162,6 +162,18 @@ namespace xUnit.Tests
             rg = view.GetRegionCave(midx + 10, midy - 5);
             Assert.True(rg == RegionCave.UpRight, "Bad region 5");
             */
+        }
+
+        [Fact]
+        public void TestUtily()
+        {
+            int a = 2, b = 3;
+            Utily.Swap<int>(ref a, ref b);
+            Assert.True(a == 3 && b == 2, "Swap isn't correct");
+            a = Utily.Next();
+            b = Utily.Next();
+            int c = Utily.Next();
+            Assert.False(a == b && a == c, "It's realy strange Ranodm");
         }
     }
 }

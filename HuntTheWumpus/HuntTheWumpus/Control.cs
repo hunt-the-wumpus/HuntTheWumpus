@@ -102,7 +102,7 @@ namespace HuntTheWumpus
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
                         {
                             player.BuyHint();
-                            int rnd = random.Next() % HintMessage.Count;
+                            int rnd = Utily.Next() % HintMessage.Count;
                             Hint NowHint = (Hint)rnd;
                             int HintData = 0;
                             if (NowHint == Hint.Bat)
@@ -200,7 +200,7 @@ namespace HuntTheWumpus
         void NewGame()
         {
             for (int i = 0; i < 5; ++i)
-                MapForPiсk[i] = new Map(random.Next());
+                MapForPiсk[i] = new Map();
             num = 0;
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
