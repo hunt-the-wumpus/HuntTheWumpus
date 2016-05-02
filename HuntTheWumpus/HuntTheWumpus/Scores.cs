@@ -14,12 +14,6 @@ using System.Collections.Specialized;
 
 namespace HuntTheWumpus {
 
-	enum StateFinal {
-		Result,
-		VKcomWaiting,
-		FaceBookWaiting
-	}
-
 	public class Scores {
 		// Player score
 		public int Score { get; private set; }
@@ -36,7 +30,7 @@ namespace HuntTheWumpus {
 		private Image BackGround = null;
 		private Image FinalPicture = null;
 
-		private const double BeginDrawingPosition = -100;
+		private const double BeginDrawingPosition = -250;
 		private const double EndDrawingPosition = 0;
 		private const int TimerShowStarting = 3000;
 
@@ -48,7 +42,6 @@ namespace HuntTheWumpus {
 		private double SpeedChangeDrawingPosition = 45;
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
-		private StateFinal state;
 		private VKApi vk;
 		private bool Winner = false;
 
@@ -57,6 +50,10 @@ namespace HuntTheWumpus {
 		private int ShareVKbuttonY;
 		private int ShareVKbuttonSize = 30;
 		private CompressionImage Vk;
+
+		private int HintX = -140;
+		private int HintY = -140;
+		private string HintMessage = "";
 
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
@@ -122,23 +119,25 @@ namespace HuntTheWumpus {
 			Brush brush = new SolidBrush(Color.Yellow);
 			//g.DrawString("Score: " + Score.ToString(), f, brush, 0, 20);
 			int width = CanvasWidth / 5; //6
-			int height = CanvasHeight / 8; //10
+			int height = width / 3; //10
 			if (activeImage != null) {
-				g.DrawImage(BackGround, new Rectangle(CanvasWidth - width, (int)AchievementDrawingPosition, width, height));
-				g.DrawImage(activeImage, new Rectangle(CanvasWidth - width + 5, (int)AchievementDrawingPosition + height / 4, height / 2, height / 2));
-				g.DrawString("New achievement", new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height / 6);
+				g.DrawImage(BackGround, new Rectangle(CanvasWidth - width, (int)AchievementDrawingPosition + height, width, height * 3 / 2));
+				g.DrawImage(activeImage, new Rectangle(CanvasWidth - width + 5, (int)AchievementDrawingPosition, width, height));
+				g.DrawString("New achievement", new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height * 7 / 6);
 				string[] strings = MessageAchievement.Split('#');
 				for (int i = 0; i < strings.Length; ++i) {
-					g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height / 3 + i * 12);
+					g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), CanvasWidth - width + 5, (float)AchievementDrawingPosition + height * 7 / 6 + (i + 1) * 12);
 				}
             }
-            
 		}
 
 		public void SetFinalState(bool isWinner) {
 			Winner = isWinner;
 			Final = true;
 			FinalPicture = Image.FromFile("data/Final.png");
+			if (isWinner) {
+				AddScores(500);
+			}
 		}
 
 		private void DrawFinalForShare() {
@@ -148,14 +147,14 @@ namespace HuntTheWumpus {
 			string WinStatus = "";
 			Brush StatusBrush;
 			if (Winner) {
-				WinStatus = "Победа";
+				WinStatus = "Victory";
 				StatusBrush = new SolidBrush(Color.Green);
 			} else {
-				WinStatus = "Поражение";
+				WinStatus = "Defeat";
 				StatusBrush = new SolidBrush(Color.Red);
 			}
 			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
-			g.DrawString("Очков набрано " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
@@ -163,7 +162,7 @@ namespace HuntTheWumpus {
 					++activestring;
 					DrawAchivements = 0;
 				}
-				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('#')[0]);
+				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('/')[0]);
 				g.DrawImage(img, 80 + DrawAchivements * 140, 430 + activestring * 46, 140, 46);
 				++DrawAchivements;
 			}
@@ -175,14 +174,14 @@ namespace HuntTheWumpus {
 			string WinStatus = "";
 			Brush StatusBrush;
 			if (Winner) {
-				WinStatus = "Победа";
+				WinStatus = "Victory";
 				StatusBrush = new SolidBrush(Color.Green);
 			} else {
-				WinStatus = "Поражение";
+				WinStatus = "Defeat";
 				StatusBrush = new SolidBrush(Color.Red);
 			}
 			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
-			g.DrawString("Очков набрано " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
@@ -190,9 +189,14 @@ namespace HuntTheWumpus {
 					++activestring;
 					DrawAchivements = 0;
 				}
-				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('#')[0]);
+				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('/')[0]);
 				g.DrawImage(img, 80 + DrawAchivements * 140, 430 + activestring * 46, 140, 46);
 				++DrawAchivements;
+			}
+			g.DrawImage(BackGround, new Rectangle(HintX, HintY, CanvasWidth / 5, CanvasWidth / 15));
+			string[] strings = HintMessage.Split('#');
+			for (int i = 0; i < strings.Length; ++i) {
+				g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), HintX + 15, HintY + 5 + i * 12);
 			}
 			Vk.Draw(g, ShareVKbuttonX, ShareVKbuttonY);
 		}
@@ -206,6 +210,28 @@ namespace HuntTheWumpus {
 				DrawFinalForShare();
 				vk = new VKApi();
 				vk.OauthAutorize();
+			}
+		}
+
+		public void MouseMove(MouseEventArgs e) {
+			int activestring = 0;
+			int DrawAchivements = 0;
+			HintX = -140;
+			HintY = -140;
+			for (int i = 0; i < WasAchievements.Count; ++i) {
+				if (DrawAchivements >= 3) {
+					++activestring;
+					DrawAchivements = 0;
+				}
+				int achX = 80 + DrawAchivements * 140;
+				int achY = 430 + activestring * 46;
+				if (e.X > achX && e.Y > achY && e.X < achX + 140 && e.Y < achY + 46) {
+					HintX = e.X;
+					HintY = e.Y;
+					HintMessage = WasAchievements[i].Split('/')[1];
+					break;
+				}
+				++DrawAchivements;
 			}
 		}
 
