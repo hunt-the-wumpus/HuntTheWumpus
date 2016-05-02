@@ -29,13 +29,7 @@ namespace HuntTheWumpus {
 		public string text { get; set; }
 		public int date { get; set; }
 		public int width { get; set; }
-		public int height { get; set; } 
-		/*public string photo_75 { get; set; }
-		public string photo_130 { get; set; }
-		public string photo_604 { get; set; }
-		public string photo_807 { get; set; }
-		public string photo_1280 { get; set; }
-		public string photo_2560 { get; set; }*/
+		public int height { get; set; }
 	}
 
 	class VKApi {
@@ -152,13 +146,13 @@ namespace HuntTheWumpus {
 			WebClient client = new WebClient();
 			var bytes = new NameValueCollection();
 			bytes.Add("Photo", "upload");
-			string result = HttpUploadFile(luck_url, @"data/achievements/dich.jpg", "file", "image/jpeg", bytes);
+			string result = HttpUploadFile(luck_url, @"data/Share.jpg", "file", "image/jpeg", bytes);
 			VKresult res = JsonConvert.DeserializeObject<VKresult>(result);
 			string photo = SendVKApi("https://api.vk.com/method/photos.saveWallPhoto?photo=" + res.photo + "&hash=" + res.hash + "&user_id=" + user + "&server=" + res.server + "&access_token=" + token + "&v=5.0");
 			Photo p = JsonConvert.DeserializeObject<Photo>(photo);
 			p.id = int.Parse(ParseJsonFormat(photo, "\"id\"", ':'));
 			SendVKApi("https://api.vk.com/method/wall.post?owner_id=" + user + "&friends_only=0&attachments=photo" + user + "_" + p.id.ToString() + "&access_token=" + token);
-			MessageBox.Show("Photo public at your account");
+			MessageBox.Show("Photo public at your account!");
 		}
 	}
 }

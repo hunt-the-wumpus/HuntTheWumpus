@@ -40,7 +40,7 @@ namespace HuntTheWumpus {
 		private const double EndDrawingPosition = 0;
 		private const int TimerShowStarting = 3000;
 
-		private string MessageAchievement = "СУДАРЬ ВЫ УПОРОЛИСЬ!!!";
+		private string MessageAchievement = "";
 
 		private Stopwatch Event_timer = new Stopwatch();
 
@@ -52,9 +52,18 @@ namespace HuntTheWumpus {
 		private VKApi vk;
 		private bool Winner = false;
 
+		// This properties for draw button "Share in VK"
+		private int ShareVKbuttonX;
+		private int ShareVKbuttonY;
+		private int ShareVKbuttonSize = 30;
+		private CompressionImage Vk;
+
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
+			ShareVKbuttonX = 50;
+			ShareVKbuttonY = Height - ShareVKbuttonSize - 40;
+			Vk = new CompressionImage("data/ShareVK.png", ShareVKbuttonSize, ShareVKbuttonSize);
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
 			List<string> bb = new List<string>();
 			Event_timer.Start();
@@ -69,6 +78,7 @@ namespace HuntTheWumpus {
 			for (int i = 0; i < achievements.Count; ++i) {
 				if (WasAchievements.IndexOf(achievements[i]) == -1) {
 					Queue.Add(achievements[i]);
+					AddScores(100);
 					WasAchievements.Add(achievements[i]);
 				}
 			}
@@ -127,7 +137,37 @@ namespace HuntTheWumpus {
 
 		public void SetFinalState(bool isWinner) {
 			Winner = isWinner;
+			Final = true;
 			FinalPicture = Image.FromFile("data/Final.png");
+		}
+
+		private void DrawFinalForShare() {
+			Bitmap b = new Bitmap(CanvasWidth,CanvasHeight);
+			Graphics g = Graphics.FromImage(b);
+			g.DrawImage(FinalPicture, 0, 0);
+			string WinStatus = "";
+			Brush StatusBrush;
+			if (Winner) {
+				WinStatus = "Победа";
+				StatusBrush = new SolidBrush(Color.Green);
+			} else {
+				WinStatus = "Поражение";
+				StatusBrush = new SolidBrush(Color.Red);
+			}
+			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
+			g.DrawString("Очков набрано " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			int activestring = 0;
+			int DrawAchivements = 0;
+			for (int i = 0; i < WasAchievements.Count; ++i) {
+				if (DrawAchivements >= 3) {
+					++activestring;
+					DrawAchivements = 0;
+				}
+				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('#')[0]);
+				g.DrawImage(img, 80 + DrawAchivements * 140, 430 + activestring * 46, 140, 46);
+				++DrawAchivements;
+			}
+			b.Save("data/Share.jpg");
 		}
 
 		public void DrawFinal(Graphics g) {
@@ -144,25 +184,26 @@ namespace HuntTheWumpus {
 			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
 			g.DrawString("Очков набрано " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
 			int activestring = 0;
-			int drawachivements = 0;
+			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
-				if (drawachivements >= 3) {
+				if (DrawAchivements >= 3) {
 					++activestring;
-					drawachivements = 0;
+					DrawAchivements = 0;
 				}
 				Image img = Image.FromFile("data/Achievements/" + WasAchievements[i].Split('#')[0]);
-				g.DrawImage(img, 80 + drawachivements * 140, 430 + activestring * 46, 140, 46);
-				++drawachivements;
+				g.DrawImage(img, 80 + DrawAchivements * 140, 430 + activestring * 46, 140, 46);
+				++DrawAchivements;
 			}
-			if (state == StateFinal.VKcomWaiting) {
-				Image img = Image.FromFile("data/vklogo.jpg");
-				g.DrawImage(img, new Rectangle(0, 0, CanvasWidth, CanvasHeight));
-			}
+			Vk.Draw(g, ShareVKbuttonX, ShareVKbuttonY);
+		}
+
+		bool Clicked(int buttonX, int buttonY, int buttonSize, int x, int y) {
+			return (buttonX < x && buttonX + buttonSize > x && buttonY < y && buttonY + buttonSize > y);
 		}
 
 		public void MouseUp(MouseEventArgs e) {
-			if (Final) {
-				state = StateFinal.VKcomWaiting;
+			if (Final && e.Button == MouseButtons.Left && Clicked(ShareVKbuttonX, ShareVKbuttonY, ShareVKbuttonSize, e.X, e.Y)) {
+				DrawFinalForShare();
 				vk = new VKApi();
 				vk.OauthAutorize();
 			}
