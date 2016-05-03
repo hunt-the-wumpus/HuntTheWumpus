@@ -134,9 +134,11 @@ namespace HuntTheWumpus {
 		public void SetFinalState(bool isWinner) {
 			Winner = isWinner;
 			Final = true;
-			FinalPicture = Image.FromFile("data/Final.png");
 			if (isWinner) {
+				FinalPicture = Image.FromFile("data/Final.png");
 				AddScores(500);
+			} else {
+				FinalPicture = Image.FromFile("data/Defeat.png");
 			}
 		}
 
@@ -144,17 +146,7 @@ namespace HuntTheWumpus {
 			Bitmap b = new Bitmap(CanvasWidth,CanvasHeight);
 			Graphics g = Graphics.FromImage(b);
 			g.DrawImage(FinalPicture, 0, 0);
-			string WinStatus = "";
-			Brush StatusBrush;
-			if (Winner) {
-				WinStatus = "Victory";
-				StatusBrush = new SolidBrush(Color.Green);
-			} else {
-				WinStatus = "Defeat";
-				StatusBrush = new SolidBrush(Color.Red);
-			}
-			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
-			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
@@ -171,17 +163,7 @@ namespace HuntTheWumpus {
 
 		public void DrawFinal(Graphics g) {
 			g.DrawImage(FinalPicture, 0, 0);
-			string WinStatus = "";
-			Brush StatusBrush;
-			if (Winner) {
-				WinStatus = "Victory";
-				StatusBrush = new SolidBrush(Color.Green);
-			} else {
-				WinStatus = "Defeat";
-				StatusBrush = new SolidBrush(Color.Red);
-			}
-			g.DrawString(WinStatus, new Font("Arial", 35), StatusBrush, 78, 78);
-			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.SteelBlue), 75, 230);
+			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
