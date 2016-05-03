@@ -89,6 +89,7 @@ namespace xUnit.Tests
             for (int i = 0; i < 6; ++i)
                 map.Move(i);
             map.Respaw();
+            Assert.True(map.danger == Danger.Empty, "Don't update map.danger");
             for (int i = 0; i < 10; ++i)
             {
                 var bat = map.GetBat();
