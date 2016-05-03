@@ -98,6 +98,7 @@ namespace HuntTheWumpus
                         {
                             IsWin = false;
                             state = ControlState.LastWindow;
+							score.SetFinalState(false);
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
                         {
@@ -124,6 +125,9 @@ namespace HuntTheWumpus
                         {
                             map.WumpusGoAway();
                         }
+						if (minigame.Is_Winner) {
+							score.AddScores(50);
+						}
                         MiniGameEnd = true;
                     }
                 }
@@ -159,10 +163,11 @@ namespace HuntTheWumpus
                 if (map.IsWin)
                 {
                     state = ControlState.LastWindow;
+					score.SetFinalState(true);
                     IsWin = true;
                 }
                 score.DrawScores(view.Graphics);
-            }
+			}
 
             if (state == ControlState.MainMenu)
             {
@@ -176,7 +181,7 @@ namespace HuntTheWumpus
 
             if (state == ControlState.LastWindow)
             {
-                //score.DrawFinal();
+                score.DrawFinal(view.Graphics);
             }
 
             if (state == ControlState.ScoreList)
@@ -186,9 +191,8 @@ namespace HuntTheWumpus
 
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
-            score.DrawScores(view.Graphics);
-            score.TickTime();
-        }
+			score.TickTime();
+		}
 
         void ContinueMenu()
         {
@@ -224,10 +228,10 @@ namespace HuntTheWumpus
                     if (minigame.Is_playing)
                         minigame.Pause(true);
                 }
-                else if (state == ControlState.LastWindow)
+                /*else if (state == ControlState.LastWindow)
                     state = ControlState.ScoreList;
                 else if (state == ControlState.ScoreList)
-                    OldState = state = ControlState.MainMenu;
+                    OldState = state = ControlState.MainMenu;*/
             }
         }
 
@@ -240,11 +244,13 @@ namespace HuntTheWumpus
             if (state == ControlState.Cave && MiniGameEnd)
             {
 				RegionCave rg = view.GetRegionCave(e.X, e.Y);
-                if ((int)rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
+                if (rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
                     if (e.Button == MouseButtons.Left)
                     {
-						player.AddCoins(map.Move((int)rg));
+						int add = map.Move((int)rg);
+						player.AddCoins(add);
+						score.AddScores(5 * add);
 						view.StartMoveAnimation((int)rg);
 						CheckDanger = false;
                     }
@@ -256,10 +262,12 @@ namespace HuntTheWumpus
                         {
                             IsWin = true;
                             state = ControlState.LastWindow;
+							score.SetFinalState(true);
                         }
                         else if (player.Arrow == 0)
                         {
                             IsWin = false;
+							score.SetFinalState(false);
                             state = ControlState.LastWindow;
                         }
                     }
@@ -322,6 +330,7 @@ namespace HuntTheWumpus
             {
                 minigame.Up(e);
             }
+			score.MouseUp(e);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
@@ -330,6 +339,7 @@ namespace HuntTheWumpus
             {
                 minigame.Move(e);
             }
+			score.MouseMove(e);
         }
     }
 }
