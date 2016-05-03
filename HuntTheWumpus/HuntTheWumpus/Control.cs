@@ -130,7 +130,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 3000))
+                if (!CheckDanger && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 5000))
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -142,6 +142,7 @@ namespace HuntTheWumpus
                     }
                     if (map.danger == Danger.Bat)
                     {
+                        view.AddComand("You met BAT");
                         map.Respaw();
                         WaitBat = false;
                         BatTimer.Reset();
@@ -155,17 +156,11 @@ namespace HuntTheWumpus
                     }
                     Danger dangerabout = map.GetDangerAbout();
                     if (dangerabout == Danger.Bat)
-                        view.AddComand("Bats Nearby");
+                        view.AddComand("Bats Nearby(" + (map.Room + 1) + ")");
                     if (dangerabout == Danger.Pit)
-                        view.AddComand("I feel a draft");
+                        view.AddComand("I feel a draft(" + (map.Room + 1) + ")");
                     if (dangerabout == Danger.Wumpus)
-                        view.AddComand("I smell a Wumpus!");
-                }
-                if (map.IsWin)
-                {
-                    state = ControlState.LastWindow;
-					score.SetFinalState(true);
-                    IsWin = true;
+                        view.AddComand("I smell a Wumpus!(" + (map.Room + 1) + ")");
                 }
                 score.DrawScores(view.Graphics);
 			}
@@ -234,10 +229,10 @@ namespace HuntTheWumpus
                         minigame.Pause(true);
                     BatTimer.Stop();
                 }
-                /*else if (state == ControlState.LastWindow)
+                else if (state == ControlState.LastWindow)
                     state = ControlState.ScoreList;
                 else if (state == ControlState.ScoreList)
-                    OldState = state = ControlState.MainMenu;*/
+                    OldState = state = ControlState.MainMenu;
             }
         }
 
@@ -261,7 +256,6 @@ namespace HuntTheWumpus
                         {
                             BatTimer.Restart();
                             WaitBat = true;
-                            view.AddComand("You met BAT");
                         }
 						view.StartMoveAnimation((int)rg);
 						CheckDanger = false;
@@ -341,7 +335,8 @@ namespace HuntTheWumpus
             {
                 minigame.Up(e);
             }
-			score.MouseUp(e);
+            if (state == ControlState.LastWindow)
+                score.MouseUp(e);
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
@@ -350,7 +345,8 @@ namespace HuntTheWumpus
             {
                 minigame.Move(e);
             }
-			score.MouseMove(e);
+			if (state == ControlState.LastWindow)
+                score.MouseMove(e);
         }
     }
 }

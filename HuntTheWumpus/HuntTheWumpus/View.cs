@@ -50,6 +50,7 @@ namespace HuntTheWumpus
         private Image bar = Image.FromFile("data/Sprites/InfoBar.png");
         private CompressionImage[] room = new CompressionImage[6];
 		private CompressionImage Bat;
+        private CompressionImage BackGround;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
 		private List<float> ScaleRoomX = new List<float>();
@@ -92,6 +93,7 @@ namespace HuntTheWumpus
             cave_room.ScreenWidth = width;
             cave_room.ScreenHeight = height;
 			Bat = new CompressionImage("data/Cave/Bat.png", length, length);
+            BackGround = new CompressionImage("data/Cave/background.png", width, 120);
 			#endregion
 			#region setted constants
 			StownPosX.Add(1.0f / 3.0f); // 0 item
@@ -123,7 +125,7 @@ namespace HuntTheWumpus
 			MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
-			deltaY = height / 36;
+			deltaY = height / 36 + 30;
         }
 
         public void DrawText(string str, int x, int y, int size_font)
@@ -137,6 +139,13 @@ namespace HuntTheWumpus
             Font fn = new Font(typefont, size_font);
             Graphics.DrawString(str, fn, Brushes.Black, x, y);
         }
+
+        public void DrawText(string str, int x, int y, int size_font, string typefont, Color cl)
+        {
+            Font fn = new Font(typefont, size_font);
+            Graphics.DrawString(str, fn, new SolidBrush(cl), x, y);
+        }
+
 
         public void Drawing(System.Object sender, System.Windows.Forms.PaintEventArgs e)
         {
@@ -238,17 +247,15 @@ namespace HuntTheWumpus
         public void DrawInterface(int coins, int arrows, int room)
         {
             int yup = Height - 120;
-            Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 120);
-            Point[] pn = new Point[3];
-            Graphics.DrawLine(Pens.Black, 150, yup, 150, Height);
-            DrawText("Arrows " + arrows, 20, yup + 10, 20);
-            DrawText("Coins " + coins, 20, yup + 60, 20);
-            DrawText("Buy Arrows", 170, yup + 10, 20);
-            DrawText("Buy Hint", 170, yup + 60, 20);
+            BackGround.Draw(Graphics, 0, Height - 120);
+            //Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 120);
+            DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
+            DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
+            DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
+            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", Color.DarkBlue);
+            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.DarkBlue);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
-                DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas");
-            DrawText("^", 704, yup + 37, 23);
-            DrawText("v", 705, yup + 52, 20);
+                DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
         }
 
 		private bool isLeftUpper(int x1, int y1, int x2, int y2, int ix, int iy) {
@@ -324,16 +331,18 @@ namespace HuntTheWumpus
 			if (isDown(Width / 2 - length / 2 + length / 3, Width / 2 + length / 2 - length / 3, (Height - length) / 2 + length - deltaY, x, y)) {
 				return RegionCave.Down;
 			}
-			if (x > 170 && x < 340 && y - yup > 60) {
-				return RegionCave.BuyHint;
-			}
-			if (x > 170 && x < 340 && y - yup < 60) {
+
+
+			if (x >= 168 && x <= 326 && y - yup >= 16 && y - yup <= 56) {
 				return RegionCave.BuyArrow;
 			}
-			if (x >= 705 && x < 730 && y > yup + 37 && y < yup + 55) {
+			if (x >= 168 && x <= 326 && y - yup >= 71 && y - yup <= 104) {
+				return RegionCave.BuyHint;
+			}
+			if (x >= 692 && x <= 718 && y >= yup + 26 && y <= yup + 45) {
 				return RegionCave.UpConsole;
 			}
-			if (x >= 705 && x < 730 && y > yup + 55 && y < yup + 85) {
+			if (x >= 692 && x <= 718 && y >= yup + 65 && y <= yup + 82) {
 				return RegionCave.DownConsole;
 			}
             return result;

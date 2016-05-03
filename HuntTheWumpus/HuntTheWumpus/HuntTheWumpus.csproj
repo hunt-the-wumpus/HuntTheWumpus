@@ -165,6 +165,9 @@
     <Content Include="data\Achievements\Sunduk.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Cave\background.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\Cave\Bat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
