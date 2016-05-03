@@ -130,7 +130,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 3000))
+                if (!CheckDanger && !view.IsBatAnimated && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 3000))
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -262,6 +262,7 @@ namespace HuntTheWumpus
                             BatTimer.Restart();
                             WaitBat = true;
                             view.AddComand("You met BAT");
+							view.StartBatAnimation();
                         }
 						view.StartMoveAnimation((int)rg);
 						CheckDanger = false;
