@@ -287,7 +287,7 @@ namespace HuntTheWumpus
                 achiv.Add("MG1.png/shag v bezdny");
             bool flag = true;
             for (int i = 0; i < 30; ++i)
-                flag = flag || CountVisit[i] == 1;
+                flag = flag && CountVisit[i] == 1;
             if (flag)
                 achiv.Add("MG1.png/tyt gamilton");
         }

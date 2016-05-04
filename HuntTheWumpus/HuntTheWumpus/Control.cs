@@ -279,6 +279,9 @@ namespace HuntTheWumpus
 							score.SetFinalState(false);
                             state = ControlState.LastWindow;
                         }
+                        List<string> achiv = new List<string>();
+                        player.GetAchievement(achiv);
+                        score.getAchievement(achiv);
                     }
                 }
                 if (rg == RegionCave.BuyArrow && player.CanBuyArrow())
@@ -287,9 +290,6 @@ namespace HuntTheWumpus
                     MiniGameEnd = false;
                     minigame = new MiniGame(Width, Height);
                     minigame.InitializeMiniGame(2);
-                    List<string> achiv = new List<string>();
-                    player.GetAchievement(achiv);
-                    score.getAchievement(achiv);
                 }
                 if (rg == RegionCave.BuyHint && player.CanBuyHint())
                 {
