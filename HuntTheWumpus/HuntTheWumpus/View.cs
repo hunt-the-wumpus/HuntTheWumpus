@@ -83,13 +83,20 @@ namespace HuntTheWumpus
             Height = height;
 			length = Height * 8 / 12;
             #region setted images
+            room[0] = new CompressionImage("data/Cave/TryTop1.png", length / 3, length / 3);
+            room[1] = new CompressionImage("data/Cave/TryUpperLeft1.png", length / 3, length / 3);
+            room[2] = new CompressionImage("data/Cave/TryBottomLeft1.png", length / 3, length / 3);
+            room[3] = new CompressionImage("data/Cave/TryTop1.png", length / 3, length / 3);
+            room[4] = new CompressionImage("data/Cave/TryUpperLeft1.png", length / 3, length / 3);
+            room[5] = new CompressionImage("data/Cave/TryBottomLeft1.png", length / 3, length / 3);
+
             for (int i = 0; i < 6; ++i)
             {
-                room[i] = new CompressionImage("data/Cave/" + i.ToString() + ".png", length / 3, length / 2);
+                //room[i] = new CompressionImage("data/Cave/" + i.ToString() + ".png", length / 3, length / 2);
                 room[i].ScreenWidth = width;
                 room[i].ScreenHeight = height;
             }
-            cave_room = new CompressionImage("data/Cave/TestRoom2.png", length, length);
+            cave_room = new CompressionImage("data/Cave/ColorRoom.png", length, length);
             cave_room.ScreenWidth = width;
             cave_room.ScreenHeight = height;
 			Bat = new CompressionImage("data/Cave/Bat.png", length, length);
@@ -97,17 +104,17 @@ namespace HuntTheWumpus
 			#endregion
 			#region setted constants
 			StownPosX.Add(1.0f / 3.0f); // 0 item
-            StownPosY.Add(0);
+            StownPosY.Add(-1.0f / 6.0f);
             StownPosX.Add(0);           // 1 item
-            StownPosY.Add(0);
+            StownPosY.Add(1.0f / 9.0f);
             StownPosX.Add(0);           // 2 item
-            StownPosY.Add(0.5f);
-            StownPosX.Add(1 / 3.0f);    // 3 item
-            StownPosY.Add(0.5f);
-            StownPosX.Add(2 / 3.0f);    // 4 item
-            StownPosY.Add(0.5f);
-            StownPosX.Add(2 / 3.0f);    // 5 item
-            StownPosY.Add(0);
+            StownPosY.Add(1.0f / 9.0f + 1.0f / 2.0f);
+            StownPosX.Add(StownPosX[0]);    // 3 item
+            StownPosY.Add(StownPosY[0] + 1);
+            StownPosX.Add(StownPosX[1] + 2.0f / 3.0f);    // 4 item
+            StownPosY.Add(StownPosY[1] + 1.0f / 2.0f);
+            StownPosX.Add(StownPosX[2] + 2.0f / 3.0f);    // 5 item
+            StownPosY.Add(StownPosY[2] - 1.0f / 2.0f);
 			// for animation
 			ScaleRoomX.Add(0);          // 0 item
 			ScaleRoomY.Add(-1);
@@ -177,16 +184,16 @@ namespace HuntTheWumpus
             return -1;//тут бы enum
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool DrawDanger = false)
+        public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom, bool DrawDanger = false)
         {
 			//Graphics.DrawImage(img, new Rectangle(x, y, length, length));
-			//cave_room.Draw(Graphics, x, y);
+			cave_room.Draw(Graphics, x, y);
 			/*if (danger == Danger.Bat && DrawDanger) {
 				Bat.Draw(Graphics, x, y);
 			}*/
 			for (int i = 0; i < 6; i++)
             {
-                if (!Active[number][i])
+                if (StartRoom && Active[number][i])
                 {
                     //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
                     room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
@@ -196,22 +203,34 @@ namespace HuntTheWumpus
 
         public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey)
         {
-            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, true);
-            DrawRoom(basex, basey - length, DangerList[0], graph[CurrentRoom][0], graph, isActive);
-            DrawRoom(basex, basey + length, DangerList[3], graph[CurrentRoom][3], graph, isActive);
-            DrawRoom(basex + length * 2 / 3, basey - length / 2, DangerList[5], graph[CurrentRoom][5], graph, isActive);
-            DrawRoom(basex - length * 2 / 3, basey - length / 2, DangerList[1], graph[CurrentRoom][1], graph, isActive);
-            DrawRoom(basex + length * 2 / 3, basey + length / 2, DangerList[4], graph[CurrentRoom][4], graph, isActive);
-            DrawRoom(basex - length * 2 / 3, basey + length / 2, DangerList[2], graph[CurrentRoom][2], graph, isActive);
+            int loclen = length - 1;
+            DrawRoom(basex, basey - loclen, DangerList[0], graph[CurrentRoom][0], graph, isActive, false);
+            DrawRoom(basex, basey + loclen, DangerList[3], graph[CurrentRoom][3], graph, isActive, false);
+            DrawRoom(basex + loclen * 2 / 3, basey - loclen / 2, DangerList[5], graph[CurrentRoom][5], graph, isActive, false);
+            DrawRoom(basex - loclen * 2 / 3, basey - loclen / 2, DangerList[1], graph[CurrentRoom][1], graph, isActive, false);
+            DrawRoom(basex + loclen * 2 / 3, basey + loclen / 2, DangerList[4], graph[CurrentRoom][4], graph, isActive, false);
+            DrawRoom(basex - loclen * 2 / 3, basey + loclen / 2, DangerList[2], graph[CurrentRoom][2], graph, isActive, false);
+            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, true, true);
         }
 
-		private Stopwatch sw;
+        private Stopwatch sw;
 
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
-			//Clear(Color.White);
-			//Clear();
-			if (!IsAnimated) {
+            //Clear(Color.White);
+            //Clear();
+            if (IsAnimated)
+            {
+                long Milliseconds = sw.ElapsedMilliseconds;
+                Progress = Milliseconds / 2500.0f;
+                if (Progress >= 1.0f)
+                {
+                    Progress = 0.0f;
+                    sw.Stop();
+                    IsAnimated = false;
+                }
+            }
+            if (!IsAnimated) {
 				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
 				//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
 				DrawInterface(Coins, Arrows, CurrentRoom);
@@ -221,18 +240,11 @@ namespace HuntTheWumpus
 				DangerListLast = DangerList;
 				dangerLast = danger;
 				CurrentRoomLast = CurrentRoom;
-			} else {
-				long Milliseconds = sw.ElapsedMilliseconds;
-				Progress = Milliseconds / 2500.0f;
+			} else {				
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
-				if (Progress >= 1.0f) {
-					Progress = 0.0f;
-					sw.Stop();
-					IsAnimated = false;
-				}
 			}
 		}
 
@@ -351,8 +363,8 @@ namespace HuntTheWumpus
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
-            AddComand("Left mouse bottom for#moving");
-            AddComand("Right mouse bottom for#shot arrow");
+            AddComand("Left mouse buton for#moving");
+            AddComand("Right mouse buton for#shot arrow");
             IndexConsole = ConsoleList.Count - 1;
         }
 
