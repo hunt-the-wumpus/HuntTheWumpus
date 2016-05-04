@@ -282,14 +282,14 @@ namespace HuntTheWumpus
         public void GetAchievement(List<string> achiv)
         {
             if (VisitRoom == 30)
-                achiv.Add("MG1.png/tyt issledovatel");
+                achiv.Add("dich.png/Исследователь#Побывать в каждой#комнате пещеры");
             if (VisitRoom >= 25)
-                achiv.Add("MG1.png/shag v bezdny");
+                achiv.Add("MG1.png/Шаг в бездну#Побывать в 25 комнатах");
             bool flag = true;
             for (int i = 0; i < 30; ++i)
                 flag = flag && CountVisit[i] == 1;
             if (flag)
-                achiv.Add("MG1.png/tyt gamilton");
+                achiv.Add("Hamilton.png/Потомок Гамильтона#Пройти всю пещеру,#побывав в каждой#комнате по разу");
         }
     }
 
