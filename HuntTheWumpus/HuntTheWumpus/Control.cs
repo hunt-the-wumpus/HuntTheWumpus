@@ -259,6 +259,9 @@ namespace HuntTheWumpus
                         }
 						view.StartMoveAnimation((int)rg);
 						CheckDanger = false;
+                        List<string> achiv = new List<string>();
+                        map.GetAchievement(achiv);
+                        score.getAchievement(achiv);
                     }
                     else
                     {
@@ -284,6 +287,9 @@ namespace HuntTheWumpus
                     MiniGameEnd = false;
                     minigame = new MiniGame(Width, Height);
                     minigame.InitializeMiniGame(2);
+                    List<string> achiv = new List<string>();
+                    player.GetAchievement(achiv);
+                    score.getAchievement(achiv);
                 }
                 if (rg == RegionCave.BuyHint && player.CanBuyHint())
                 {

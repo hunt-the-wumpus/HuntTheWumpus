@@ -12,6 +12,7 @@ namespace HuntTheWumpus
         public int Coins { get; private set; }
 
         private int CostArrow;
+        private int CountBuyArrow;
         private int CostHint;
 
         public Player()
@@ -20,6 +21,7 @@ namespace HuntTheWumpus
             CostHint = 5;
             Coins = 5;
             Arrow = 3;
+            CountBuyArrow = 0;
         }
 
         public bool CanBuyArrow()
@@ -28,6 +30,7 @@ namespace HuntTheWumpus
         }
         public void BuyArrow()
         {
+            CountBuyArrow += 3 - Arrow;
             Arrow = 3;
             Coins -= CostArrow;
         }
@@ -46,6 +49,15 @@ namespace HuntTheWumpus
         public void AddCoins(int i)
         {
             Coins += i;
+        }
+        public void GetAchievement(List<string> achiv)
+        {
+            if (CountBuyArrow >= 5)
+                achiv.Add("MG1.png/tyt lychnik");
+            if (CountBuyArrow >= 15)
+                achiv.Add("MG1.png/tyt hunter");
+            if (CountBuyArrow >= 25)
+                achiv.Add("MG1.png/tyt war");
         }
     }
 }

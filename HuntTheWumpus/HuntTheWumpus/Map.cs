@@ -29,6 +29,9 @@ namespace HuntTheWumpus
         public List<int>[] graph;
         public List<bool>[] isActive;
 
+        private int VisitRoom;
+        private int[] CountVisit;
+
         Tuple<int, int> cell(int x, int y)
         {
             return Tuple.Create((x + 6) % 6 + 6 * ((y + 5) % 5), Utily.Next() % 100000);
@@ -151,6 +154,8 @@ namespace HuntTheWumpus
         {
             graph = new List<int>[30];
             isActive = new List<bool>[30];
+            CountVisit = new int[30];
+            VisitRoom = 1;
             GenGraph();
             int[] a = new int[30];
             for (int i = 0; i < 30; i++)
@@ -163,6 +168,7 @@ namespace HuntTheWumpus
             PitRoom = Tuple.Create(a[2], a[3]);
             Wumpus = a[4];
             Room = a[5];
+            CountVisit[Room] = 1;
             Turn = 0;
             IsWin = false;
             danger = Danger.Empty;
@@ -172,6 +178,9 @@ namespace HuntTheWumpus
             int ans = -1;
             if (isActive[Room][i])
             {
+                ++CountVisit[graph[Room][i]];
+                if (CountVisit[graph[Room][i]] == 1)
+                    ++VisitRoom;
                 ++Turn;
                 ans = coins[Room][i];
                 coins[Room][i] = 0;                
@@ -268,6 +277,19 @@ namespace HuntTheWumpus
                 ans.Add(GetDanger(graph[Room][i]));
             }
             return ans;
+        }
+
+        public void GetAchievement(List<string> achiv)
+        {
+            if (VisitRoom == 30)
+                achiv.Add("MG1.png/tyt issledovatel");
+            if (VisitRoom >= 25)
+                achiv.Add("MG1.png/shag v bezdny");
+            bool flag = true;
+            for (int i = 0; i < 30; ++i)
+                flag = flag || CountVisit[i] == 1;
+            if (flag)
+                achiv.Add("MG1.png/tyt gamilton");
         }
     }
 
