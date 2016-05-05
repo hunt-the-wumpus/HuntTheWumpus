@@ -76,6 +76,7 @@ namespace HuntTheWumpus
             HintMessage.Add("Pit in ");
             HintMessage.Add("Bat in ");
             HintMessage.Add("You have bad luck...");
+			state = ControlState.LastWindow;
         }
 
         public void UpDate(long time)
@@ -213,6 +214,7 @@ namespace HuntTheWumpus
             minigame = new MiniGame(Width, Height);
             player = new Player();
             score = new Scores(Width, Height);
+			score.SetFinalState(false);
             CheckDanger = false;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;

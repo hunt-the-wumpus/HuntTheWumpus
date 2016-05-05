@@ -13,20 +13,29 @@ namespace HuntTheWumpus {
 
 		public string access_token { get; private set; }
 		public string user_id { get; private set; }
+		private string address = "";
+		public string code { get; private set; }
 
-		public WebBrowser() {
+		public WebBrowser(string load_address) {
+			access_token = "";
+			address = load_address;
 			InitializeComponent();
 		}
 
 		private void WebBrowser_Load(object sender, EventArgs e) {
 			access_token = "";
 			user_id = "";
-			webBrowser1.Navigate("https://oauth.vk.com/authorize?client_id=5407281&display=page&redirect_uri=http://oauth.vk.com/blank.html&scope=wall,photos&response_type=token&v=5.45&revoke=1");
+			code = "";
+			webBrowser1.Navigate(address);
 		}
 
 		private void webBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e) {
+			#region GetVK;
 			if (e.Url.ToString().IndexOf("access_token") != -1) {
 				string url = e.Url.ToString();
+				if (url.IndexOf("facebook") != -1) {
+					return;
+				}
 				url = url.Replace('#', '=');
 				url = url.Replace('&', '=');
 				url =  url.Replace('?', '=');
@@ -63,6 +72,28 @@ namespace HuntTheWumpus {
 				user_id = luck_user_id;
 				MessageBox.Show("Авторизация пройдена! Можете закрыть окно браузера");
 			}
+			#endregion
+			#region GetFaceBook
+			if (e.Url.ToString().IndexOf("code") != -1) {
+				string urlbase = e.Url.ToString();
+				if (urlbase.IndexOf("facebook") != -1) {
+					return;
+				}
+				string url = e.Url.Query;
+				string outed = "";
+				bool state = false;
+				for (int i = 0; i < url.Length; ++i) {
+					if (state) {
+						outed += url[i];
+					} else {
+						if (url[i] == '=') {
+							state = true;
+						}
+					}
+				}
+				code = outed;
+			}
+			#endregion
 		}
 	}
 }

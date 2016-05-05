@@ -38,8 +38,8 @@ namespace HuntTheWumpus {
 		private string user = "";
 		private string json = "";
 
-		public void OauthAutorize() {
-			wb = new WebBrowser();
+		public void OauthAuthorize() {
+			wb = new WebBrowser("https://oauth.vk.com/authorize?client_id=5407281&display=page&redirect_uri=http://oauth.vk.com/blank.html&scope=wall,photos&response_type=token&v=5.45&revoke=1");
 			wb.Show();
 		}
 
@@ -83,7 +83,7 @@ namespace HuntTheWumpus {
 
 		private string HttpUploadFile(string url, string file, string paramName, string contentType, NameValueCollection nvc) {
 			string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
-			byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+			byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
 			HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(url);
 			wr.ContentType = "multipart/form-data; boundary=" + boundary;

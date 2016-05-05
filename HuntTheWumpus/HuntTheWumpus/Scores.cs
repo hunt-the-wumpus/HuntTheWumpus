@@ -43,6 +43,7 @@ namespace HuntTheWumpus {
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 		private VKApi vk;
+		private FaceBookApi face;
 		private bool Winner = false;
 
 		// This properties for draw button "Share in VK"
@@ -84,6 +85,10 @@ namespace HuntTheWumpus {
 		public void TickTime() {
 			if (Final && vk != null) {
 				vk.Access_authorize();
+				return;
+			}
+			if (Final && face != null) {
+				face.Access_code();
 				return;
 			}
 			long Milliseconds = Event_timer.ElapsedMilliseconds;
@@ -190,8 +195,8 @@ namespace HuntTheWumpus {
 		public void MouseUp(MouseEventArgs e) {
 			if (Final && e.Button == MouseButtons.Left && Clicked(ShareVKbuttonX, ShareVKbuttonY, ShareVKbuttonSize, e.X, e.Y)) {
 				DrawFinalForShare();
-				vk = new VKApi();
-				vk.OauthAutorize();
+				face = new FaceBookApi();
+				face.OauthAuthorize();
 			}
 		}
 
