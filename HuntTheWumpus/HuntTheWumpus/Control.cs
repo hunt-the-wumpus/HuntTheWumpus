@@ -213,6 +213,7 @@ namespace HuntTheWumpus
             StoryMiniGame = StoryMG.Empty;
             BatTimer.Reset();
             WaitBat = false;
+            view.UpdateImage();
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
