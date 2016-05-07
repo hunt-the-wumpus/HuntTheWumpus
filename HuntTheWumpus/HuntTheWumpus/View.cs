@@ -118,7 +118,7 @@ namespace HuntTheWumpus
             BackGround = new CompressionImage("data/Cave/background.png", width, 120);
             #endregion
             #region setted constants
-            StownPosX.Add(1.0f / 3.0f); // 0 item
+            StownPosX.Add(1.0f / 3.0f - 1.0f / 70.0f); // 0 item
             StownPosY.Add(-1.0f / 6.0f);
             StownPosX.Add(0);           // 1 item
             StownPosY.Add(1.0f / 9.0f);
@@ -434,34 +434,38 @@ namespace HuntTheWumpus
 
         public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
         {
-            Clear(Color.LightGreen);
+            Clear(Color.DarkOrange);
             int size = 55;
             int d = 5;
             int hght = (int)(size * 1.732);
-            for (int i = 0; i < 6; ++i)
-                for (int j = 0; j < 5; ++j)
+            for (int i = 0; i <= 6; ++i)
+                for (int j = 0; j <= 5; ++j)
                 {
                     int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * (hght + d) / 2 + 50 + j * d;
-                    Point[] pn = new Point[6];
-                    pn[0] = new Point(lx + size / 2, ly);
-                    pn[1] = new Point(lx, ly + hght / 2);
-                    pn[2] = new Point(lx + size / 2, ly + hght);
-                    pn[3] = new Point(lx + size * 3 / 2, ly + hght);
-                    pn[4] = new Point(lx + size * 2, ly + hght / 2);
-                    pn[5] = new Point(lx + size * 3 / 2, ly);
-                    Graphics.FillPolygon(Brushes.BlueViolet, pn);
+                    if (i < 6 && j < 5)
+                    {
+                        Point[] pn = new Point[6];
+                        pn[0] = new Point(lx + size / 2, ly);
+                        pn[1] = new Point(lx, ly + hght / 2);
+                        pn[2] = new Point(lx + size / 2, ly + hght);
+                        pn[3] = new Point(lx + size * 3 / 2, ly + hght);
+                        pn[4] = new Point(lx + size * 2, ly + hght / 2);
+                        pn[5] = new Point(lx + size * 3 / 2, ly);
+                        Graphics.FillPolygon(Brushes.BlueViolet, pn);
+                    }
                     Pen pen = new Pen(Color.Brown, 9);
                     for (int k = 0; k < 3; ++k)
                     {
-                        int v = i + j * 6;
+                        int v = (i % 6) + (j % 5) * 6;
                         if (isActive[v][k])
                         {
-                            if (k == 0)
-                                Graphics.DrawLine(pen, lx + size, ly + hght / 3, lx + size, ly - hght / 3 - d);
-                            if (k == 1)
-                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght / 3, lx - size / 3, ly);
-                            if (k == 2)
-                                Graphics.DrawLine(pen, lx + size * 2 / 3, ly + hght * 2 / 3, lx - size / 3, ly + hght);
+                            if (k == 0 && i < 6)
+                                Graphics.DrawLine(pen, lx + size, ly + hght / 6, lx + size, ly - hght / 6 - d);
+                            if (k == 1 && ((i < 6 && j < 5) || (i == 6 && j > 0) || (j == 5 && i > 1 && i % 2 == 0)))
+                                Graphics.DrawLine(pen, lx + 25, ly + 29, lx - 1, ly + 13);
+                            if (k == 2 &&  j < 5)
+                                Graphics.DrawLine(pen, lx + 25, ly + hght - 29, lx - 1, ly + hght - 13);
+                            
                         }
                     }
                 }
@@ -469,7 +473,7 @@ namespace HuntTheWumpus
             {
                 if (i > 0)
                     Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, i * Width / 5, Height);
-                DrawText((i + 1).ToString(), i * Width / 5 + 60, Height - 100, 40);
+                DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
             DrawText("GO!!", 850, 550, 40);
         }
