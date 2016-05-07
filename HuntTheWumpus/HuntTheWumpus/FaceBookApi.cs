@@ -25,7 +25,7 @@ namespace HuntTheWumpus {
 
 		public void OauthAuthorize() {
 			//wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&redirect_uri=" + uri + "&response_type=code");
-			wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&responce_type=token");
+			wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&responce_type=code");
 			wb.Show();
 		}
 
@@ -73,11 +73,11 @@ namespace HuntTheWumpus {
 		}
 
 		public void Access_code() {
-			/*if (code == "") {
+			if (code == "") {
 				if (wb.code != "") {
 					code = wb.code;
 					MessageBox.Show("Your code is " + code);
-					var responseData = RequestResponse("https://graph.facebook.com/oauth/access_token?debug=all&client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "/&code=" + code + "&responce_type=id");
+					var responseData = RequestResponse("https://graph.facebook.com/oauth/access_token?debug=all&client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&code=" + code + "&responce_type=id");
 					if (responseData == "") {
 						return;
 					}
@@ -87,15 +87,15 @@ namespace HuntTheWumpus {
 					MessageBox.Show("Your token is " + access_token);
 					MessageBox.Show(SendFaceBook("https://graph.facebook.com/me/feed?debug=all&message=123&access_token=" + access_token));
 				}
-			}*/
-			if (access_token == "") {
+			}
+			/*if (access_token == "") {
 				if (wb.access_token != "") {
 					access_token = wb.access_token;
 					MessageBox.Show("Your token is " + access_token);
 					HttpPost("https://graph.facebook.com/me/feed?access_token=" + access_token, "message=123&link=google.ru");
 					//MessageBox.Show(SendFaceBook("https://graph.facebook.com/me/feed?debug=all&message=123&access_token=" + access_token));
 				}
-			}
+			}*/
 		}
 
 		private string SendFaceBook(string send) {
