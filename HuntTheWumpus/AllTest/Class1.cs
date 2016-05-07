@@ -44,7 +44,7 @@ namespace xUnit.Tests
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
             var map = new HuntTheWumpus.Map();
-            view.DrawPickCave(map.graph, map.isActive, 0);
+            view.DrawPickCave(map.graph, map.isActive, 0, "112");
             view.MainForm.DrawAll();
         }
 

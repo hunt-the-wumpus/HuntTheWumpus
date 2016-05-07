@@ -19,5 +19,9 @@ namespace HuntTheWumpus
             a = b;
             b = c;
         }
+        public static void ChangeSeed(long seed)
+        {
+            random = new Random((int)seed);
+        }
     }
 }

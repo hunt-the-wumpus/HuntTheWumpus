@@ -252,6 +252,9 @@
     <Content Include="data\Sprites\InfoBar.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Sprites\Menu.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\vklogo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

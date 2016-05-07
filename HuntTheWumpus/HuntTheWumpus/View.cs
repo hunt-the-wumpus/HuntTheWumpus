@@ -33,6 +33,14 @@ namespace HuntTheWumpus
         Play,
         Empty
     }
+    public enum RegionMenu
+    {
+        NewGame,
+        Continue,
+        ScoreList,
+        Exit,
+        Empty
+    }
 
     public class View
     {
@@ -144,7 +152,7 @@ namespace HuntTheWumpus
             ScaleRoomX.Add(0.67f);      // 5 item
             ScaleRoomY.Add(-0.5f);
             #endregion
-            MainMenuImage = Image.FromFile(@".\data\Sprites\MainMenuBackground.png");
+            MainMenuImage = Image.FromFile(@".\data\Sprites\Menu.png");
             MainForm = new Form1(Drawing, width, height);
             MainForm.Show();
             deltaY = height / 36 + 30;
@@ -199,9 +207,19 @@ namespace HuntTheWumpus
             Graphics.DrawImage(MainMenuImage, 0, 0, Width, Height);
         }
 
-        public int GetRegionMainMenu(int x, int y)
+        public RegionMenu GetRegionMainMenu(int x, int y)
         {
-            return -1;//тут бы enum
+            if (x < 287 || x > 745)
+                return RegionMenu.Empty;
+            if (y >= 182 && y <= 256)
+                return RegionMenu.NewGame;
+            if (y >= 290 && y <= 365)
+                return RegionMenu.Continue;
+            if (y >= 394 && y <= 459)
+                return RegionMenu.ScoreList;
+            if (y >= 486 && y <= 549)
+                return RegionMenu.Exit;
+            return RegionMenu.Empty;
         }
 
         public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom, bool DrawDanger = false)
@@ -292,8 +310,8 @@ namespace HuntTheWumpus
             DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
             DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
             DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
-            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", Color.DarkBlue);
-            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.DarkBlue);
+            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", Color.FromArgb(0, 255, 0));
+            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.FromArgb(0, 255, 0));
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
         }
@@ -432,7 +450,7 @@ namespace HuntTheWumpus
                 IndexConsole = Math.Max(IndexConsole + up, 4);
         }
 
-        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num)
+        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num, string seed)
         {
             Clear(Color.DarkOrange);
             int size = 55;
@@ -473,8 +491,13 @@ namespace HuntTheWumpus
             {
                 if (i > 0)
                     Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, i * Width / 5, Height);
+                if (i != num)
+                    Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, (i + 1) * Width / 5, Height - 120);
                 DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
+            DrawText("Enter your seed:", 660, 100, 30);
+            Graphics.FillRectangle(Brushes.White, 660, 145, 360, 50);
+            DrawText(seed, 658, 150, 30);
             DrawText("GO!!", 850, 550, 40);
         }
 
