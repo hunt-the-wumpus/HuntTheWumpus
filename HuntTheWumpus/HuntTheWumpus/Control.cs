@@ -112,9 +112,9 @@ namespace HuntTheWumpus
                             if (NowHint == Hint.Wumpus)
                                 HintData = map.Wumpus;
                             if (NowHint != Hint.NoLuck)
-                                view.AddComand(HintMessage[(int)NowHint] + HintData);
+                                view.AddComand(HintMessage[(int)NowHint] + HintData, true);
                             else
-                                view.AddComand(HintMessage[(int)NowHint]);
+                                view.AddComand(HintMessage[(int)NowHint], true);
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
@@ -130,7 +130,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 5000))
+                if (!CheckDanger && view.IsEndAnimation() && (!WaitBat || BatTimer.ElapsedMilliseconds > 5000))
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -142,7 +142,7 @@ namespace HuntTheWumpus
                     }
                     if (map.danger == Danger.Bat)
                     {
-                        view.AddComand("You met BAT");
+                        view.AddComand("You met BAT", true);
                         map.Respaw();
                         WaitBat = false;
                         BatTimer.Reset();
@@ -156,11 +156,11 @@ namespace HuntTheWumpus
                     }
                     Danger dangerabout = map.GetDangerAbout();
                     if (dangerabout == Danger.Bat)
-                        view.AddComand("Bats Nearby(" + (map.Room + 1) + ")");
+                        view.AddComand("Bats Nearby(" + (map.Room + 1) + ")", true);
                     if (dangerabout == Danger.Pit)
-                        view.AddComand("I feel a draft(" + (map.Room + 1) + ")");
+                        view.AddComand("I feel a draft(" + (map.Room + 1) + ")", true);
                     if (dangerabout == Danger.Wumpus)
-                        view.AddComand("I smell a Wumpus!(" + (map.Room + 1) + ")");
+                        view.AddComand("I smell a Wumpus!(" + (map.Room + 1) + ")", true);
                 }
                 score.DrawScores(view.Graphics);
 			}
@@ -242,7 +242,7 @@ namespace HuntTheWumpus
             {
                 minigame.Down(e);
             }
-            if (state == ControlState.Cave && MiniGameEnd && !view.IsAnimated && !WaitBat)
+            if (state == ControlState.Cave && MiniGameEnd && view.IsEndAnimation() && !WaitBat)
             {
 				RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if (rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
@@ -289,7 +289,7 @@ namespace HuntTheWumpus
                     StoryMiniGame = StoryMG.BuyArrow;
                     MiniGameEnd = false;
                     minigame = new MiniGame(Width, Height);
-                    minigame.InitializeMiniGame(2);
+                    minigame.InitializeMiniGame(1);
                 }
                 if (rg == RegionCave.BuyHint && player.CanBuyHint())
                 {

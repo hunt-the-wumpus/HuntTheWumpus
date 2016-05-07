@@ -39,7 +39,9 @@ namespace HuntTheWumpus
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
 		public bool IsAnimated { get; set; }
-        
+        public bool IsBaner { get; set; }
+        private Stopwatch BanerTimer;
+
         private Image MainMenuImage;
 
         public int Width { get; private set; }
@@ -79,6 +81,7 @@ namespace HuntTheWumpus
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             ConsoleList = new List<string>();
+            BanerTimer = new Stopwatch();
             Width = width;
             Height = height;
 			length = Height * 8 / 12;
@@ -144,6 +147,12 @@ namespace HuntTheWumpus
         {
             Font fn = new Font(typefont, size_font);
             Graphics.DrawString(str, fn, new SolidBrush(cl), x, y);
+        }
+
+        public void DrawTextMid(string str, int x, int y, int size_font, string typefont)
+        {
+            Font fn = new Font(typefont, size_font);
+            Graphics.DrawString(str, fn, Brushes.Black, x - Graphics.MeasureString(str, fn).Width / 2, y);
         }
 
 
@@ -256,6 +265,15 @@ namespace HuntTheWumpus
             DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.DarkBlue);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
+            if (IsBaner && BanerTimer.ElapsedMilliseconds > 2000)
+            {
+                IsBaner = false;
+                BanerTimer.Reset();
+            }
+            if (IsBaner)
+            {
+                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Batang");
+            }
         }
 
 		private bool isLeftUpper(int x1, int y1, int x2, int y2, int ix, int iy) {
@@ -351,18 +369,23 @@ namespace HuntTheWumpus
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
-            AddComand("Left mouse bottom for#moving");
-            AddComand("Right mouse bottom for#shot arrow");
+            AddComand("Left mouse bottom for#moving", false);
+            AddComand("Right mouse bottom for#shot arrow", false);
             IndexConsole = ConsoleList.Count - 1;
         }
 
-		public void AddComand(string s)
+        public void AddComand(string s, bool b)
         {
             if (IndexConsole == ConsoleList.Count - 1)
                 ++IndexConsole;
             string[] strs = s.Split('#');
             for (int i = strs.Length - 1; i >= 0; i--)
                 ConsoleList.Add(strs[i]);
+            if (b)
+            {
+                BanerTimer.Restart();
+                IsBaner = true;
+            }
         }
 
 		public void ChangeIndex(int up)
@@ -424,6 +447,11 @@ namespace HuntTheWumpus
             if (y > 550 && x > 850)
                 return RegionPickCave.Play;
             return RegionPickCave.Empty;
+        }
+
+        public bool IsEndAnimation()
+        {
+            return !IsAnimated && !IsBaner;
         }
     }
 }
