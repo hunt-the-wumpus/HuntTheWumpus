@@ -46,13 +46,9 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
-<<<<<<< HEAD
 		public bool IsAnimated { get; set; }
         public bool IsBaner { get; set; }
         private Stopwatch BanerTimer;
-=======
-        public bool IsAnimated { get; set; }
->>>>>>> prifio/RoomTextures
 
         private Image MainMenuImage;
 
@@ -189,16 +185,12 @@ namespace HuntTheWumpus
             Graphics.DrawString(str, fn, new SolidBrush(cl), x, y);
         }
 
-<<<<<<< HEAD
-        public void DrawTextMid(string str, int x, int y, int size_font, string typefont)
+        public void DrawTextMid(string str, int x, int y, int size_font, string typefont, Color cl)
         {
             Font fn = new Font(typefont, size_font);
-            Graphics.DrawString(str, fn, Brushes.Black, x - Graphics.MeasureString(str, fn).Width / 2, y);
+            Graphics.DrawString(str, fn, new SolidBrush(cl), x - Graphics.MeasureString(str, fn).Width / 2, y);
         }
 
-
-=======
->>>>>>> prifio/RoomTextures
         public void Drawing(System.Object sender, System.Windows.Forms.PaintEventArgs e)
         {
             e.Graphics.DrawImage(Bitmap, 0, 0);
@@ -338,7 +330,7 @@ namespace HuntTheWumpus
             }
             if (IsBaner)
             {
-                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Batang");
+                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Batang", Color.FromArgb(0, 255, 0));
             }
         }
 
