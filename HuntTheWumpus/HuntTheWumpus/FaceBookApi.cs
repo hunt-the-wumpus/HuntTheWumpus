@@ -24,8 +24,7 @@ namespace HuntTheWumpus {
 		private const string uri = "http://alexsytsev2014.wix.com/huntthewumpus";
 
 		public void OauthAuthorize() {
-			//wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&redirect_uri=" + uri + "&response_type=code");
-			wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&responce_type=code");
+			wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&responce_type=code&scope=publish_actions");
 			wb.Show();
 		}
 
@@ -83,19 +82,13 @@ namespace HuntTheWumpus {
 					}
 					MessageBox.Show("result getted is " + responseData);
 					access_token = ParseValue(responseData, "access_token");
-					wb = null;
+					//wb = null;
 					MessageBox.Show("Your token is " + access_token);
-					MessageBox.Show(SendFaceBook("https://graph.facebook.com/me/feed?debug=all&message=123&access_token=" + access_token));
+					WebClient uploadclient = new WebClient();
+					uploadclient.UploadFile("https://graph.facebook.com/me/photos?access_token=" + access_token + "&message=I playing at Hunt the Wumpus and have this result!", "POST", "data/Share.jpg");
+					//HttpPost("https://graph.facebook.com/me/feed?access_token=" + access_token, "message=123&link=google.ru");
 				}
 			}
-			/*if (access_token == "") {
-				if (wb.access_token != "") {
-					access_token = wb.access_token;
-					MessageBox.Show("Your token is " + access_token);
-					HttpPost("https://graph.facebook.com/me/feed?access_token=" + access_token, "message=123&link=google.ru");
-					//MessageBox.Show(SendFaceBook("https://graph.facebook.com/me/feed?debug=all&message=123&access_token=" + access_token));
-				}
-			}*/
 		}
 
 		private string SendFaceBook(string send) {

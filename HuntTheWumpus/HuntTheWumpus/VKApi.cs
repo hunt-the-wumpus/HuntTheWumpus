@@ -39,7 +39,7 @@ namespace HuntTheWumpus {
 		private string json = "";
 
 		public void OauthAuthorize() {
-			wb = new WebBrowser("https://oauth.vk.com/authorize?client_id=5407281&display=page&redirect_uri=http://oauth.vk.com/blank.html&scope=wall,photos&response_type=token&v=5.45&revoke=1");
+			wb = new WebBrowser("https://oauth.vk.com/authorize?client_id=5407281&display=page&redirect_uri=http://oauth.vk.com/blank.html&scope=wall,photos&response_type=token&v=5.0&revoke=1");
 			wb.Show();
 		}
 
