@@ -255,10 +255,10 @@
     <Content Include="data\Sprites\Menu.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\vklogo.jpg">
+    <Content Include="data\StartNewGameButt.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="data\Sprites\MainMenuBackground.png">
+    <Content Include="data\vklogo.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
