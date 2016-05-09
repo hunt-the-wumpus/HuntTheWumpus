@@ -18,6 +18,7 @@ namespace HuntTheWumpus {
 		// Player score
 		public int Score { get; private set; }
 		public bool Final { get; set; }
+        public bool isNewGame { get; private set; }
 
 		private int CanvasWidth;
 		private int CanvasHeight;
@@ -29,6 +30,7 @@ namespace HuntTheWumpus {
 		private Image activeImage = null;
 		private Image BackGround = null;
 		private Image FinalPicture = null;
+        private Image NewGameButton = Image.FromFile(@"data/StartNewGameButt.png");
 
 		private const double BeginDrawingPosition = -250;
 		private const double EndDrawingPosition = 0;
@@ -164,6 +166,7 @@ namespace HuntTheWumpus {
 		public void DrawFinal(Graphics g) {
 			g.DrawImage(FinalPicture, 0, 0);
 			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
+            g.DrawImage(NewGameButton, 630, 50);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
@@ -183,6 +186,8 @@ namespace HuntTheWumpus {
 			Vk.Draw(g, ShareVKbuttonX, ShareVKbuttonY);
 		}
 
+        public
+
 		bool Clicked(int buttonX, int buttonY, int buttonSize, int x, int y) {
 			return (buttonX < x && buttonX + buttonSize > x && buttonY < y && buttonY + buttonSize > y);
 		}
@@ -193,6 +198,10 @@ namespace HuntTheWumpus {
 				vk = new VKApi();
 				vk.OauthAutorize();
 			}
+            if(e.X<930 && e.X>630 & e.Y>50 && e.Y < 112)
+            {
+                isNewGame = true;
+            }
 		}
 
 		public void MouseMove(MouseEventArgs e) {
