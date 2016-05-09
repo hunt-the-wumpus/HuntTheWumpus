@@ -22,6 +22,10 @@ namespace HuntTheWumpus {
 			InitializeComponent();
 		}
 
+		public void Navigate(string url) {
+			webBrowser1.Navigate(url);
+		}
+
 		private void WebBrowser_Load(object sender, EventArgs e) {
 			access_token = "";
 			user_id = "";

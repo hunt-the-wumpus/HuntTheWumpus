@@ -21,7 +21,8 @@ namespace HuntTheWumpus {
 		private string access_token = "";
 		private const string client_id = "249609735389185";
 		private const string client_secret = "c15de867a49ab5f238eed9a2b2f31826";
-		private const string uri = "http://alexsytsev2014.wix.com/huntthewumpus";
+		private const string uri = "http://alexsytsev2014.wix.com/huntthewumpus#!oauth/iu2or";
+		private bool published = false;
 
 		public void OauthAuthorize() {
 			wb = new WebBrowser("https://www.facebook.com/dialog/oauth?client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&responce_type=code&scope=publish_actions");
@@ -72,64 +73,25 @@ namespace HuntTheWumpus {
 		}
 
 		public void Access_code() {
-			if (code == "") {
+			if (code == "" && !published) {
 				if (wb.code != "") {
 					code = wb.code;
-					MessageBox.Show("Your code is " + code);
+					wb.Navigate(uri);
+					//MessageBox.Show("Your code is " + code);
 					var responseData = RequestResponse("https://graph.facebook.com/oauth/access_token?debug=all&client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&code=" + code + "&responce_type=id");
 					if (responseData == "") {
 						return;
 					}
-					MessageBox.Show("result getted is " + responseData);
+					//MessageBox.Show("result getted is " + responseData);
 					access_token = ParseValue(responseData, "access_token");
 					//wb = null;
-					MessageBox.Show("Your token is " + access_token);
+					//MessageBox.Show("Your token is " + access_token);
 					WebClient uploadclient = new WebClient();
 					uploadclient.UploadFile("https://graph.facebook.com/me/photos?access_token=" + access_token + "&message=I playing at Hunt the Wumpus and have this result!", "POST", "data/Share.jpg");
-					//HttpPost("https://graph.facebook.com/me/feed?access_token=" + access_token, "message=123&link=google.ru");
+					published = true;
+					MessageBox.Show("Achievement public at your account");
 				}
 			}
-		}
-
-		private string SendFaceBook(string send) {
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(send);
-			request.Method = "GET";
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-			StreamReader reader = new StreamReader(response.GetResponseStream());
-			string result = reader.ReadToEnd();
-			response.Close();
-			return result;
-		}
-
-		private string HttpPost(string pUrl, string pPostData) {
-			HttpWebRequest webRequest = (HttpWebRequest)HttpWebRequest.Create(pUrl);
-			webRequest.ContentType = "application/x-www-form-urlencoded";
-			webRequest.Method = "POST";
-			byte[] bytes = System.Text.Encoding.UTF8.GetBytes(pPostData);
-			Stream requestWriter = webRequest.GetRequestStream(); //GetRequestStream
-			requestWriter.Write(bytes, 0, bytes.Length);
-			requestWriter.Close();
-
-			Stream responseStream = null;
-			StreamReader responseReader = null;
-			string responseData = "";
-			try {
-				WebResponse webResponse = webRequest.GetResponse();
-				responseStream = webResponse.GetResponseStream();
-				responseReader = new StreamReader(responseStream);
-				responseData = responseReader.ReadToEnd();
-			}
-			catch (Exception exc) {
-				throw new Exception("could not post : " + exc.Message);
-			}
-			finally {
-				if (responseStream != null) {
-					responseStream.Close();
-					responseReader.Close();
-				}
-			}
-
-			return responseData;
 		}
 	}
 }

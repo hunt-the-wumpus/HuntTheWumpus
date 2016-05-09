@@ -237,6 +237,9 @@
     <Content Include="data\Particles\wave.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\shareFACEBOOK.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\ShareVK.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
