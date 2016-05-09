@@ -183,7 +183,7 @@ namespace HuntTheWumpus
                     ++VisitRoom;
                 ++Turn;
                 ans = coins[Room][i];
-                coins[Room][i] = 0;                
+                coins[Room][i] = coins[graph[Room][i]][(i + 3) % 6] = 0;                
                 Room = graph[Room][i];
                 if (Room == BatRoom.Item1 || Room == BatRoom.Item2)
                     danger = Danger.Bat;

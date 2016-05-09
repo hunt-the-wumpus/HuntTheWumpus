@@ -216,6 +216,8 @@ namespace HuntTheWumpus
             BatTimer.Reset();
             WaitBat = false;
             view.UpdateImage();
+            view.ClearConsole();
+            seed = "";
             state = ControlState.PickCave;
         }
 
