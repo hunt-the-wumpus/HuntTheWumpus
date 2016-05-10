@@ -31,6 +31,7 @@ namespace HuntTheWumpus {
 		private Image BackGround = null;
 		private Image FinalPicture = null;
         private Image NewGameButton = Image.FromFile(@"data/StartNewGameButt.png");
+        private Image ShareButton = Image.FromFile(@"data/ShareButton.png");
 
 		private const double BeginDrawingPosition = -250;
 		private const double EndDrawingPosition = 0;
@@ -167,6 +168,7 @@ namespace HuntTheWumpus {
 			g.DrawImage(FinalPicture, 0, 0);
 			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
             g.DrawImage(NewGameButton, 630, 50);
+            g.DrawImage(ShareButton, 20, 640);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
