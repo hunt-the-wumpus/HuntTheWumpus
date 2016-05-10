@@ -46,6 +46,7 @@ namespace HuntTheWumpus {
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 		private VKApi vk;
+		private FaceBookApi face;
 		private bool Winner = false;
 
 		// This properties for draw button "Share in VK"
@@ -53,6 +54,11 @@ namespace HuntTheWumpus {
 		private int ShareVKbuttonY;
 		private int ShareVKbuttonSize = 30;
 		private CompressionImage Vk;
+		// This properties for draw "Share in Facebook"
+		private int ShareFBbuttonX;
+		private int ShareFBbuttonY;
+		private int ShareFBbuttonSize = 30;
+		private CompressionImage Fb;
 
 		private int HintX = -140;
 		private int HintY = -140;
@@ -64,6 +70,9 @@ namespace HuntTheWumpus {
 			ShareVKbuttonX = 50;
 			ShareVKbuttonY = Height - ShareVKbuttonSize - 40;
 			Vk = new CompressionImage("data/ShareVK.png", ShareVKbuttonSize, ShareVKbuttonSize);
+			ShareFBbuttonX = 50 + ShareVKbuttonSize + 3;
+			ShareFBbuttonY = Height - ShareFBbuttonSize - 40;
+			Fb = new CompressionImage("data/ShareFACEBOOK.png", ShareFBbuttonSize, ShareFBbuttonSize);
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
 			List<string> bb = new List<string>();
 			Event_timer.Start();
@@ -87,6 +96,10 @@ namespace HuntTheWumpus {
 		public void TickTime() {
 			if (Final && vk != null) {
 				vk.Access_authorize();
+				return;
+			}
+			if (Final && face != null) {
+				face.Access_code();
 				return;
 			}
 			long Milliseconds = Event_timer.ElapsedMilliseconds;
@@ -186,6 +199,7 @@ namespace HuntTheWumpus {
 				g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), HintX + 15, HintY + 5 + i * 12);
 			}
 			Vk.Draw(g, ShareVKbuttonX, ShareVKbuttonY);
+			Fb.Draw(g, ShareFBbuttonX, ShareFBbuttonY);
 		}
 
         public
@@ -196,9 +210,16 @@ namespace HuntTheWumpus {
 
 		public void MouseUp(MouseEventArgs e) {
 			if (Final && e.Button == MouseButtons.Left && Clicked(ShareVKbuttonX, ShareVKbuttonY, ShareVKbuttonSize, e.X, e.Y)) {
+				face = null;
 				DrawFinalForShare();
 				vk = new VKApi();
-				vk.OauthAutorize();
+				vk.OauthAuthorize();
+			}
+			if (Final && e.Button == MouseButtons.Left && Clicked(ShareFBbuttonX, ShareFBbuttonY, ShareFBbuttonSize, e.X, e.Y)) {
+				vk = null;
+				DrawFinalForShare();
+				face = new FaceBookApi();
+				face.OauthAuthorize();
 			}
             if(e.X<930 && e.X>630 & e.Y>50 && e.Y < 112)
             {

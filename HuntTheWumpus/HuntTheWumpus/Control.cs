@@ -77,6 +77,7 @@ namespace HuntTheWumpus
             HintMessage.Add("Pit in ");
             HintMessage.Add("Bat in ");
             HintMessage.Add("You have bad luck...");
+			NewGame();
         }
 
         public void UpDate(long time)
@@ -132,7 +133,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger && view.IsEndAnimation() && (!WaitBat || BatTimer.ElapsedMilliseconds > 5000))
+                if (!CheckDanger && !view.IsBatAnimated && !view.IsAnimated && (!WaitBat || BatTimer.ElapsedMilliseconds > 3000))
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -210,6 +211,7 @@ namespace HuntTheWumpus
             minigame = new MiniGame(Width, Height);
             player = new Player();
             score = new Scores(Width, Height);
+			score.SetFinalState(false);
             CheckDanger = false;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;
@@ -268,6 +270,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd && view.IsEndAnimation() && !WaitBat)
             {
+				view.StopAnimation();
                 RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if (rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
@@ -280,6 +283,7 @@ namespace HuntTheWumpus
                         {
                             BatTimer.Restart();
                             WaitBat = true;
+							view.StartBatAnimation();
                         }
                         view.StartMoveAnimation((int)rg);
                         CheckDanger = false;

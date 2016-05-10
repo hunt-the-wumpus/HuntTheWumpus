@@ -23,8 +23,6 @@ namespace HuntTheWumpus
         DownConsole,
         Empty
     }
-
-
     public enum RegionPickCave
     {
         Cave0,
@@ -48,8 +46,10 @@ namespace HuntTheWumpus
     {
         public System.Drawing.Graphics Graphics { get; private set; }
         private System.Drawing.Bitmap Bitmap;
+
 		public bool IsAnimated { get; set; }
         public bool IsBaner { get; set; }
+		public bool IsBatAnimated { get; private set; }
         private Stopwatch BanerTimer;
 
         private Image MainMenuImage;
@@ -82,7 +82,7 @@ namespace HuntTheWumpus
         private int numberstone = 0;
         private int length = 0;
         private int deltaY = 0;
-        /*private const int */
+		private int normallength;
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
         {
@@ -97,7 +97,8 @@ namespace HuntTheWumpus
             BanerTimer = new Stopwatch();
             Width = width;
             Height = height;
-            length = Height * 8 / 12;
+			length = Height * 8 / 12;
+			normallength = length;
             #region setted images
             room[0] = new CompressionImage("data/Cave/TryTop1.png", length / 3, length / 3);
             room[1] = new CompressionImage("data/Cave/TryUpperLeft1.png", length / 3, length / 3);
@@ -235,13 +236,22 @@ namespace HuntTheWumpus
 
         public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom, bool DrawDanger = false)
         {
-            //Graphics.DrawImage(img, new Rectangle(x, y, length, length));
-            if (StartRoom && danger != Danger.Pit)
-                CaveRoom[TypeImageRoom[number]].Draw(Graphics, x, y);
-            else if (StartRoom)
-                PitRoom.Draw(Graphics, x, y);
-            else
-                DarkRoom.Draw(Graphics, x, y);
+			if (IsBatAnimated && !IsAnimated) {
+				if (StartRoom && danger != Danger.Pit)
+					Graphics.DrawImage(CaveRoom[TypeImageRoom[number]].CompressedImage, x, y, length, length);
+				else if (StartRoom)
+					Graphics.DrawImage(PitRoom.CompressedImage, x, y, length, length);
+				else
+					Graphics.DrawImage(DarkRoom.CompressedImage, x, y, length, length);
+			} else {
+				//Graphics.DrawImage(img, new Rectangle(x, y, length, length));
+				if (StartRoom && danger != Danger.Pit)
+					CaveRoom[TypeImageRoom[number]].Draw(Graphics, x, y);
+				else if (StartRoom)
+					PitRoom.Draw(Graphics, x, y);
+				else
+					DarkRoom.Draw(Graphics, x, y);
+			}
             /*if (danger == Danger.Bat && DrawDanger) {
 				Bat.Draw(Graphics, x, y);
 			}*/
@@ -249,8 +259,11 @@ namespace HuntTheWumpus
             {
                 if (StartRoom && Active[number][i])
                 {
-                    //Graphics.DrawImage(room[i], new Rectangle(x, y, length, length));
-                    room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
+					if (IsBatAnimated && !IsAnimated) {
+						Graphics.DrawImage(room[i].CompressedImage, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]), length / 3, length / 2);
+					} else {
+						room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
+					}
                 }
             }
         }
@@ -267,51 +280,64 @@ namespace HuntTheWumpus
             DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, true, true);
         }
 
-        private Stopwatch sw;
+		private Stopwatch moveTimerAnimation;
+		private Stopwatch batTimerAnimation;
 
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
-            //Clear(Color.White);
-            //Clear();
-            if (IsAnimated)
-            {
-                long Milliseconds = sw.ElapsedMilliseconds;
-                Progress = Milliseconds / 2500.0f;
-                if (Progress >= 1.0f)
-                {
-                    Progress = 0.0f;
-                    sw.Stop();
-                    IsAnimated = false;
-                }
-            }
-            if (!IsAnimated)
-            {
-                DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
-                //Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
-                DrawInterface(Coins, Arrows, CurrentRoom);
-                //Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
-                //Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
-                isActiveLast = isActive;
-                DangerListLast = DangerList;
-                dangerLast = danger;
-                CurrentRoomLast = CurrentRoom;
-            }
-            else {
-                int TargetCenterX = Width / 2 - length / 2;
-                int TargetCenterY = (Height - length) / 2 - deltaY;
-                DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
-                DrawInterface(Coins, Arrows, CurrentRoom);
-            }
-        }
+			//Clear(Color.White);
+			//Clear();
+			if (!IsAnimated) {
+				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
+				//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
+				DrawInterface(Coins, Arrows, CurrentRoom);
+				//Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
+				//Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
+				isActiveLast = isActive;
+				DangerListLast = DangerList;
+				dangerLast = danger;
+				CurrentRoomLast = CurrentRoom;
+			} else {
+				long Milliseconds = moveTimerAnimation.ElapsedMilliseconds;
+				Progress = Milliseconds / 2500.0f;
+				int TargetCenterX = Width / 2 - length / 2;
+				int TargetCenterY = (Height - length) / 2 - deltaY;
+				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawInterface(Coins, Arrows, CurrentRoom);
+				if (Progress >= 1.0f) {
+					Progress = 0.0f;
+					moveTimerAnimation.Stop();
+					IsAnimated = false;
+				}
+			}
+			if (IsBatAnimated && !IsAnimated) {
+				if (batTimerAnimation == null) {
+					batTimerAnimation = new Stopwatch();
+					batTimerAnimation.Start();
+				} else {
+					long Milliseconds = batTimerAnimation.ElapsedMilliseconds;
+					float progress = Milliseconds / 2500.0f;
+					length = (int)(normallength * (1.0f - progress));
+					if (progress >= 1.0f) {
+						IsBatAnimated = false;
+						batTimerAnimation = null;
+						length = normallength;
+					}
+				}
+			}
+		}
 
-        public void StartMoveAnimation(int direction)
-        {
-            Progress = 0.0f;
-            numberstone = direction;
-            IsAnimated = true;
-            sw = new Stopwatch();
-            sw.Start();
-        }
+		public void StartMoveAnimation(int direction) {
+			Progress = 0.0f;
+			numberstone = direction;
+			IsAnimated = true;
+			moveTimerAnimation = new Stopwatch();
+			moveTimerAnimation.Start();
+		}
+
+		public void StartBatAnimation() {
+			IsBatAnimated = true;
+		}
 
         public void DrawInterface(int coins, int arrows, int room)
         {
@@ -535,9 +561,14 @@ namespace HuntTheWumpus
             return RegionPickCave.Empty;
         }
 
+		public void StopAnimation() {
+			IsBaner = false;
+			BanerTimer.Reset();
+		}
+
         public bool IsEndAnimation()
         {
-            return !IsAnimated && !IsBaner;
+            return !IsAnimated;
         }
     }
 }

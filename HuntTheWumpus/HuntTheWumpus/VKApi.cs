@@ -37,9 +37,11 @@ namespace HuntTheWumpus {
 		private string token = "";
 		private string user = "";
 		private string json = "";
+		private const string uri = "http://alexsytsev2014.wix.com/huntthewumpus#!oauth/iu2or";
+		private bool published = false;
 
-		public void OauthAutorize() {
-			wb = new WebBrowser();
+		public void OauthAuthorize() {
+			wb = new WebBrowser("https://oauth.vk.com/authorize?client_id=5407281&display=page&redirect_uri=http://oauth.vk.com/blank.html&scope=wall,photos&response_type=token&v=5.0&revoke=1");
 			wb.Show();
 		}
 
@@ -70,20 +72,19 @@ namespace HuntTheWumpus {
 		}
 
 		public void Access_authorize() {
-			if (wb != null) {
+			if (wb != null && !published) {
 				if (wb.access_token != "" && wb.user_id != "") {
 					token = wb.access_token;
 					user = wb.user_id;
-					wb.Close();
-					wb = null;
-					PublicPhoto("");
+					wb.Navigate(uri);
+					PublicPhoto();
 				}
 			}
 		}
 
 		private string HttpUploadFile(string url, string file, string paramName, string contentType, NameValueCollection nvc) {
 			string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
-			byte[] boundarybytes = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
+			byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
 
 			HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(url);
 			wr.ContentType = "multipart/form-data; boundary=" + boundary;
@@ -140,7 +141,7 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		public void PublicPhoto(string PhotoAdress) {
+		public void PublicPhoto() {
 			string upload_url = SendVKApi("https://api.vk.com/method/photos.getWallUploadServer?user_id=" + user + "&access_token=" + token);
 			string luck_url = ParseJsonFormat(upload_url, "\"upload_url\":", '~');
 			WebClient client = new WebClient();
@@ -152,7 +153,9 @@ namespace HuntTheWumpus {
 			Photo p = JsonConvert.DeserializeObject<Photo>(photo);
 			p.id = int.Parse(ParseJsonFormat(photo, "\"id\"", ':'));
 			SendVKApi("https://api.vk.com/method/wall.post?owner_id=" + user + "&friends_only=0&attachments=photo" + user + "_" + p.id.ToString() + "&access_token=" + token);
-			MessageBox.Show("Photo public at your account!");
+			SendVKApi("https://api.vk.com/method/stats.trackVisitor");
+			published = true;
+			MessageBox.Show("Achievement public at your account!");
 		}
 	}
 }
