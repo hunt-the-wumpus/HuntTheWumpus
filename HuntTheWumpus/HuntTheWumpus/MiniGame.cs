@@ -253,9 +253,9 @@ namespace HuntTheWumpus
 			ProgressBarSettedAngle = Math.Min(ProgressBarSettedAngle, 360);
 			if (PlayerPoints <= 0)
             {
-				Faster = Faster || (Difficult == 1 && LifeTimer >= 0);
-				Reactivity = Reactivity || (Difficult == 2 && LifeTimer >= 0);
-				Zinger = Zinger || (Difficult == 3 && LifeTimer >= 0);
+				Faster = Faster || (Difficult == 1 && LifeTimer >= MaxLife - 7000);
+				Reactivity = Reactivity || (Difficult == 2 && LifeTimer >= MaxLife - 7000);
+				Zinger = Zinger || (Difficult == 3 && LifeTimer >= MaxLife - 7000);
 				Accurate = Accurate || (Difficult == 1 && points >= 500 && PlayerPoints == 500 - points);
 				NoName76 = NoName76 || (Difficult == 2 && points >= 500 && PlayerPoints == 500 - points);
 				Sniper = Sniper || (Difficult == 3 && points >= 500 && PlayerPoints == 500 - points);
