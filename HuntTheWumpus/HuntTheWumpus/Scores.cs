@@ -14,11 +14,53 @@ using System.Collections.Specialized;
 
 namespace HuntTheWumpus {
 
+	public enum ScoreState {
+		Null,
+		Achievements,
+		Final,
+		Leaders
+	}
+
+	public enum ScoreRegion {
+		Null,
+		//ShareVK,
+		//ShareFacebook,
+		Continue
+	}
+
+	public class Button {
+		public int x { get; set; }
+		public int y { get; set; }
+		public int width { get; private set; }
+		public int height { get; private set; }
+		private CompressionImage img;
+
+		public Button(Image create, int w, int h) {
+			width = w;
+			height = h;
+			img = new CompressionImage(create, width, height);
+		}
+
+		public Button(string s, int w, int h) {
+			width = w;
+			height = h;
+			img = new CompressionImage(s, width, height);
+		}
+
+		public void Draw(Graphics g) {
+			img.Draw(g, x, y);
+		}
+
+		public bool Clicked(int mousex, int mousey) {
+			return (mousex > x) && (mousex < x + width) && (mousey > y) && (mousey < y + height);
+		}
+	}
+
 	public class Scores {
 		// Player score
 		public int Score { get; private set; }
 		public bool Final { get; set; }
-        public bool isNewGame { get; private set; }
+		public ScoreState active { get; set; }
 
 		private int CanvasWidth;
 		private int CanvasHeight;
@@ -30,7 +72,6 @@ namespace HuntTheWumpus {
 		private Image activeImage = null;
 		private Image BackGround = null;
 		private Image FinalPicture = null;
-        private Image NewGameButton = Image.FromFile(@"data/StartNewGameButt.png");
 
 		private const double BeginDrawingPosition = -250;
 		private const double EndDrawingPosition = 0;
@@ -48,16 +89,9 @@ namespace HuntTheWumpus {
 		private FaceBookApi face;
 		private bool Winner = false;
 
-		// This properties for draw button "Share in VK"
-		private int ShareVKbuttonX;
-		private int ShareVKbuttonY;
-		private int ShareVKbuttonSize = 30;
-		private CompressionImage Vk;
-		// This properties for draw "Share in Facebook"
-		private int ShareFBbuttonX;
-		private int ShareFBbuttonY;
-		private int ShareFBbuttonSize = 30;
-		private CompressionImage Fb;
+		private Button ShareVK;
+		private Button ShareFaceBook;
+		private Button Continue;
 
 		private int HintX = -140;
 		private int HintY = -140;
@@ -66,12 +100,15 @@ namespace HuntTheWumpus {
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
-			ShareVKbuttonX = 50;
-			ShareVKbuttonY = Height - ShareVKbuttonSize - 40;
-			Vk = new CompressionImage("data/ShareVK.png", ShareVKbuttonSize, ShareVKbuttonSize);
-			ShareFBbuttonX = 50 + ShareVKbuttonSize + 3;
-			ShareFBbuttonY = Height - ShareFBbuttonSize - 40;
-			Fb = new CompressionImage("data/ShareFACEBOOK.png", ShareFBbuttonSize, ShareFBbuttonSize);
+			ShareVK = new Button("data/ShareVK.png", 30, 30);
+			ShareVK.x = 50;
+			ShareVK.y = Height - 30 - 40;
+			ShareFaceBook = new Button("data/ShareFACEBOOK.png", 30, 30);
+			ShareFaceBook.x = 50 + 30 + 3;
+			ShareFaceBook.y = Height - 30 - 40;
+			Continue = new Button("data/continue.png", 150, 30);
+			Continue.x = 50 + 30 + 3 + 30 + 3;
+			Continue.y = Height - 30 - 40;
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
 			List<string> bb = new List<string>();
 			Event_timer.Start();
@@ -179,8 +216,7 @@ namespace HuntTheWumpus {
 		public void DrawFinal(Graphics g) {
 			g.DrawImage(FinalPicture, 0, 0);
 			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
-            g.DrawImage(NewGameButton, 630, 50);
-			int activestring = 0;
+            int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {
 				if (DrawAchivements >= 3) {
@@ -196,33 +232,23 @@ namespace HuntTheWumpus {
 			for (int i = 0; i < strings.Length; ++i) {
 				g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), HintX + 15, HintY + 5 + i * 12);
 			}
-			Vk.Draw(g, ShareVKbuttonX, ShareVKbuttonY);
-			Fb.Draw(g, ShareFBbuttonX, ShareFBbuttonY);
-		}
-
-        public
-
-		bool Clicked(int buttonX, int buttonY, int buttonSize, int x, int y) {
-			return (buttonX < x && buttonX + buttonSize > x && buttonY < y && buttonY + buttonSize > y);
+			ShareVK.Draw(g);
+			ShareFaceBook.Draw(g);
 		}
 
 		public void MouseUp(MouseEventArgs e) {
-			if (Final && e.Button == MouseButtons.Left && Clicked(ShareVKbuttonX, ShareVKbuttonY, ShareVKbuttonSize, e.X, e.Y)) {
+			if (Final && e.Button == MouseButtons.Left && ShareFaceBook.Clicked(e.X, e.Y)) {
 				face = null;
 				DrawFinalForShare();
 				vk = new VKApi();
 				vk.OauthAuthorize();
 			}
-			if (Final && e.Button == MouseButtons.Left && Clicked(ShareFBbuttonX, ShareFBbuttonY, ShareFBbuttonSize, e.X, e.Y)) {
+			if (Final && e.Button == MouseButtons.Left && ShareVK.Clicked(e.X, e.Y)) {
 				vk = null;
 				DrawFinalForShare();
 				face = new FaceBookApi();
 				face.OauthAuthorize();
 			}
-            if(e.X<930 && e.X>630 & e.Y>50 && e.Y < 112)
-            {
-                isNewGame = true;
-            }
 		}
 
 		public void MouseMove(MouseEventArgs e) {
@@ -245,6 +271,13 @@ namespace HuntTheWumpus {
 				}
 				++DrawAchivements;
 			}
+		}
+
+		public ScoreRegion GetRegion(int x, int y) {
+			if (Continue.Clicked(x, y) && active == ScoreState.Final) {
+				return ScoreRegion.Continue;
+			}
+			return ScoreRegion.Null;
 		}
 
 	}
