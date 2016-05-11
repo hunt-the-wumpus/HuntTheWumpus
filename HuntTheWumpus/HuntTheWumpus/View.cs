@@ -50,6 +50,8 @@ namespace HuntTheWumpus
 		public bool IsAnimated { get; set; }
         public bool IsBaner { get; set; }
 		public bool IsBatAnimated { get; private set; }
+        public bool IsArrowAnimation { get; private set; }
+        private int ArrowDirection;
         private Stopwatch BanerTimer;
 
         private Image MainMenuImage;
@@ -95,6 +97,7 @@ namespace HuntTheWumpus
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
             ConsoleList = new List<string>();
             BanerTimer = new Stopwatch();
+            ArrowTimerAnimation = new Stopwatch();
             Width = width;
             Height = height;
 			length = Height * 8 / 12;
@@ -282,6 +285,7 @@ namespace HuntTheWumpus
 
 		private Stopwatch moveTimerAnimation;
 		private Stopwatch batTimerAnimation;
+        private Stopwatch ArrowTimerAnimation;
 
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
@@ -325,6 +329,36 @@ namespace HuntTheWumpus
 					}
 				}
 			}
+            if (IsArrowAnimation && !IsBatAnimated && !IsAnimated)
+            {
+                long ms = ArrowTimerAnimation.ElapsedMilliseconds;
+                int WaitTime = 500;
+                if (ms < WaitTime)
+                {
+                    Pen pn = new Pen(Color.Gold, 5);
+                    double cos = 3 / Utily.Hypot(3, 2);
+                    double sin = 2 / Utily.Hypot(3, 2);
+                    int UseHeight = Height - 120;
+                    if (ArrowDirection == 0)
+                        Graphics.DrawLine(pn, Width / 2, UseHeight / 2 - ms * length / 2 / WaitTime, Width / 2, UseHeight / 2 - ms * length / 2 / WaitTime - 50);
+                    if (ArrowDirection == 3)
+                        Graphics.DrawLine(pn, Width / 2, UseHeight / 2 + ms * length / 2 / WaitTime, Width / 2, UseHeight / 2 + ms * length / 2 / WaitTime + 50);
+                    if (ArrowDirection == 1)
+                        Graphics.DrawLine(pn, Width / 2 - length * ms / 3 / WaitTime, UseHeight / 2 - ms * length / 4 / WaitTime, Width / 2 - length * ms / 3 / WaitTime - (int)(50 * cos), UseHeight / 2 - ms * length / 4 / WaitTime - (int)(50 * sin));
+                    if (ArrowDirection == 2)
+                        Graphics.DrawLine(pn, Width / 2 - length * ms / 3 / WaitTime, UseHeight / 2 + ms * length / 4 / WaitTime, Width / 2 - length * ms / 3 / WaitTime - (int)(50 * cos), UseHeight / 2 + ms * length / 4 / WaitTime + (int)(50 * sin));
+                    if (ArrowDirection == 5)
+                        Graphics.DrawLine(pn, Width / 2 + length * ms / 3 / WaitTime, UseHeight / 2 - ms * length / 4 / WaitTime, Width / 2 + length * ms / 3 / WaitTime + (int)(50 * cos), UseHeight / 2 - ms * length / 4 / WaitTime - (int)(50 * sin));
+                    if (ArrowDirection == 4)
+                        Graphics.DrawLine(pn, Width / 2 + length * ms / 3 / WaitTime, UseHeight / 2 + ms * length / 4 / WaitTime, Width / 2 + length * ms / 3 / WaitTime + (int)(50 * cos), UseHeight / 2 + ms * length / 4 / WaitTime + (int)(50 * sin));
+
+                }
+                else
+                {
+                    IsArrowAnimation = false;
+                    ArrowTimerAnimation.Stop();
+                }
+            }
 		}
 
 		public void StartMoveAnimation(int direction) {
@@ -338,6 +372,13 @@ namespace HuntTheWumpus
 		public void StartBatAnimation() {
 			IsBatAnimated = true;
 		}
+
+        public void StartArrowAnimation(int i)
+        {
+            IsArrowAnimation = true;
+            ArrowTimerAnimation.Restart();
+            ArrowDirection = i;
+        }
 
         public void DrawInterface(int coins, int arrows, int room)
         {
@@ -568,7 +609,7 @@ namespace HuntTheWumpus
 
         public bool IsEndAnimation()
         {
-            return !IsAnimated;
+            return !IsAnimated && !IsArrowAnimation;
         }
     }
 }

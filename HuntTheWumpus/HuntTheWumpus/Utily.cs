@@ -23,5 +23,10 @@ namespace HuntTheWumpus
         {
             random = new Random((int)seed);
         }
+
+        public static double Hypot(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
     }
 }

@@ -28,12 +28,16 @@ namespace HuntTheWumpus
         {
             return Coins >= CostArrow && Arrow < 3;
         }
-        public void BuyArrow()
+        public void BuyArrows()
+        {
+            Coins -= CostArrow;
+        }
+        public void GiveArrows()
         {
             CountBuyArrow += 3 - Arrow;
             Arrow = 3;
-            Coins -= CostArrow;
         }
+
         public void PushArrow()
         {
             --Arrow;

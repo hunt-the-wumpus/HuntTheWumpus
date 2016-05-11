@@ -107,7 +107,7 @@ namespace xUnit.Tests
             player.AddCoins(0);
             Assert.True(mem + 100 == player.Coins, "AddCoins isn't correct");
             mem += 100;
-            player.BuyArrow();
+            player.BuyArrows();
             Assert.True(mem > player.Coins, "BuyArrow isn't correct");
             mem = player.Coins;
             player.BuyHint();
@@ -115,7 +115,7 @@ namespace xUnit.Tests
             int ch = 0;
             while (player.CanBuyArrow() && ch < 1000)
             {
-                player.BuyArrow();
+                player.BuyArrows();
                 ++ch;
             }
             Assert.True(ch < 1000, "CanBuyArrow isn't correct");
