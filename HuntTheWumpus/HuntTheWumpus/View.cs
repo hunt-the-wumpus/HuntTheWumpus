@@ -237,7 +237,7 @@ namespace HuntTheWumpus
             return RegionMenu.Empty;
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom, bool DrawDanger = false)
+        public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom)
         {
 			if (IsBatAnimated && !IsAnimated) {
 				if (StartRoom && danger != Danger.Pit)
@@ -263,7 +263,7 @@ namespace HuntTheWumpus
                 if (StartRoom && Active[number][i])
                 {
 					if (IsBatAnimated && !IsAnimated) {
-						Graphics.DrawImage(room[i].CompressedImage, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]), length / 3, length / 2);
+						Graphics.DrawImage(room[i].CompressedImage, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]), length / 3, length / 3);
 					} else {
 						room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
 					}
@@ -271,7 +271,7 @@ namespace HuntTheWumpus
             }
         }
 
-        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey)
+        public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey, bool activated = true)
         {
             int loclen = length - 1;
             DrawRoom(basex, basey - loclen, DangerList[0], graph[CurrentRoom][0], graph, isActive, false);
@@ -280,7 +280,7 @@ namespace HuntTheWumpus
             DrawRoom(basex - loclen * 2 / 3, basey - loclen / 2, DangerList[1], graph[CurrentRoom][1], graph, isActive, false);
             DrawRoom(basex + loclen * 2 / 3, basey + loclen / 2, DangerList[4], graph[CurrentRoom][4], graph, isActive, false);
             DrawRoom(basex - loclen * 2 / 3, basey + loclen / 2, DangerList[2], graph[CurrentRoom][2], graph, isActive, false);
-            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, true, true);
+            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, activated);
         }
 
 		private Stopwatch moveTimerAnimation;
@@ -301,11 +301,13 @@ namespace HuntTheWumpus
 				DangerListLast = DangerList;
 				dangerLast = danger;
 				CurrentRoomLast = CurrentRoom;
-			} else {
+			}
+			if (IsAnimated) {
 				long Milliseconds = moveTimerAnimation.ElapsedMilliseconds;
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
+				DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length), false);
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
@@ -585,12 +587,16 @@ namespace HuntTheWumpus
                     Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, i * Width / 5, Height);
                 if (i != num)
                     Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, (i + 1) * Width / 5, Height - 120);
+				else {
+					Graphics.FillRectangle(Brushes.Blue, i * Width / 5, Height - 120, Width / 5, 120);
+				}
                 DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
             DrawText("Enter your seed:", 660, 100, 30);
             Graphics.FillRectangle(Brushes.White, 660, 145, 360, 50);
             DrawText(seed, 658, 150, 30);
-            DrawText("GO!!", 850, 550, 40);
+			Graphics.FillRectangle(Brushes.Blue, 840, 540, 200, 90);
+            DrawText("PLAY!", 850, 550, 40);
         }
 
         public RegionPickCave GetRegionPickCave(int x, int y)

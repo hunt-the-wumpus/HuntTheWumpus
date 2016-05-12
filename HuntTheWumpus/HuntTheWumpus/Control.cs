@@ -66,7 +66,6 @@ namespace HuntTheWumpus
             view = new View(width, height);
             Width = width;
             Height = height;
-            score = new Scores(Width, Height);
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             view.ClearConsole();
             MapForPiсk = new Map[5];
@@ -184,20 +183,12 @@ namespace HuntTheWumpus
                 view.DrawPickCave(MapForPiсk[num].graph, MapForPiсk[num].isActive, num, seed);
             }
 
-            if (state == ControlState.LastWindow)
-            {
-                score.DrawFinal(view.Graphics);
-            }
-
-            if (state == ControlState.ScoreList)
-            {
-                //score.DrawScoreList();
-            }
-
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
-            score.DrawScores(view.Graphics);
-            score.TickTime();
+			if (score != null) {
+				score.TickTime();
+				score.Draw(view.Graphics);
+			}
         }
 
         void ContinueMenu()
@@ -220,7 +211,7 @@ namespace HuntTheWumpus
             minigame = new MiniGame(Width, Height);
             player = new Player();
             score = new Scores(Width, Height);
-			score.SetFinalState(false);
+			score.active = ScoreState.Achievements;
             CheckDanger = false;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;
@@ -267,7 +258,14 @@ namespace HuntTheWumpus
                     if (seed.Length > 0)
                         seed = seed.Remove(seed.Length - 1);
                 }
+				score.KeyDown("del");
             }
+			if (e.KeyCode == Keys.Enter) {
+				score.KeyDown("enter");
+			}
+			if (score != null) {
+				score.KeyDown((new KeysConverter()).ConvertToString(e.KeyCode));
+			}
         }
 
         public void MouseDown(object sender, MouseEventArgs e)
