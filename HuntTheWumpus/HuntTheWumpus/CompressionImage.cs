@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 
 namespace HuntTheWumpus {
-	class CompressionImage {
+	public class CompressionImage {
 
 		public Image CompressedImage { get; private set; }
 		public int ScreenWidth { get; set; }

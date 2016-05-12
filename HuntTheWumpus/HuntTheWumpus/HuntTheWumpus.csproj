@@ -207,6 +207,9 @@
     <Content Include="data\Cave\TryUpperRight1.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\continue.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\defeat.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
