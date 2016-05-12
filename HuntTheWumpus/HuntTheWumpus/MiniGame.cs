@@ -111,11 +111,24 @@ namespace HuntTheWumpus
             //* ...and read info about new figure */
             StreamReader file = new StreamReader(@"./data/MiniGame/" + filename);
             string line = "";
+            int rot = Utily.Next() % 4, simetr = 1 - 2 * (Utily.Next() % 2);
+            int cos = 1, sin = 0;
+            if (rot % 2 == 1)
+            {
+                cos = 0;
+                sin = 1;
+            }
+            if (rot > 1)
+            {
+                cos = -cos;
+                sin = -sin;
+            }
             while ((line = file.ReadLine()) != null)
             {
                 string[] points = line.Split(' ').ToArray();
-                MainX.Add(-int.Parse(points[0]) + (Utily.Next() % 21 - 10) / 10.0);
-                MainY.Add(-int.Parse(points[1]) + (Utily.Next() % 21 - 10) / 10.0);
+                int x1 = -int.Parse(points[0]), y1 = -int.Parse(points[1]);
+                MainX.Add((x1 * cos - y1 * sin) * simetr + (Utily.Next() % 21 - 10) / 10.0);
+                MainY.Add(x1 * sin + y1 * cos + (Utily.Next() % 21 - 10) / 10.0);
             }
             for (int i = 0; i < MainX.Count; ++i)
             {
@@ -166,7 +179,6 @@ namespace HuntTheWumpus
         /// Call this method for create new game
         public void InitializeMiniGame(int difficult)
         {
-            Difficult = difficult;
             //* Read info about game level and set random figure *//
             LifeTimer = MaxLife;
             ProgressBarDrawingAngle = 0;

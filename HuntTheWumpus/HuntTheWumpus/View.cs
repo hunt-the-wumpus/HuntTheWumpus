@@ -609,7 +609,7 @@ namespace HuntTheWumpus
 
         public bool IsEndAnimation()
         {
-            return !IsAnimated && !IsArrowAnimation;
+            return !IsAnimated && !IsArrowAnimation && !IsBatAnimated;
         }
     }
 }

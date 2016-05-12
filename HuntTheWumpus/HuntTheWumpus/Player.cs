@@ -17,8 +17,8 @@ namespace HuntTheWumpus
 
         public Player()
         {
-            CostArrow = 3;
-            CostHint = 5;
+            CostArrow = 25;
+            CostHint = 35;
             Coins = 5;
             Arrow = 3;
             CountBuyArrow = 0;
@@ -34,8 +34,8 @@ namespace HuntTheWumpus
         }
         public void GiveArrows()
         {
-            CountBuyArrow += 3 - Arrow;
-            Arrow = 3;
+            CountBuyArrow += 2;
+            Arrow += 2;
         }
 
         public void PushArrow()

@@ -53,6 +53,7 @@ namespace HuntTheWumpus
         int num = 0;
         private Map[] MapForPiсk;
         private Map map;
+        private int[] seeds;
         private string seed = "";
 
         private bool IsWin;
@@ -69,6 +70,7 @@ namespace HuntTheWumpus
             view.InitEvent(KeyDown, MouseDown, MouseUp, MouseMove);
             view.ClearConsole();
             MapForPiсk = new Map[5];
+            seeds = new int[5];
             HintMessage = new List<string>();
             HintMessage.Add("Wumpus in ");
             HintMessage.Add("Pit in ");
@@ -208,7 +210,11 @@ namespace HuntTheWumpus
         void NewGame()
         {
             for (int i = 0; i < 5; ++i)
+            {
+                seeds[i] = Utily.Next();
+                Utily.ChangeSeed(seeds[i]);
                 MapForPiсk[i] = new Map();
+            }
             num = 0;
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
@@ -349,14 +355,13 @@ namespace HuntTheWumpus
                 }
                 if (rg == RegionPickCave.Play)
                 {
-                    if (seed == "")
-                        map = MapForPiсk[num];
-                    else
-                    {
-                        Utily.ChangeSeed(long.Parse(seed));
-                        map = new Map();
-                    }
+                    long nowseed = seeds[num];
+                    if (seed != "")
+                        nowseed = long.Parse(seed);
+                    Utily.ChangeSeed(nowseed);
+                    map = new Map();
                     state = ControlState.Cave;
+                    view.AddComand("Map's seed " + nowseed, false);
                 }
             }
         }

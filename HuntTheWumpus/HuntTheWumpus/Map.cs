@@ -201,22 +201,37 @@ namespace HuntTheWumpus
             if (isActive[Room][i] && Wumpus == graph[Room][i])
                 IsWin = true;
         }
+
+        private bool TryWumpusGoAway()
+        {
+            int step = Utily.Next() % 3 + 2;
+            int nowWumpus = Wumpus;
+            int lastdir = -1;
+            for (int i = 0; i < step; i++)
+            {
+                List<int> good = new List<int>();
+                for (int j = 0; j < 6; ++j)
+                    if (isActive[nowWumpus][i] && lastdir != j)
+                        good.Add(j);
+                if (good.Count == 0)
+                    return false;
+                int dir = Utily.Next() % good.Count;
+                lastdir = (dir + 3) % 6;
+                nowWumpus = graph[nowWumpus][dir];
+            }
+            if (!RoomIsDanger(nowWumpus))
+            {
+                Wumpus = nowWumpus;
+                return true;
+            }
+            return false;
+        }
+
         public void WumpusGoAway()
         {
-            int mem = Wumpus;
-            int rnd = Utily.Next() % 6;
-            while (!isActive[mem][rnd])
-                rnd = Utily.Next() % 6;
-            Wumpus = graph[mem][rnd];
-            rnd = Utily.Next() % 6;
-            int cnt = 0;
-            while ((!isActive[Wumpus][rnd] || graph[Wumpus][rnd] == mem || RoomIsDanger(graph[Wumpus][rnd])) && cnt < 100)
-            {
-                rnd = Utily.Next() % 6;
-                ++cnt;
-            }
-            if (cnt < 100)
-                Wumpus = graph[Wumpus][rnd];
+            bool flag = false;
+            while (!flag)
+                flag = TryWumpusGoAway();
         }
         public void Respaw()
         {
