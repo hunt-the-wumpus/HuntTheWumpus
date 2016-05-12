@@ -262,18 +262,13 @@ namespace HuntTheWumpus {
 			Font StandardTextFont = new Font("Arial", 20);
 			Brush StandardFieldBrush = new SolidBrush(Color.Cyan);
 			Brush StandardTextBrush = new SolidBrush(Color.Black);
+			int lastscores = 0;
+			int point = -1;
+			Brush[] best = new SolidBrush[3];
+			best[2] = new SolidBrush(Color.FromArgb(255, 205, 127, 50));
+			best[1] = new SolidBrush(Color.Silver);
+			best[0] = new SolidBrush(Color.Gold);
 			for (int i = 0; i < Players.Count; ++i) {
-				Brush FieldBrush = StandardFieldBrush;
-				if (i == 2) {
-					FieldBrush = new SolidBrush(Color.FromArgb(255, 205, 127, 50));
-				}
-				if (i == 1) {
-					FieldBrush = new SolidBrush(Color.Silver);
-				}
-				if (i == 0) {
-					FieldBrush = new SolidBrush(Color.Gold);
-				}
-				g.FillRectangle(FieldBrush, new Rectangle(50, 50 + i * FieldSize + i * 2, CanvasWidth - 100, FieldSize));
 				string[] splitted = Players[i].Split(' ');
 				string playername = splitted[2];
 				string isvictory = splitted[1];
@@ -283,16 +278,29 @@ namespace HuntTheWumpus {
 					isvictory = "Defeated";
 				}
 				string scores = splitted[0];
+				string achievements = (splitted[3].Split('/').Length - 1).ToString() + " achievements";
+				Brush FieldBrush;
+				if (!(point < 3 && lastscores == Convert.ToInt32(scores))) {
+					point++;
+				}
+				if (point > 2) {
+					FieldBrush = StandardFieldBrush;
+				} else {
+					FieldBrush = best[point];
+				}
+				g.FillRectangle(FieldBrush, new Rectangle(50, 50 + i * FieldSize + i * 2, CanvasWidth - 100, FieldSize));
 				g.DrawString(playername, StandardTextFont, StandardTextBrush, 50 + 3, 50 + i * FieldSize + i * 2 + 1);
 				g.DrawString(scores, StandardTextFont, StandardTextBrush, 50 + 3 + 200, 50 + i * FieldSize + i * 2 + 1);
 				g.DrawString(isvictory, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75, 50 + i * FieldSize + i * 2 + 1);
+				g.DrawString(achievements, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75 + 200, 50 + i * FieldSize + i * 2 + 1);
+				lastscores = Convert.ToInt32(scores);
 			}
 			if (ActiveLeader != -1) {
 				Brush ShowAchBrush = new SolidBrush(Color.Gray);
 				int width = 140;
 				int height = 46;
 				string[] ach = Players[ActiveLeader].Split(' ')[3].Split('/');
-				int hw = ach.Length % 3;
+				int hw = (ach.Length - 1) % 3;
 				if (hw == 0 && ach.Length > 2) {
 					hw = 3;
 				}
@@ -391,7 +399,7 @@ namespace HuntTheWumpus {
 			if (active == ScoreState.Leaders) {
 				int activestring = -1;
 				for (int i = 0; i < Players.Count; ++i) {
-					if (e.X > CanvasWidth - 250 && e.X < CanvasWidth - 50 && e.Y > 50 + i * FieldSize + i * 2 && e.Y < 50 + (i + 1) * FieldSize + i * 2) {
+					if (e.X > CanvasWidth - 400 && e.X < CanvasWidth - 50 && e.Y > 50 + i * FieldSize + i * 2 && e.Y < 50 + (i + 1) * FieldSize + i * 2) {
 						activestring = i;
 					}
 				}

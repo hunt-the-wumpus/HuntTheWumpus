@@ -260,7 +260,7 @@ namespace HuntTheWumpus
                 if (StartRoom && Active[number][i])
                 {
 					if (IsBatAnimated && !IsAnimated) {
-						Graphics.DrawImage(room[i].CompressedImage, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]), length / 3, length / 2);
+						Graphics.DrawImage(room[i].CompressedImage, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]), length / 3, length / 3);
 					} else {
 						room[i].Draw(Graphics, x + (int)(length * StownPosX[i]), y + (int)(length * StownPosY[i]));
 					}
