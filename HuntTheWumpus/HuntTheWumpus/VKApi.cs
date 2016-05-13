@@ -82,72 +82,18 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		private string HttpUploadFile(string url, string file, string paramName, string contentType, NameValueCollection nvc) {
-			string boundary = "---------------------------" + DateTime.Now.Ticks.ToString("x");
-			byte[] boundarybytes = Encoding.ASCII.GetBytes("\r\n--" + boundary + "\r\n");
-
-			HttpWebRequest wr = (HttpWebRequest)WebRequest.Create(url);
-			wr.ContentType = "multipart/form-data; boundary=" + boundary;
-			wr.Method = "POST";
-			wr.KeepAlive = true;
-			wr.Credentials = CredentialCache.DefaultCredentials;
-
-			Stream rs = wr.GetRequestStream();
-
-			string formdataTemplate = "Content-Disposition: form-data; name=\"{0}\"\r\n\r\n{1}";
-			foreach (string key in nvc.Keys) {
-				rs.Write(boundarybytes, 0, boundarybytes.Length);
-				string formitem = string.Format(formdataTemplate, key, nvc[key]);
-				byte[] formitembytes = System.Text.Encoding.UTF8.GetBytes(formitem);
-				rs.Write(formitembytes, 0, formitembytes.Length);
-			}
-			rs.Write(boundarybytes, 0, boundarybytes.Length);
-
-			string headerTemplate = "Content-Disposition: form-data; name=\"{0}\"; filename=\"{1}\"\r\nContent-Type: {2}\r\n\r\n";
-			string header = string.Format(headerTemplate, paramName, file, contentType);
-			byte[] headerbytes = System.Text.Encoding.UTF8.GetBytes(header);
-			rs.Write(headerbytes, 0, headerbytes.Length);
-
-			FileStream fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
-			byte[] buffer = new byte[4096];
-			int bytesRead = 0;
-			while ((bytesRead = fileStream.Read(buffer, 0, buffer.Length)) != 0) {
-				rs.Write(buffer, 0, bytesRead);
-			}
-			fileStream.Close();
-
-			byte[] trailer = System.Text.Encoding.ASCII.GetBytes("\r\n--" + boundary + "--\r\n");
-			rs.Write(trailer, 0, trailer.Length);
-			rs.Close();
-
-			WebResponse wresp = null;
-			try {
-				wresp = wr.GetResponse();
-				Stream stream2 = wresp.GetResponseStream();
-				StreamReader reader2 = new StreamReader(stream2);
-				string responce = reader2.ReadToEnd();
-				return responce;
-			}
-			catch (Exception ex) {
-				MessageBox.Show("Error uploading file " + ex.Message);
-				if (wresp != null) {
-					wresp.Close();
-					wresp = null;
-				}
-				return "Exception " + ex.Message;
-			}
-			finally {
-				wr = null;
-			}
+		private string HttpUploadFile(string url, string file) {
+			System.Net.ServicePointManager.Expect100Continue = false;
+			WebClient uploadclient = new WebClient();
+			string res = Encoding.ASCII.GetString(uploadclient.UploadFile(url, "POST", file));
+			return res;
 		}
 
 		public void PublicPhoto() {
 			string upload_url = SendVKApi("https://api.vk.com/method/photos.getWallUploadServer?user_id=" + user + "&access_token=" + token);
 			string luck_url = ParseJsonFormat(upload_url, "\"upload_url\":", '~');
 			WebClient client = new WebClient();
-			var bytes = new NameValueCollection();
-			bytes.Add("Photo", "upload");
-			string result = HttpUploadFile(luck_url, @"data/Share.jpg", "file", "image/jpeg", bytes);
+			string result = HttpUploadFile(luck_url, @"data/Share.jpg");
 			VKresult res = JsonConvert.DeserializeObject<VKresult>(result);
 			string photo = SendVKApi("https://api.vk.com/method/photos.saveWallPhoto?photo=" + res.photo + "&hash=" + res.hash + "&user_id=" + user + "&server=" + res.server + "&access_token=" + token + "&v=5.0");
 			Photo p = JsonConvert.DeserializeObject<Photo>(photo);

@@ -186,6 +186,7 @@ namespace HuntTheWumpus
             PlayerPoints = 500;
             files_Difficulties.Clear();
             Is_playing = true;
+			Difficult = difficult;
             StreamReader file = new StreamReader(@"./data/MiniGame/Difficulties" + difficult.ToString() + ".txt");
             string line = "";
             while ((line = file.ReadLine()) != null)
