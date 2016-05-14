@@ -134,14 +134,13 @@ namespace xUnit.Tests
         {
             var view = new HuntTheWumpus.View(1024, 768);
             var score = new HuntTheWumpus.Scores(1024, 768);
-            score.DrawScores(view.Graphics);
             var minigame = new HuntTheWumpus.MiniGame(1024, 768);
             List<string> ls = new List<string>();
             ls.Add("step.png/STEP#IDONT know#opisanie##podlyanka#");
             minigame.InitializeMiniGame(2);
             minigame.GetAchievement(ls);
             score.getAchievement(ls);
-            score.DrawScores(view.Graphics);
+            score.Draw(view.Graphics);
         }
 
         [Fact]

@@ -410,7 +410,7 @@ namespace HuntTheWumpus
             }
             if (NoName76)
             {
-                acv.Add("Sunduk.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
+                acv.Add("MG2.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
             }
             if (Sniper)
             {
