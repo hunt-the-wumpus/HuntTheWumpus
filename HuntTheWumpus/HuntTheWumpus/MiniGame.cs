@@ -222,14 +222,19 @@ namespace HuntTheWumpus
                     2 * radius, 2 * radius));
             }
             /* Here we drawing user's line */
-            Pen line_marker = new Pen(Color.FromArgb(150, 0, 255, 0));
-            line_marker.Width = 5;
-            for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i)
-            {
-                g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
-            }
+            Pen line_marker = new Pen(Color.FromArgb(80, 0, 0, 255));
+            line_marker.Width = 8;
+			if (MousePositionsX.Count > 1) {
+				Point[] drawes = new Point[MousePositionsX.Count];
+				for (int i = 0; i < MousePositionsX.Count && !Is_Analytics; ++i) {
+					drawes[i] = new Point(MousePositionsX[i], MousePositionsY[i]);
+					//g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
+				}
+				g.DrawCurve(line_marker, drawes);
+			}
             Font f = new Font("Arial", 40);
             Brush brush = new SolidBrush(Color.FromArgb(50, 0, 0, 255));
+			line_marker.Width = 5;
             g.DrawString((500 - PlayerPoints).ToString(), f, brush, CanvasWidth - 50, CanvasHeight - 20);
             line_marker.Color = Color.FromArgb(255 * (360 - ProgressBarDrawingAngle) / 360, 255 * ProgressBarDrawingAngle / 360, 0);
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);

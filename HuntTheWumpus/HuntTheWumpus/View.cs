@@ -300,6 +300,16 @@ namespace HuntTheWumpus
 		private Stopwatch batTimerAnimation;
         private Stopwatch ArrowTimerAnimation;
 
+		private void DrawRegion(float directx, float directy, int x, int y) {
+			for (int i = 0; i < 6; ++i) {
+				if (directx == ScaleRoomX[i] && directy == ScaleRoomY[i]) {
+					for (int j = 0; j < 3; ++j) {
+						DrawRoom(x - (int)(ScaleRoomX[(6 + i + j - 1) % 6] * length), y - (int)(ScaleRoomY[(6 + i + j - 1) % 6] * length), Danger.Empty, 0, null, null, false);
+					}
+				}
+			}
+		}
+
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
 			Clear(Color.Black);
@@ -333,10 +343,8 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				if (Progress > 0.5) {
-					DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length) - (int)(150 * (1 - Progress)), false);
-				}
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawRegion(-ScaleRoomX[numberstone], -ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(2 * length * ScaleRoomX[numberstone]) - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(2 * length * ScaleRoomY[numberstone]) - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
 					Progress = 0.0f;
@@ -424,8 +432,17 @@ namespace HuntTheWumpus
             DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
             DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
             DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
-            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", Color.FromArgb(0, 255, 0));
-            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.FromArgb(0, 255, 0));
+			Color drawed = Color.FromArgb(0, 255, 0);
+			if (coins < 15) {
+				drawed = Color.FromArgb(255, 0, 0);
+			}
+            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", drawed);
+			if (coins >= 25) {
+				drawed = Color.FromArgb(0, 255, 0);
+			} else {
+				drawed = Color.FromArgb(255, 0, 0);
+			}
+            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", drawed);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
             if (IsBaner && BanerTimer.ElapsedMilliseconds > 2000)
@@ -653,4 +670,3 @@ namespace HuntTheWumpus
         }
     }
 }
-//kekes
