@@ -211,7 +211,7 @@ namespace HuntTheWumpus
             {
                 List<int> good = new List<int>();
                 for (int j = 0; j < 6; ++j)
-                    if (isActive[nowWumpus][i] && lastdir != j)
+                    if (isActive[nowWumpus][j] && lastdir != j)
                         good.Add(j);
                 if (good.Count == 0)
                     return false;

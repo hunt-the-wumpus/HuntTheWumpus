@@ -106,9 +106,9 @@ namespace HuntTheWumpus
             StarX = new List<int>();
             StarY = new List<int>();
             StarTime = new List<int>();
-            for (int i = 0; i < 30; ++i)
+            for (int i = 0; i < 200; ++i)
             {
-                StarX.Add(Utily.Next() % (Width - length * 5 / 3));
+                StarX.Add(Utily.Next() % Width);
                 StarY.Add(Utily.Next() % Height);
                 StarTime.Add(Utily.Next() % 200 + 100);
             }
@@ -320,15 +320,11 @@ namespace HuntTheWumpus
                 StarTime[i] -= deltaStar;
                 if (StarTime[i] <= 0)
                 {
-                    StarX[i] = Utily.Next() % (Width - length * 5 / 3);
+                    StarX[i] = Utily.Next() % Width;
                     StarY[i] = Utily.Next() % Height;
                     StarTime[i] = Utily.Next() % 200 + 500;
                 }
-                int emptX = Width / 2 - length * 5 / 6;
-                if (!IsBatAnimated)
-                    Graphics.FillRectangle(Brushes.White, StarX[i] % emptX + (Width / 2 + length * 5 / 6) * (StarX[i] / emptX), StarY[i], 1, 1);
-                else
-                    Graphics.FillRectangle(Brushes.White, StarX[i], StarY[i], 1, 1);
+                Graphics.FillRectangle(Brushes.White, StarX[i], StarY[i], 1, 1);
             }
 			if (!IsAnimated) {
 				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
