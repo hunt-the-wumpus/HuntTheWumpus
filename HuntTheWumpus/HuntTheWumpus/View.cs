@@ -291,7 +291,9 @@ namespace HuntTheWumpus
             DrawRoom(basex - loclen * 2 / 3, basey - loclen / 2, DangerList[1], graph[CurrentRoom][1], graph, isActive, false);
             DrawRoom(basex + loclen * 2 / 3, basey + loclen / 2, DangerList[4], graph[CurrentRoom][4], graph, isActive, false);
             DrawRoom(basex - loclen * 2 / 3, basey + loclen / 2, DangerList[2], graph[CurrentRoom][2], graph, isActive, false);
-            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, activated);
+			if (activated) {
+				DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, activated);
+			}
         }
 
 		private Stopwatch moveTimerAnimation;
@@ -332,7 +334,7 @@ namespace HuntTheWumpus
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
 				if (Progress > 0.5) {
-					DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length), false);
+					DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length) - (int)(150 * (1 - Progress)), false);
 				}
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);

@@ -77,15 +77,15 @@ namespace HuntTheWumpus {
 				if (wb.code != "") {
 					code = wb.code;
 					wb.Navigate(uri);
-					//MessageBox.Show("Your code is " + code);
-					var responseData = RequestResponse("https://graph.facebook.com/oauth/access_token?debug=all&client_id=" + client_id + "&client_secret=" + client_secret + "&redirect_uri=" + uri + "&code=" + code + "&responce_type=id");
+					MessageBox.Show("Your code is " + code);
+					var responseData = RequestResponse("https://graph.facebook.com/oauth/access_token?debug=all&client_id=" + client_id + "&client_secret=" + client_secret + "&code=" + code + "&responce_type=id" + "&redirect_uri=" + uri);
 					if (responseData == "") {
 						return;
 					}
-					//MessageBox.Show("result getted is " + responseData);
+					MessageBox.Show("result getted is " + responseData);
 					access_token = ParseValue(responseData, "access_token");
 					//wb = null;
-					//MessageBox.Show("Your token is " + access_token);
+					MessageBox.Show("Your token is " + access_token);
 					WebClient uploadclient = new WebClient();
 					uploadclient.UploadFile("https://graph.facebook.com/me/photos?access_token=" + access_token + "&message=I playing at Hunt the Wumpus and have this result!", "POST", "data/Share.jpg");
 					published = true;

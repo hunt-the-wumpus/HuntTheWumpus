@@ -273,7 +273,7 @@ namespace HuntTheWumpus
 			if (!IsGoodGame) {
 				Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
 			}
-			if (ProgressBarDrawingAngle == 360 && IsGoodGame) {
+			if (ProgressBarDrawingAngle >= 360 && IsGoodGame) {
 				Is_Winner = true;
 				Is_playing = false;
 			}
