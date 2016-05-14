@@ -53,6 +53,8 @@ namespace HuntTheWumpus
         public bool IsArrowAnimation { get; private set; }
         private int ArrowDirection;
         private Stopwatch BanerTimer;
+        private Stopwatch StarTimer;
+        private List<int> StarX, StarY, StarTime;
 
         private Image MainMenuImage;
 
@@ -66,7 +68,6 @@ namespace HuntTheWumpus
         private int[] TypeImageRoom;
         private CompressionImage DarkRoom;
         private CompressionImage[] room = new CompressionImage[6];
-        private CompressionImage Bat;
         private CompressionImage BackGround;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
@@ -95,12 +96,23 @@ namespace HuntTheWumpus
         {
             Bitmap = new System.Drawing.Bitmap(width, height);
             Graphics = System.Drawing.Graphics.FromImage(Bitmap);
-            ConsoleList = new List<string>();
-            BanerTimer = new Stopwatch();
-            ArrowTimerAnimation = new Stopwatch();
             Width = width;
             Height = height;
-			length = Height * 8 / 12;
+            length = Height * 8 / 12;
+            ConsoleList = new List<string>();
+            BanerTimer = new Stopwatch();
+            StarTimer = new Stopwatch();
+            StarTimer.Start();
+            StarX = new List<int>();
+            StarY = new List<int>();
+            StarTime = new List<int>();
+            for (int i = 0; i < 200; ++i)
+            {
+                StarX.Add(Utily.Next() % Width);
+                StarY.Add(Utily.Next() % Height);
+                StarTime.Add(Utily.Next() % 200 + 100);
+            }
+            ArrowTimerAnimation = new Stopwatch();
 			normallength = length;
             #region setted images
             room[0] = new CompressionImage("data/Cave/TryTop1.png", length / 3, length / 3);
@@ -131,7 +143,6 @@ namespace HuntTheWumpus
             DarkRoom.ScreenWidth = width;
             DarkRoom.ScreenHeight = height;
 
-            Bat = new CompressionImage("data/Cave/Bat.png", length, length);
             BackGround = new CompressionImage("data/Cave/background.png", width, 120);
             #endregion
             #region setted constants
@@ -280,23 +291,44 @@ namespace HuntTheWumpus
             DrawRoom(basex - loclen * 2 / 3, basey - loclen / 2, DangerList[1], graph[CurrentRoom][1], graph, isActive, false);
             DrawRoom(basex + loclen * 2 / 3, basey + loclen / 2, DangerList[4], graph[CurrentRoom][4], graph, isActive, false);
             DrawRoom(basex - loclen * 2 / 3, basey + loclen / 2, DangerList[2], graph[CurrentRoom][2], graph, isActive, false);
-            DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, activated);
+			if (activated) {
+				DrawRoom(basex, basey, danger, CurrentRoom, graph, isActive, activated);
+			}
         }
 
 		private Stopwatch moveTimerAnimation;
 		private Stopwatch batTimerAnimation;
         private Stopwatch ArrowTimerAnimation;
 
+		private void DrawRegion(float directx, float directy, int x, int y) {
+			for (int i = 0; i < 6; ++i) {
+				if (directx == ScaleRoomX[i] && directy == ScaleRoomY[i]) {
+					for (int j = 0; j < 3; ++j) {
+						DrawRoom(x - (int)(ScaleRoomX[(6 + i + j - 1) % 6] * length), y - (int)(ScaleRoomY[(6 + i + j - 1) % 6] * length), Danger.Empty, 0, null, null, false);
+					}
+				}
+			}
+		}
+
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
-			//Clear(Color.White);
-			//Clear();
+			Clear(Color.Black);
+            int deltaStar = (int)StarTimer.ElapsedMilliseconds;
+            StarTimer.Restart();
+            for (int i = 0; i < StarX.Count; ++i)
+            {
+                StarTime[i] -= deltaStar;
+                if (StarTime[i] <= 0)
+                {
+                    StarX[i] = Utily.Next() % Width;
+                    StarY[i] = Utily.Next() % Height;
+                    StarTime[i] = Utily.Next() % 200 + 500;
+                }
+                Graphics.FillRectangle(Brushes.White, StarX[i], StarY[i], 1, 1);
+            }
 			if (!IsAnimated) {
 				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
-				//Graphics.DrawImage(bar, new Rectangle(0, Height - 60, Width, 30));
 				DrawInterface(Coins, Arrows, CurrentRoom);
-				//Graphics.DrawEllipse(Pens.Red, Width / 2 - length / 2 + length / 3 - 10, Height / 12 - deltaY - 10, 20, 20);
-				//Graphics.DrawEllipse(Pens.Blue, Width / 2 - length / 2 - 10, Height / 12 + length / 2 - deltaY - 10, 20, 20);
 				isActiveLast = isActive;
 				DangerListLast = DangerList;
 				dangerLast = danger;
@@ -307,8 +339,8 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length), false);
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawRegion(-ScaleRoomX[numberstone], -ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(2 * length * ScaleRoomX[numberstone]) - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(2 * length * ScaleRoomY[numberstone]) - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
 					Progress = 0.0f;
@@ -373,7 +405,13 @@ namespace HuntTheWumpus
 
 		public void StartBatAnimation() {
 			IsBatAnimated = true;
-		}
+            for (int i = 0; i < StarX.Count; ++i)
+            {
+                StarX[i] = Utily.Next() % Width;
+                StarY[i] = Utily.Next() % Height;
+                StarTime[i] = 2500;
+            }
+        }
 
         public void StartArrowAnimation(int i)
         {
@@ -390,8 +428,17 @@ namespace HuntTheWumpus
             DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
             DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
             DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
-            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", Color.FromArgb(0, 255, 0));
-            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", Color.FromArgb(0, 255, 0));
+			Color drawed = Color.FromArgb(0, 255, 0);
+			if (coins < 15) {
+				drawed = Color.FromArgb(255, 0, 0);
+			}
+            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", drawed);
+			if (coins >= 25) {
+				drawed = Color.FromArgb(0, 255, 0);
+			} else {
+				drawed = Color.FromArgb(255, 0, 0);
+			}
+            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", drawed);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
             if (IsBaner && BanerTimer.ElapsedMilliseconds > 2000)
@@ -619,4 +666,3 @@ namespace HuntTheWumpus
         }
     }
 }
-//kekes

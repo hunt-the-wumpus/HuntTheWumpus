@@ -76,6 +76,7 @@ namespace HuntTheWumpus {
 		private Image BackGround = null;
 		private Image FinalPicture = null;
 		#endregion
+        private Image ListBackground = Image.FromFile("data/Sprites/ListBackground.png");
 
 		#region Timer show achievements
 		private const double BeginDrawingPosition = -250;
@@ -262,7 +263,7 @@ namespace HuntTheWumpus {
 			Font StandardTextFont = new Font("Arial", 20);
 			Brush StandardFieldBrush = new SolidBrush(Color.Cyan);
 			Brush StandardTextBrush = new SolidBrush(Color.Black);
-			int lastscores = 0;
+			int lastscores = -1;
 			int point = -1;
 			Brush[] best = new SolidBrush[3];
 			best[2] = new SolidBrush(Color.FromArgb(255, 205, 127, 50));
@@ -346,11 +347,15 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		private void ShareCreate() {
-			Bitmap b = new Bitmap(CanvasWidth, CanvasHeight);
-			Graphics g = Graphics.FromImage(b);
-			DrawFinalMain(g);
-			b.Save("data/Share.jpg");
+        private void ShareCreate() {
+            Bitmap b = new Bitmap(CanvasWidth, CanvasHeight);
+            Graphics g = Graphics.FromImage(b);
+            DrawFinalMain(g);
+            b.Save("data/Share.jpg");
+        }
+
+        public bool Clicked(int buttonX, int buttonY, int buttonSize, int x, int y) {
+			return (buttonX < x && buttonX + buttonSize > x && buttonY < y && buttonY + buttonSize > y);
 		}
 
 		public void MouseUp(MouseEventArgs e) {
@@ -425,7 +430,6 @@ namespace HuntTheWumpus {
 				if (c == "enter" && name.Length > 0) {
 					SaveLeader();
 					LoadLeaders();
-					active = ScoreState.Leaders;
 				}
 			}
 		}
@@ -445,7 +449,7 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		private void LoadLeaders() {
+		public void LoadLeaders() {
 			Players = new List<string>();
 			StreamReader file = new StreamReader(@"" + LeadersFile);
 			string line = "";
@@ -455,6 +459,7 @@ namespace HuntTheWumpus {
 			Players.Remove("");
 			Players.Sort(Comparer);
 			Players.Reverse();
+			active = ScoreState.Leaders;
 		}
 
 		private void SaveLeader() {

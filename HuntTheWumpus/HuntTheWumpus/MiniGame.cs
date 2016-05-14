@@ -56,7 +56,7 @@ namespace HuntTheWumpus
         // Radius of point
         private const int radius = 10;
 
-        private const int MaxPointsFromOneFigure = 1200;
+        private const int MaxPointsFromOneFigure = 1500;
         private const float Speed_Change_Scale_Distance = 1.0f;
 
         // Scale for transform figure position to screen position 
@@ -88,6 +88,8 @@ namespace HuntTheWumpus
         private bool Accurate = false;
         private bool NoName76 = false;
         private bool Sniper = false;
+
+		private bool IsGoodGame = false;
 
         /// Class constructor, say me window's width and height
         public MiniGame(int DrawingWidth, int DrawingHeight)
@@ -186,6 +188,8 @@ namespace HuntTheWumpus
             PlayerPoints = 500;
             files_Difficulties.Clear();
             Is_playing = true;
+			IsGoodGame = false;
+			Difficult = difficult;
             StreamReader file = new StreamReader(@"./data/MiniGame/Difficulties" + difficult.ToString() + ".txt");
             string line = "";
             while ((line = file.ReadLine()) != null)
@@ -218,15 +222,20 @@ namespace HuntTheWumpus
                     2 * radius, 2 * radius));
             }
             /* Here we drawing user's line */
-            Pen line_marker = new Pen(Color.FromArgb(150, 0, 255, 0));
-            line_marker.Width = 5;
-            for (int i = 1; i < MousePositionsX.Count && !Is_Analytics; ++i)
-            {
-                g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
-            }
+            Pen line_marker = new Pen(Color.FromArgb(80, 0, 0, 255));
+            line_marker.Width = 8;
+			if (MousePositionsX.Count > 1) {
+				Point[] drawes = new Point[MousePositionsX.Count];
+				for (int i = 0; i < MousePositionsX.Count && !Is_Analytics; ++i) {
+					drawes[i] = new Point(MousePositionsX[i], MousePositionsY[i]);
+					//g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
+				}
+				g.DrawCurve(line_marker, drawes);
+			}
             Font f = new Font("Arial", 40);
             Brush brush = new SolidBrush(Color.FromArgb(50, 0, 0, 255));
-            g.DrawString(PlayerPoints.ToString(), f, brush, CanvasWidth - 50, CanvasHeight - 20);
+			line_marker.Width = 5;
+            g.DrawString((500 - PlayerPoints).ToString(), f, brush, CanvasWidth - 50, CanvasHeight - 20);
             line_marker.Color = Color.FromArgb(255 * (360 - ProgressBarDrawingAngle) / 360, 255 * ProgressBarDrawingAngle / 360, 0);
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
             line_marker.Color = Color.FromArgb(NowNegative, 255 * (MaxLife - LifeTimer) / MaxLife, 255 * LifeTimer / MaxLife, 0);
@@ -245,12 +254,13 @@ namespace HuntTheWumpus
                 ProgressBarDrawingAngle += ProgressBarSpeedChangeAngle * (int)Milliseconds / 1000;
                 ProgressBarDrawingAngle = Math.Min(ProgressBarDrawingAngle, 360);
             }
-            LifeTimer -= (int)Milliseconds;
-            if (LifeTimer <= 0)
-            {
-                Is_Winner = false;
-                Is_playing = false;
-            }
+			if (!IsGoodGame) {
+				LifeTimer -= (int)Milliseconds;
+				if (LifeTimer <= 0) {
+					Is_Winner = false;
+					Is_playing = false;
+				}
+			}
             if (LifeTimer < MaxLife / 2)
             {
                 if (NowNegative >= MaximalNegative)
@@ -265,7 +275,13 @@ namespace HuntTheWumpus
                 NowNegative = Math.Min(NowNegative, 255);
                 NowNegative = Math.Max(NowNegative, 0);
             }
-            Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
+			if (!IsGoodGame) {
+				Scale_Distance += Speed_Change_Scale_Distance * Milliseconds / 1000;
+			}
+			if (ProgressBarDrawingAngle >= 360 && IsGoodGame) {
+				Is_Winner = true;
+				Is_playing = false;
+			}
             Event_timer.Restart();
         }
 
@@ -324,8 +340,7 @@ namespace HuntTheWumpus
 				Accurate = Accurate || (Difficult == 1 && points >= 500 && PlayerPoints == 500 - points);
 				NoName76 = NoName76 || (Difficult == 2 && points >= 500 && PlayerPoints == 500 - points);
 				Sniper = Sniper || (Difficult == 3 && points >= 500 && PlayerPoints == 500 - points);
-				Is_playing = false;
-                Is_Winner = true;
+				IsGoodGame = true;
             }
             else {
                 Random range = new Random();
@@ -400,7 +415,7 @@ namespace HuntTheWumpus
             }
             if (NoName76)
             {
-                acv.Add("Sunduk.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
+                acv.Add("MG2.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
             }
             if (Sniper)
             {
