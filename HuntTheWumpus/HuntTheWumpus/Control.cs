@@ -284,6 +284,7 @@ namespace HuntTheWumpus
                         int add = map.Move((int)rg);
                         player.AddCoins(add);
                         score.AddScores(5 * add);
+						view.StartAddCoinAnimation(add);
                         if (map.danger == Danger.Bat)
                         	view.StartBatAnimation();
                         view.StartMoveAnimation((int)rg);
