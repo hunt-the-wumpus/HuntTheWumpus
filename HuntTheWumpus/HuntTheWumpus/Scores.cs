@@ -425,7 +425,6 @@ namespace HuntTheWumpus {
 				if (c == "enter" && name.Length > 0) {
 					SaveLeader();
 					LoadLeaders();
-					active = ScoreState.Leaders;
 				}
 			}
 		}
@@ -445,7 +444,7 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		private void LoadLeaders() {
+		public void LoadLeaders() {
 			Players = new List<string>();
 			StreamReader file = new StreamReader(@"" + LeadersFile);
 			string line = "";
@@ -455,6 +454,7 @@ namespace HuntTheWumpus {
 			Players.Remove("");
 			Players.Sort(Comparer);
 			Players.Reverse();
+			active = ScoreState.Leaders;
 		}
 
 		private void SaveLeader() {

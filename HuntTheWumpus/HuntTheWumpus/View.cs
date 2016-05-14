@@ -289,7 +289,7 @@ namespace HuntTheWumpus
 
         public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
         {
-			//Clear(Color.White);
+			Clear(Color.Black);
 			//Clear();
 			if (!IsAnimated) {
 				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
@@ -307,7 +307,9 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length), false);
+				if (Progress > 0.5) {
+					DrawAllFriends(graph, null, DangerListLast, Danger.Empty, 0, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(ScaleRoomX[numberstone] * length), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(ScaleRoomY[numberstone] * length), false);
+				}
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {

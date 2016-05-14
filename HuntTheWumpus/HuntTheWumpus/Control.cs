@@ -85,8 +85,8 @@ namespace HuntTheWumpus
                 view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
                 if (!MiniGameEnd)
                 {
-                    minigame.DrawMiniGame(view.Graphics);
-                    minigame.TickTime();
+					minigame.TickTime();
+					minigame.DrawMiniGame(view.Graphics);
                     if (!minigame.Is_playing)
                     {
                         List<string> listachiv = new List<string>();
