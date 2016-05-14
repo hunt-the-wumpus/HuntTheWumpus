@@ -81,7 +81,6 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.Clear();
                 view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
                 if (!MiniGameEnd)
                 {
