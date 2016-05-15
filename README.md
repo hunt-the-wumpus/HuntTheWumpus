@@ -34,7 +34,7 @@ Go through all the rooms visiting each 1 time only
 
 ![Step into the Abyss](HuntTheWumpus/HuntTheWumpus/data/Achievements/Step.png)
 
-Explore 25 rooms
+Explore 12 rooms
 
 ![Shooter](HuntTheWumpus/HuntTheWumpus/data/Achievements/Shooter.png)
 
