@@ -77,6 +77,7 @@ namespace HuntTheWumpus {
 		private Image FinalPicture = null;
 		#endregion
         private Image ListBackground = Image.FromFile("data/Sprites/ListBackground.png");
+        private Image ShareButton = Image.FromFile("data/ShareButton.png");
 
 		#region Timer show achievements
 		private const double BeginDrawingPosition = -250;
@@ -97,6 +98,7 @@ namespace HuntTheWumpus {
 		private Button ShareVK;
 		private Button ShareFaceBook;
 		private Button Continue;
+        private Button StartNewGame;
 		#endregion
 
 		#region Hint messages
@@ -134,16 +136,21 @@ namespace HuntTheWumpus {
 			#endregion
 			#region SetFACEBOOKsharebutton
 			ShareFaceBook = new Button("data/ShareFACEBOOK.png", 30, 30);
-			ShareFaceBook.x = 50 + 30 + 3;
+			ShareFaceBook.x = 50 + 60 + 3;
 			ShareFaceBook.y = Height - 30 - 40;
 			#endregion
 			#region SetContinueButton
 			Continue = new Button("data/continue.png", 150, 30);
-			Continue.x = 50 + 30 + 3 + 30 + 3;
-			Continue.y = Height - 30 - 40;
-			#endregion
-			#region SetEdit
-			editX = (Width - editWidth) / 2;
+			Continue.x = 113;
+			Continue.y = 300;
+            #endregion
+            #region SetStartNewGameButton
+            StartNewGame = new Button("data/StartNewGameButt.png", 280, 121);
+            StartNewGame.x = 744;
+            StartNewGame.y = 643;
+            #endregion
+            #region SetEdit
+            editX = (Width - editWidth) / 2;
 			editY = (Height - editHeight) / 2;
 			#endregion
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
@@ -247,19 +254,22 @@ namespace HuntTheWumpus {
 			ShareVK.Draw(g);
 			ShareFaceBook.Draw(g);
 			Continue.Draw(g);
+            g.DrawImage(ShareButton, 15, CanvasHeight - 130);
 		}
 
 		private void DrawCheckingName(Graphics g) {
 			Brush standardField = new SolidBrush(Color.Cyan);
 			Brush standardText = new SolidBrush(Color.DarkBlue);
 			Font fieldText = new Font("Arial", editHeight * 2 / 3);
-			g.Clear(Color.White);
+            g.DrawString("Enter your name", fieldText, standardText, 400, 300);
+            g.Clear(Color.White);
 			g.FillRectangle(standardField, new Rectangle(editX, editY, editWidth, editHeight));
 			g.DrawString(name, fieldText, standardText, editX + 3, editY + 1);
 		}
 
 		private void DrawLeaders(Graphics g) {
 			g.Clear(Color.White);
+            StartNewGame.Draw(g);
 			Font StandardTextFont = new Font("Arial", 20);
 			Brush StandardFieldBrush = new SolidBrush(Color.Cyan);
 			Brush StandardTextBrush = new SolidBrush(Color.Black);
