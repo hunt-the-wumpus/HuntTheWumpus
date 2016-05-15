@@ -456,7 +456,7 @@ namespace HuntTheWumpus
 				if (Milliseconds > 1750) {
 					Alpha = (int)(255 * (2500 - Milliseconds) / 750);
 				}
-                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Batang", Color.FromArgb(Alpha, 255, 0, 0));
+                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
             }
 			if (CoinTimer != null) {
 				long Milliseconds = CoinTimer.ElapsedMilliseconds;

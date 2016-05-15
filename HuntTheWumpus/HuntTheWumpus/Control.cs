@@ -337,6 +337,8 @@ namespace HuntTheWumpus
                 }
                 if (rg == RegionMenu.ScoreList)
                 {
+					score = new Scores(Width, Height);
+					score.LoadLeaders(false);
                     state = ControlState.ScoreList;
                 }
                 if (rg == RegionMenu.Exit)
@@ -370,8 +372,18 @@ namespace HuntTheWumpus
             {
                 minigame.Up(e);
             }
-            if (state == ControlState.LastWindow)
+            if (state == ControlState.LastWindow && score != null)
                 score.MouseUp(e);
+			if (e.Button == MouseButtons.Left && score != null && (state == ControlState.LastWindow || state == ControlState.ScoreList)) {
+				ScoreRegion rg = score.GetRegion(e.X, e.Y);
+				if (rg == ScoreRegion.Back) {
+					score = null;
+					player = null;
+					map = null;
+					minigame = null;
+					state = ControlState.MainMenu;
+				}
+			}
         }
 
         public void MouseMove(object sender, MouseEventArgs e)
@@ -380,7 +392,7 @@ namespace HuntTheWumpus
             {
                 minigame.Move(e);
             }
-            if (state == ControlState.LastWindow)
+            if (state == ControlState.LastWindow || state == ControlState.ScoreList)
                 score.MouseMove(e);
         }
     }

@@ -298,8 +298,8 @@ namespace HuntTheWumpus
         {
             if (VisitRoom == 30)
                 achiv.Add("explorer.png/Исследователь#Побывать в каждой#комнате пещеры");
-            if (VisitRoom >= 25)
-                achiv.Add("MG1.png/Шаг в бездну#Побывать в 25 комнатах");
+            if (VisitRoom >= 12)
+                achiv.Add("Step.png/Шаг в бездну#Побывать в 12 комнатах");
             bool flag = true;
             for (int i = 0; i < 30; ++i)
                 flag = flag && CountVisit[i] == 1;
