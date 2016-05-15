@@ -21,7 +21,6 @@ namespace HuntTheWumpus {
 		CheckingName,
 		Leaders
 	}
-
 	public enum ScoreRegion {
 		Null,
 		Continue,
@@ -93,8 +92,9 @@ namespace HuntTheWumpus {
 		private VKApi vk;
 		private FaceBookApi face;
 		#endregion
-		
+
 		#region Buttons
+		private CompressionImage ShareForm;
 		private Button ShareVK;
 		private Button ShareFaceBook;
 		private Button Continue;
@@ -131,6 +131,9 @@ namespace HuntTheWumpus {
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
+			#region SetShareForm
+			ShareForm = new CompressionImage("data/ShareButton.png", 125, 70);
+			#endregion
 			#region SetVKshareButton
 			ShareVK = new Button("data/ShareVK.png", 30, 30);
 			ShareVK.x = 50;
@@ -143,7 +146,7 @@ namespace HuntTheWumpus {
 			#endregion
 			#region SetContinueButton
 			Continue = new Button("data/continue.png", 150, 30);
-			Continue.x = 50 + 30 + 3 + 30 + 3;
+			Continue.x = 50 + 30 + 3 + 30 + 3 + 50;
 			Continue.y = Height - 30 - 40;
 			#endregion
 			#region SetBackButton
@@ -254,6 +257,7 @@ namespace HuntTheWumpus {
 			for (int i = 0; i < strings.Length; ++i) {
 				g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), HintX + 15, HintY + 5 + i * 12);
 			}
+			ShareForm.Draw(g, (ShareVK.x + ShareFaceBook.x - 95) / 2, (ShareVK.y - 30));
 			ShareVK.Draw(g);
 			ShareFaceBook.Draw(g);
 			Continue.Draw(g);
@@ -321,10 +325,10 @@ namespace HuntTheWumpus {
 				int height = 46;
 				string[] ach = Players[ActiveLeader].Split(' ')[3].Split('/');
 				int hw = (ach.Length - 1) % 3;
-				if (hw == 0 && ach.Length > 2) {
+				if (ach.Length > 2) {
 					hw = 3;
 				}
-				int HintWidth = hw * width;
+				int HintWidth = hw * width + 10;
 				int HintHeight = ((ach.Length + 1) / 3) * height;
 				g.FillRectangle(ShowAchBrush, new Rectangle(CanvasWidth - HintWidth - 75, 50 + ActiveLeader * FieldSize + 2 * ActiveLeader + ScaleY, HintWidth, HintHeight));
 				for (int i = 0; i < ach.Length; ++i) {

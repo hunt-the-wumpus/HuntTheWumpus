@@ -56,12 +56,12 @@ namespace HuntTheWumpus
         }
         public void GetAchievement(List<string> achiv)
         {
-            if (CountBuyArrow >= 4)
-                achiv.Add("MG1.png/tyt lychnik");
-            if (CountBuyArrow >= 6)
-                achiv.Add("MG1.png/tyt hunter");
-            if (CountBuyArrow >= 8)
-                achiv.Add("MG1.png/tyt war");
+            if (CountBuyArrow == 2)
+                achiv.Add("Shooter.png/Shooter#Buy 2 arrows");
+            if (CountBuyArrow == 4)
+                achiv.Add("Hunter.png/Hunter#Buy 4 arrows");
+            if (CountBuyArrow == 8)
+                achiv.Add("Robin.png/Robin Hood#Buy 8 arrows");
         }
     }
 }

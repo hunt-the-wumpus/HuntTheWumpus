@@ -51,6 +51,8 @@ namespace HuntTheWumpus
         public bool IsBaner { get; set; }
 		public bool IsBatAnimated { get; private set; }
         public bool IsArrowAnimation { get; private set; }
+		public bool MaximizateBat { get; private set; }
+		public bool MinimizeBat { get; private set; }
         private int ArrowDirection;
         private Stopwatch BanerTimer;
 		private Stopwatch CoinTimer;
@@ -339,8 +341,10 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				//DrawRoom(TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress), dangerLast, CurrentRoomLast, graph, isActiveLast, true);
 				DrawRegion(-ScaleRoomX[numberstone], -ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(2 * length * ScaleRoomX[numberstone]) - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(2 * length * ScaleRoomY[numberstone]) - (int)(length * ScaleRoomY[numberstone] * Progress));
+				//DrawRegion(ScaleRoomX[numberstone], ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
 					Progress = 0.0f;
@@ -348,7 +352,7 @@ namespace HuntTheWumpus
 					IsAnimated = false;
 				}
 			}
-			if (IsBatAnimated && !IsAnimated) {
+			if ((IsBatAnimated || MaximizateBat) && !IsAnimated) {
 				if (batTimerAnimation == null) {
 					batTimerAnimation = new Stopwatch();
 					batTimerAnimation.Start();
@@ -357,7 +361,15 @@ namespace HuntTheWumpus
 					float progress = Milliseconds / 2500.0f;
 					length = (int)(normallength * (1.0f - progress));
 					if (progress >= 1.0f) {
+						progress -= 1;
+						MaximizateBat = true;
+						MinimizeBat = false;
+						length = (int)(normallength * progress);
+					}
+					if (Milliseconds > 5000) {
 						IsBatAnimated = false;
+						MaximizateBat = false;
+						MinimizeBat = false;
 						batTimerAnimation = null;
 						length = normallength;
 					}
@@ -405,6 +417,7 @@ namespace HuntTheWumpus
 
 		public void StartBatAnimation() {
 			IsBatAnimated = true;
+			MinimizeBat = true;
             for (int i = 0; i < StarX.Count; ++i)
             {
                 StarX[i] = Utily.Next() % Width;
@@ -487,7 +500,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX + (int)(BigSizeX * k);
             return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
         }
-
         private bool isRightUpper(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x2;
@@ -499,7 +511,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = x2 - (int)(BigSizeX * k);
             return (ix - HipotinuzeX > 0 && iy > y1 && iy < y2);
         }
-
         private bool isLeftDown(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x1;
@@ -511,7 +522,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX + (int)(BigSizeX * k);
             return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
         }
-
         private bool isRightDown(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x1;
@@ -523,12 +533,10 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX - (int)(BigSizeX * k);
             return (ix - HipotinuzeX > 0 && iy > y1 && iy < y2);
         }
-
         private bool isUnder(int x1, int x2, int y12, int x, int y)
         {
             return (y < y12 && x1 < x && x2 > x);
         }
-
         private bool isDown(int x1, int x2, int y12, int x, int y)
         {
             return (y > y12 && x1 < x && x2 > x);

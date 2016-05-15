@@ -81,16 +81,20 @@ namespace HuntTheWumpus
         {
             if (state == ControlState.Cave)
             {
-                view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
+				List<string> listachiv = new List<string>();
+				map.GetAchievement(listachiv);
+				if (minigame != null) {
+					minigame.GetAchievement(listachiv);
+				}
+				player.GetAchievement(listachiv);
+				score.getAchievement(listachiv);
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
                 if (!MiniGameEnd)
                 {
 					minigame.TickTime();
 					minigame.DrawMiniGame(view.Graphics);
                     if (!minigame.Is_playing)
                     {
-                        List<string> listachiv = new List<string>();
-                        minigame.GetAchievement(listachiv);
-                        score.getAchievement(listachiv);
                         if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
                         {
                             IsWin = false;
@@ -103,11 +107,11 @@ namespace HuntTheWumpus
                             Hint NowHint = (Hint)rnd;
                             int HintData = 0;
                             if (NowHint == Hint.Bat)
-                                HintData = map.GetBat();
+                                HintData = map.GetBat() + 1;
                             if (NowHint == Hint.Pit)
-                                HintData = map.GetPit();
+                                HintData = map.GetPit() + 1;
                             if (NowHint == Hint.Wumpus)
-                                HintData = map.Wumpus;
+                                HintData = map.Wumpus + 1;
                             if (NowHint != Hint.NoLuck)
                                 view.AddComand(HintMessage[(int)NowHint] + HintData, true);
                             else
@@ -128,7 +132,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = true;
                     }
                 }
-                if (!CheckDanger && !view.IsBatAnimated && !view.IsAnimated)
+                if (!CheckDanger && !view.MinimizeBat && !view.IsAnimated)
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
@@ -183,7 +187,7 @@ namespace HuntTheWumpus
             }
 
             if (time > 0)
-                view.DrawText((1000 / time).ToString(), 5, 5, 10);
+                view.DrawText((1000 / time).ToString(), 5, 5, 10, "Arial", Color.White);
 			if (score != null) {
 				score.TickTime();
 				score.Draw(view.Graphics);
@@ -233,11 +237,7 @@ namespace HuntTheWumpus
                     if (minigame.Is_playing)
                         minigame.Pause(true);
                 }
-                else if (state == ControlState.LastWindow)
-                    state = ControlState.ScoreList;
-                else if (state == ControlState.ScoreList)
-                    state = ControlState.MainMenu;
-                else if (state == ControlState.PickCave)
+				if (state == ControlState.PickCave)
                 {
                     state = ControlState.MainMenu;
                     OldState = ControlState.PickCave;
@@ -289,9 +289,6 @@ namespace HuntTheWumpus
                         	view.StartBatAnimation();
                         view.StartMoveAnimation((int)rg);
                         CheckDanger = false;
-                        List<string> achiv = new List<string>();
-                        map.GetAchievement(achiv);
-                        score.getAchievement(achiv);
                     }
                     else
                     {
