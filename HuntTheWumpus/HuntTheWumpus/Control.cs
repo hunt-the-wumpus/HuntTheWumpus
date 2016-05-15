@@ -84,8 +84,8 @@ namespace HuntTheWumpus
                 view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
                 if (!MiniGameEnd)
                 {
-					minigame.TickTime();
-					minigame.DrawMiniGame(view.Graphics);
+                    minigame.TickTime();
+                    minigame.DrawMiniGame(view.Graphics);
                     if (!minigame.Is_playing)
                     {
                         List<string> listachiv = new List<string>();
@@ -116,10 +116,12 @@ namespace HuntTheWumpus
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
                             player.GiveArrows();
+                            view.AddComand("You received 2 arrows", true);
                         }
                         if (minigame.Is_Winner && StoryMG.Wumpus == StoryMiniGame)
                         {
                             map.WumpusGoAway();
+                            view.AddComand("Wumpus run away", true);
                         }
                         if (minigame.Is_Winner)
                         {
@@ -184,10 +186,11 @@ namespace HuntTheWumpus
 
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10);
-			if (score != null) {
-				score.TickTime();
-				score.Draw(view.Graphics);
-			}
+            if (score != null)
+            {
+                score.TickTime();
+                score.Draw(view.Graphics);
+            }
         }
 
         void ContinueMenu()
@@ -210,7 +213,7 @@ namespace HuntTheWumpus
             minigame = new MiniGame(Width, Height);
             player = new Player();
             score = new Scores(Width, Height);
-			score.active = ScoreState.Achievements;
+            score.active = ScoreState.Achievements;
             CheckDanger = false;
             IsWin = false;
             StoryMiniGame = StoryMG.Empty;
@@ -257,14 +260,16 @@ namespace HuntTheWumpus
                     if (seed.Length > 0)
                         seed = seed.Remove(seed.Length - 1);
                 }
-				score.KeyDown("del");
+                score.KeyDown("del");
             }
-			if (e.KeyCode == Keys.Enter) {
-				score.KeyDown("enter");
-			}
-			if (score != null) {
-				score.KeyDown((new KeysConverter()).ConvertToString(e.KeyCode));
-			}
+            if (e.KeyCode == Keys.Enter)
+            {
+                score.KeyDown("enter");
+            }
+            if (score != null)
+            {
+                score.KeyDown((new KeysConverter()).ConvertToString(e.KeyCode));
+            }
         }
 
         public void MouseDown(object sender, MouseEventArgs e)
@@ -275,7 +280,7 @@ namespace HuntTheWumpus
             }
             if (state == ControlState.Cave && MiniGameEnd && view.IsEndAnimation())
             {
-				view.StopAnimation();
+                view.StopAnimation();
                 RegionCave rg = view.GetRegionCave(e.X, e.Y);
                 if (rg >= 0 && (int)rg < 6 && map.isActive[map.Room][(int)rg])
                 {
@@ -284,8 +289,12 @@ namespace HuntTheWumpus
                         int add = map.Move((int)rg);
                         player.AddCoins(add);
                         score.AddScores(5 * add);
+                        if (add == 1)
+                            view.AddComand("You pick up coin", true);
+                        else if (add > 1)
+                            view.AddComand("You pick up " + add + " coins", true);
                         if (map.danger == Danger.Bat)
-                        	view.StartBatAnimation();
+                            view.StartBatAnimation();
                         view.StartMoveAnimation((int)rg);
                         CheckDanger = false;
                         List<string> achiv = new List<string>();
@@ -302,21 +311,31 @@ namespace HuntTheWumpus
                         score.getAchievement(achiv);
                     }
                 }
-                if (rg == RegionCave.BuyArrow && player.CanBuyArrow())
+                if (rg == RegionCave.BuyArrow)
                 {
-                    StoryMiniGame = StoryMG.BuyArrow;
-                    MiniGameEnd = false;
-                    minigame = new MiniGame(Width, Height);
-                    minigame.InitializeMiniGame(1);
-                    player.BuyArrows();
+                    if (player.CanBuyArrow())
+                    {
+                        StoryMiniGame = StoryMG.BuyArrow;
+                        MiniGameEnd = false;
+                        minigame = new MiniGame(Width, Height);
+                        minigame.InitializeMiniGame(1);
+                        player.BuyArrows();
+                    }
+                    else
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyArrows().ToString() + ")", true);
                 }
-                if (rg == RegionCave.BuyHint && player.CanBuyHint())
+                if (rg == RegionCave.BuyHint)
                 {
-                    StoryMiniGame = StoryMG.BuyHint;
-                    MiniGameEnd = false;
-                    minigame = new MiniGame(Width, Height);
-                    minigame.InitializeMiniGame(2);
-                    player.BuyHint();
+                    if (player.CanBuyHint())
+                    {
+                        StoryMiniGame = StoryMG.BuyHint;
+                        MiniGameEnd = false;
+                        minigame = new MiniGame(Width, Height);
+                        minigame.InitializeMiniGame(2);
+                        player.BuyHint();
+                    }
+                    else
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyHint().ToString() + ")", true);
                 }
                 if (rg == RegionCave.UpConsole)
                     view.ChangeIndex(1);

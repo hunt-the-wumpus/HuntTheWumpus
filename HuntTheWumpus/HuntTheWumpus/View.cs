@@ -569,9 +569,9 @@ namespace HuntTheWumpus
 
         public void AddComand(string s, bool b)
         {
-            if (IndexConsole == ConsoleList.Count - 1)
-                ++IndexConsole;
             string[] strs = s.Split('#');
+            if (IndexConsole == ConsoleList.Count - 1)
+                IndexConsole += strs.Length;
             for (int i = strs.Length - 1; i >= 0; i--)
                 ConsoleList.Add(strs[i]);
             if (b)
@@ -635,14 +635,15 @@ namespace HuntTheWumpus
                 if (i != num)
                     Graphics.DrawLine(new Pen(Color.Black), i * Width / 5, Height - 120, (i + 1) * Width / 5, Height - 120);
 				else {
-					Graphics.FillRectangle(Brushes.Blue, i * Width / 5, Height - 120, Width / 5, 120);
+					Graphics.FillRectangle(Brushes.Green, i * Width / 5, Height - 120, Width / 5 + 1, 120);
 				}
                 DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
-            DrawText("Enter your seed:", 660, 100, 30);
-            Graphics.FillRectangle(Brushes.White, 660, 145, 360, 50);
-            DrawText(seed, 658, 150, 30);
-			Graphics.FillRectangle(Brushes.Blue, 840, 540, 200, 90);
+            DrawText("Pick a cave or", 660, 150, 30);
+            DrawText("enter your seed", 660, 190, 30);
+            Graphics.FillRectangle(Brushes.White, 660, 245, 360, 50);
+            DrawText(seed, 658, 250, 30);
+			Graphics.FillRectangle(Brushes.Green, 850, 547, 165, 68);
             DrawText("PLAY!", 850, 550, 40);
         }
 

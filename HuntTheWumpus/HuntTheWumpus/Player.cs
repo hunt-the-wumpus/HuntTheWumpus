@@ -32,6 +32,10 @@ namespace HuntTheWumpus
         {
             Coins -= CostArrow;
         }
+        public int NeedForBuyArrows()
+        {
+            return Math.Max(0, CostArrow - Coins);
+        }
         public void GiveArrows()
         {
             CountBuyArrow += 2;
@@ -49,6 +53,10 @@ namespace HuntTheWumpus
         public void BuyHint()
         {
             Coins -= CostHint;
+        }
+        public int NeedForBuyHint()
+        {
+            return Math.Max(0, CostHint - Coins);
         }
         public void AddCoins(int i)
         {
