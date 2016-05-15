@@ -45,6 +45,7 @@ namespace HuntTheWumpus
         private MiniGame minigame;
         private bool CheckDanger;
         private StoryMG StoryMiniGame;
+        private bool UseMiniGame;
 
         private Scores score;
 
@@ -94,8 +95,7 @@ namespace HuntTheWumpus
                         if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
                         {
                             IsWin = false;
-                            state = ControlState.LastWindow;
-                            score.SetFinalState(false);
+                            EndGame();
                         }
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyHint)
                         {
@@ -138,6 +138,7 @@ namespace HuntTheWumpus
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Pit;
                         minigame.InitializeMiniGame(2);
+                        UseMiniGame = true;
                         MiniGameEnd = false;
                     }
                     if (map.danger == Danger.Bat)
@@ -150,6 +151,7 @@ namespace HuntTheWumpus
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Wumpus;
                         MiniGameEnd = false;
+                        UseMiniGame = true;
                         minigame.InitializeMiniGame(3);
                     }
                     Danger dangerabout = map.GetDangerAbout();
@@ -163,14 +165,12 @@ namespace HuntTheWumpus
                 if (map.IsWin && view.IsEndAnimation())
                 {
                     IsWin = true;
-                    state = ControlState.LastWindow;
-                    score.SetFinalState(true);
+                    EndGame();
                 }
                 else if (player.Arrow == 0 && view.IsEndAnimation())
                 {
                     IsWin = false;
-                    score.SetFinalState(false);
-                    state = ControlState.LastWindow;
+                    EndGame();
                 }
             }
 
@@ -221,6 +221,19 @@ namespace HuntTheWumpus
             view.ClearConsole();
             seed = "";
             state = ControlState.PickCave;
+            UseMiniGame = false;
+        }
+
+        private void EndGame()
+        {
+            state = ControlState.LastWindow;
+            if (!UseMiniGame)
+            {
+                List<string> ls = new List<string>();
+                ls.Add("MG1.png/namedlyaneuzalMiniGame#mbvseponatno");
+                score.getAchievement(ls);
+            }
+            score.SetFinalState(false);
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
@@ -319,6 +332,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
                         minigame.InitializeMiniGame(1);
+                        UseMiniGame = true;
                         player.BuyArrows();
                     }
                     else
@@ -332,6 +346,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
                         minigame.InitializeMiniGame(2);
+                        UseMiniGame = true;
                         player.BuyHint();
                     }
                     else
