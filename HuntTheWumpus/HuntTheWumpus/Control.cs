@@ -89,7 +89,7 @@ namespace HuntTheWumpus
 				}
 				player.GetAchievement(listachiv);
 				score.getAchievement(listachiv);
-				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room, player.Coins, player.Arrow);
+				view.DrawCave(map.graph, map.isActive, map.GetDangerList(), map.danger, map.Room);
                 if (!MiniGameEnd)
                 {
                     minigame.TickTime();
@@ -120,7 +120,7 @@ namespace HuntTheWumpus
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
                             player.GiveArrows();
-                            view.AddComand("You received 2 arrows", true);
+                            view.AddComand("You received 2 arrows", true, false);
                         }
                         if (minigame.Is_Winner && StoryMG.Wumpus == StoryMiniGame)
                         {
@@ -133,7 +133,9 @@ namespace HuntTheWumpus
                         }
                         MiniGameEnd = true;
                     }
-                }
+                } else {
+					view.DrawInterface(player.Coins, player.Arrow, map.Room);
+				}
                 if (!CheckDanger && !view.MinimizeBat && !view.IsAnimated)
                 {
                     CheckDanger = true;
@@ -235,7 +237,7 @@ namespace HuntTheWumpus
                 ls.Add("MG1.png/namedlyaneuzalMiniGame#mbvseponatno");
                 score.getAchievement(ls);
             }
-            score.SetFinalState(false);
+            score.SetFinalState(IsWin);
         }
 
         public void KeyDown(object sender, KeyEventArgs e)
@@ -328,7 +330,7 @@ namespace HuntTheWumpus
                         player.BuyArrows();
                     }
                     else
-                        view.AddComand("Not enough coins(need " + player.NeedForBuyArrows().ToString() + ")", true);
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyArrows().ToString() + ")", true, false);
                 }
                 if (rg == RegionCave.BuyHint)
                 {
@@ -342,7 +344,7 @@ namespace HuntTheWumpus
                         player.BuyHint();
                     }
                     else
-                        view.AddComand("Not enough coins(need " + player.NeedForBuyHint().ToString() + ")", true);
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyHint().ToString() + ")", true, false);
                 }
                 if (rg == RegionCave.UpConsole)
                     view.ChangeIndex(1);

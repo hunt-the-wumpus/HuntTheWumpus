@@ -81,6 +81,7 @@ namespace HuntTheWumpus
         private int IndexConsole = 0;
 
 		private string TextCoin = "";
+		private string TextBaner = "";
 
         private float Progress = 0.0f;
         private List<bool>[] isActiveLast;
@@ -312,7 +313,7 @@ namespace HuntTheWumpus
 			}
 		}
 
-        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int Coins, int Arrows)
+        public void DrawCave(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom)
         {
 			Clear(Color.Black);
             int deltaStar = (int)StarTimer.ElapsedMilliseconds;
@@ -330,7 +331,6 @@ namespace HuntTheWumpus
             }
 			if (!IsAnimated) {
 				DrawAllFriends(graph, isActive, DangerList, danger, CurrentRoom, Width / 2 - length / 2, (Height - length) / 2 - deltaY);
-				DrawInterface(Coins, Arrows, CurrentRoom);
 				isActiveLast = isActive;
 				DangerListLast = DangerList;
 				dangerLast = danger;
@@ -341,11 +341,8 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				//DrawRoom(TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress), dangerLast, CurrentRoomLast, graph, isActiveLast, true);
 				DrawRegion(-ScaleRoomX[numberstone], -ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(2 * length * ScaleRoomX[numberstone]) - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(2 * length * ScaleRoomY[numberstone]) - (int)(length * ScaleRoomY[numberstone] * Progress));
-				//DrawRegion(ScaleRoomX[numberstone], ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
-				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
 					Progress = 0.0f;
 					moveTimerAnimation.Stop();
@@ -437,7 +434,6 @@ namespace HuntTheWumpus
         {
             int yup = Height - 120;
             BackGround.Draw(Graphics, 0, Height - 120);
-            //Graphics.FillRectangle(Brushes.Gray, 0, yup, Width, 120);
             DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
             DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
             DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
@@ -458,6 +454,7 @@ namespace HuntTheWumpus
             {
                 IsBaner = false;
                 BanerTimer.Reset();
+				TextBaner = "";
             }
             if (IsBaner)
             {
@@ -469,7 +466,7 @@ namespace HuntTheWumpus
 				if (Milliseconds > 1750) {
 					Alpha = (int)(255 * (2500 - Milliseconds) / 750);
 				}
-                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
+                DrawTextMid(TextBaner, Width / 2, 100, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
             }
 			if (CoinTimer != null) {
 				long Milliseconds = CoinTimer.ElapsedMilliseconds;
@@ -599,18 +596,21 @@ namespace HuntTheWumpus
             IndexConsole = ConsoleList.Count - 1;
         }
 
-        public void AddComand(string s, bool b)
+        public void AddComand(string s, bool isbaner, bool toaddconsole = true)
         {
-            string[] strs = s.Split('#');
-            if (IndexConsole == ConsoleList.Count - 1)
-                IndexConsole += strs.Length;
-            for (int i = strs.Length - 1; i >= 0; i--)
-                ConsoleList.Add(strs[i]);
-            if (b)
+			if (toaddconsole) {
+				string[] strs = s.Split('#');
+				if (IndexConsole == ConsoleList.Count - 1)
+					IndexConsole += strs.Length;
+				for (int i = strs.Length - 1; i >= 0; i--)
+					ConsoleList.Add(strs[i]);
+			}
+            if (isbaner)
             {
                 BanerTimer.Restart();
                 IsBaner = true;
             }
+			TextBaner = s;
         }
 
         public void ChangeIndex(int up)

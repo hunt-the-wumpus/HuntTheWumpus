@@ -228,7 +228,6 @@ namespace HuntTheWumpus
 				Point[] drawes = new Point[MousePositionsX.Count];
 				for (int i = 0; i < MousePositionsX.Count && !Is_Analytics; ++i) {
 					drawes[i] = new Point(MousePositionsX[i], MousePositionsY[i]);
-					//g.DrawLine(line_marker, MousePositionsX[i - 1], MousePositionsY[i - 1], MousePositionsX[i], MousePositionsY[i]);
 				}
 				g.DrawCurve(line_marker, drawes);
 			}
@@ -240,6 +239,7 @@ namespace HuntTheWumpus
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
             line_marker.Color = Color.FromArgb(NowNegative, 255 * (MaxLife - LifeTimer) / MaxLife, 255 * LifeTimer / MaxLife, 0);
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2 - 10, CanvasHeight / 6 - 10, CanvasHeight * 3 / 2 + 20, CanvasHeight * 3 / 2 + 20), -90, LifeTimer * 360 / MaxLife);
+			g.DrawString("Draw figures, for survive", new Font("Arial", 25), Brushes.White, CanvasWidth - 200, CanvasHeight * 2 - 100);
         }
 
         public void TickTime()
