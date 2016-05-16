@@ -21,10 +21,10 @@ namespace HuntTheWumpus {
 		CheckingName,
 		Leaders
 	}
-
 	public enum ScoreRegion {
 		Null,
-		Continue
+		Continue,
+		Back
 	}
 
 	public class Button {
@@ -75,16 +75,15 @@ namespace HuntTheWumpus {
 		private Image activeImage = null;
 		private Image BackGround = null;
 		private Image FinalPicture = null;
+		private CompressionImage ListBackground;
 		#endregion
-        private Image ListBackground = Image.FromFile("data/Sprites/ListBackground.png");
-        private Image ShareButton = Image.FromFile("data/ShareButton.png");
 
 		#region Timer show achievements
 		private const double BeginDrawingPosition = -250;
 		private const double EndDrawingPosition = 0;
 		private const int TimerShowStarting = 3000;
 		private double AchievementDrawingPosition = 0;
-		private double SpeedChangeDrawingPosition = 45;
+		private double SpeedChangeDrawingPosition = 90;
 		private int TimerShowAchievement = 3000;
 		private int NowChange = 1;
 		#endregion
@@ -93,12 +92,13 @@ namespace HuntTheWumpus {
 		private VKApi vk;
 		private FaceBookApi face;
 		#endregion
-		
+
 		#region Buttons
+		private CompressionImage ShareForm;
 		private Button ShareVK;
 		private Button ShareFaceBook;
 		private Button Continue;
-        private Button StartNewGame;
+		private Button Back;
 		#endregion
 
 		#region Hint messages
@@ -111,15 +111,17 @@ namespace HuntTheWumpus {
 		private string name = "";
 		private int editX = 0;
 		private int editY = 0;
-		private int editWidth = 400;
+		private int editWidth = 490;
 		private int editHeight = 50;
 		#endregion
 
 		#region Leaders
 		private List<string> Players;
+		private const int ScaleY = 50;
 		private const string LeadersFile = "data/Leaders.dat";
 		private const int FieldSize = 30;
 		private int ActiveLeader = -1;
+		private int ShowNow = -1;
 		#endregion
 
 		private string MessageAchievement = "";
@@ -129,6 +131,9 @@ namespace HuntTheWumpus {
 		public Scores(int Width, int Height) {
 			CanvasWidth = Width;
 			CanvasHeight = Height;
+			#region SetShareForm
+			ShareForm = new CompressionImage("data/ShareButton.png", 125, 70);
+			#endregion
 			#region SetVKshareButton
 			ShareVK = new Button("data/ShareVK.png", 30, 30);
 			ShareVK.x = 50;
@@ -141,19 +146,20 @@ namespace HuntTheWumpus {
 			#endregion
 			#region SetContinueButton
 			Continue = new Button("data/continue.png", 150, 30);
-			Continue.x = 113;
-			Continue.y = 300;
-            #endregion
-            #region SetStartNewGameButton
-            StartNewGame = new Button("data/StartNewGameButt.png", 280, 121);
-            StartNewGame.x = 744;
-            StartNewGame.y = 643;
-            #endregion
-            #region SetEdit
-            editX = (Width - editWidth) / 2;
+			Continue.x = 50 + 30 + 3 + 30 + 3 + 50;
+			Continue.y = Height - 30 - 40;
+			#endregion
+			#region SetBackButton
+			Back = new Button("data/back.png", 150, 30);
+			Back.x = (Width - 150) / 2;
+			Back.y = Height - 30 - 50;
+			#endregion
+			#region SetEdit
+			editX = (Width - editWidth) / 2;
 			editY = (Height - editHeight) / 2;
 			#endregion
 			BackGround = Image.FromFile("data/Achievements/BackGround.png");
+			ListBackground = new CompressionImage("data/Sprites/ListBackGround.png", Width, Height);
 			active = ScoreState.Null;
 			Event_timer.Start();
 		}
@@ -251,25 +257,25 @@ namespace HuntTheWumpus {
 			for (int i = 0; i < strings.Length; ++i) {
 				g.DrawString(strings[i], new Font("Colibri", 8), new SolidBrush(Color.LimeGreen), HintX + 15, HintY + 5 + i * 12);
 			}
+			ShareForm.Draw(g, (ShareVK.x + ShareFaceBook.x - 95) / 2, (ShareVK.y - 30));
 			ShareVK.Draw(g);
 			ShareFaceBook.Draw(g);
 			Continue.Draw(g);
-            g.DrawImage(ShareButton, 15, CanvasHeight - 130);
 		}
 
 		private void DrawCheckingName(Graphics g) {
+			ListBackground.Draw(g, 0, 0);
 			Brush standardField = new SolidBrush(Color.Cyan);
 			Brush standardText = new SolidBrush(Color.DarkBlue);
 			Font fieldText = new Font("Arial", editHeight * 2 / 3);
-            g.DrawString("Enter your name", fieldText, standardText, 400, 300);
-            g.Clear(Color.White);
+			g.DrawString("Enter your name", fieldText, Brushes.White, 50, 50);
 			g.FillRectangle(standardField, new Rectangle(editX, editY, editWidth, editHeight));
 			g.DrawString(name, fieldText, standardText, editX + 3, editY + 1);
 		}
 
 		private void DrawLeaders(Graphics g) {
-			g.Clear(Color.White);
-            StartNewGame.Draw(g);
+			ListBackground.Draw(g, 0, 0);
+			g.DrawString("Leaders", new Font("Arial", 30), Brushes.White, 30, 30);
 			Font StandardTextFont = new Font("Arial", 20);
 			Brush StandardFieldBrush = new SolidBrush(Color.Cyan);
 			Brush StandardTextBrush = new SolidBrush(Color.Black);
@@ -289,21 +295,28 @@ namespace HuntTheWumpus {
 					isvictory = "Defeated";
 				}
 				string scores = splitted[0];
-				string achievements = (splitted[3].Split('/').Length - 1).ToString() + " achievements";
-				Brush FieldBrush;
+				int CountAchievements = splitted[3].Split('/').Length - 1;
+				string achievements = CountAchievements.ToString() + " achievements";
+				if (CountAchievements > 0) {
+					achievements += "\t\t[Show]";
+				}
+				Brush FieldBrush = Brushes.White;
+				if (i == ShowNow) {
+					FieldBrush = Brushes.Green;
+				}
 				if (!(point < 3 && lastscores == Convert.ToInt32(scores))) {
 					point++;
 				}
-				if (point > 2) {
+				if (point > 2 && i != ShowNow) {
 					FieldBrush = StandardFieldBrush;
-				} else {
+				} else if (point <= 2) {
 					FieldBrush = best[point];
 				}
-				g.FillRectangle(FieldBrush, new Rectangle(50, 50 + i * FieldSize + i * 2, CanvasWidth - 100, FieldSize));
-				g.DrawString(playername, StandardTextFont, StandardTextBrush, 50 + 3, 50 + i * FieldSize + i * 2 + 1);
-				g.DrawString(scores, StandardTextFont, StandardTextBrush, 50 + 3 + 200, 50 + i * FieldSize + i * 2 + 1);
-				g.DrawString(isvictory, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75, 50 + i * FieldSize + i * 2 + 1);
-				g.DrawString(achievements, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75 + 200, 50 + i * FieldSize + i * 2 + 1);
+				g.FillRectangle(FieldBrush, new Rectangle(50, 50 + i * FieldSize + i * 2 + ScaleY, CanvasWidth - 100, FieldSize));
+				g.DrawString(playername, StandardTextFont, StandardTextBrush, 50 + 3, 50 + i * FieldSize + i * 2 + 1 + ScaleY);
+				g.DrawString(scores, StandardTextFont, StandardTextBrush, 50 + 3 + 200, 50 + i * FieldSize + i * 2 + 1 + ScaleY);
+				g.DrawString(isvictory, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75, 50 + i * FieldSize + i * 2 + 1 + ScaleY);
+				g.DrawString(achievements, StandardTextFont, StandardTextBrush, 50 + 3 + 200 + 75 + 200, 50 + i * FieldSize + i * 2 + 1 + ScaleY);
 				lastscores = Convert.ToInt32(scores);
 			}
 			if (ActiveLeader != -1) {
@@ -312,12 +325,12 @@ namespace HuntTheWumpus {
 				int height = 46;
 				string[] ach = Players[ActiveLeader].Split(' ')[3].Split('/');
 				int hw = (ach.Length - 1) % 3;
-				if (hw == 0 && ach.Length > 2) {
+				if (ach.Length > 2) {
 					hw = 3;
 				}
-				int HintWidth = hw * width;
+				int HintWidth = hw * width + 10;
 				int HintHeight = ((ach.Length + 1) / 3) * height;
-				g.FillRectangle(ShowAchBrush, new Rectangle(CanvasWidth - HintWidth - 75, 50 + ActiveLeader * FieldSize + 2 * ActiveLeader, HintWidth, HintHeight));
+				g.FillRectangle(ShowAchBrush, new Rectangle(CanvasWidth - HintWidth - 75, 50 + ActiveLeader * FieldSize + 2 * ActiveLeader + ScaleY, HintWidth, HintHeight));
 				for (int i = 0; i < ach.Length; ++i) {
 					if (ach[i] == "") {
 						break;
@@ -325,9 +338,10 @@ namespace HuntTheWumpus {
 					Image img = Image.FromFile("data/Achievements/" + ach[i]);
 					int activestring = i / 3;
 					int number = i % 3;
-					g.DrawImage(img, new Rectangle(CanvasWidth - HintWidth - 75 + 2 + number * width, 50 + ActiveLeader * FieldSize + 2 * ActiveLeader + 1 + height * activestring, width, height));
+					g.DrawImage(img, new Rectangle(CanvasWidth - HintWidth - 75 + 2 + number * width, 50 + ScaleY + ActiveLeader * FieldSize + 2 * ActiveLeader + 1 + height * activestring, width, height));
 				}
 			}
+			Back.Draw(g);
 		}
 
 		public void SetFinalState(bool isWinner) {
@@ -373,14 +387,14 @@ namespace HuntTheWumpus {
 				active = ScoreState.CheckingName;
 				name = "";
 			}
-			if (active == ScoreState.Final && e.Button == MouseButtons.Left && ShareFaceBook.Clicked(e.X, e.Y)) {
+			if (active == ScoreState.Final && e.Button == MouseButtons.Left && ShareVK.Clicked(e.X, e.Y)) {
 				face = null;
 				vk = null;
 				ShareCreate();
 				vk = new VKApi();
 				vk.OauthAuthorize();
 			}
-			if (active == ScoreState.Final && e.Button == MouseButtons.Left && ShareVK.Clicked(e.X, e.Y)) {
+			if (active == ScoreState.Final && e.Button == MouseButtons.Left && ShareFaceBook.Clicked(e.X, e.Y)) {
 				vk = null;
 				face = null;
 				ShareCreate();
@@ -414,7 +428,7 @@ namespace HuntTheWumpus {
 			if (active == ScoreState.Leaders) {
 				int activestring = -1;
 				for (int i = 0; i < Players.Count; ++i) {
-					if (e.X > CanvasWidth - 400 && e.X < CanvasWidth - 50 && e.Y > 50 + i * FieldSize + i * 2 && e.Y < 50 + (i + 1) * FieldSize + i * 2) {
+					if (e.X > CanvasWidth - 400 && e.X < CanvasWidth - 50 && e.Y > 50 + ScaleY + i * FieldSize + i * 2 && e.Y < 50 + ScaleY + (i + 1) * FieldSize + i * 2) {
 						activestring = i;
 					}
 				}
@@ -425,6 +439,9 @@ namespace HuntTheWumpus {
 		public ScoreRegion GetRegion(int x, int y) {
 			if (Continue.Clicked(x, y) && active == ScoreState.Final) {
 				return ScoreRegion.Continue;
+			}
+			if (active == ScoreState.Leaders && Back.Clicked(x, y)) {
+				return ScoreRegion.Back;
 			}
 			return ScoreRegion.Null;
 		}
@@ -459,7 +476,19 @@ namespace HuntTheWumpus {
 			}
 		}
 
-		public void LoadLeaders() {
+		private string ArrayToString(List<string> array, char Cut = '~', int AddedPart = 0) {
+			string result = "";
+			for (int i = 0; i < array.Count; ++i) {
+				if (Cut != '~') {
+					result += array[i].Split(Cut)[AddedPart] + "/";
+				} else {
+					result += array[i] + "/";
+				}
+			}
+			return result;
+		}
+
+		public void LoadLeaders(bool FromLast = true) {
 			Players = new List<string>();
 			StreamReader file = new StreamReader(@"" + LeadersFile);
 			string line = "";
@@ -469,16 +498,19 @@ namespace HuntTheWumpus {
 			Players.Remove("");
 			Players.Sort(Comparer);
 			Players.Reverse();
+			for (int i = 0; i < Players.Count && FromLast; i++) {
+				string nowPlayer = Score.ToString() + " " + Winner.ToString() + " " + name + " " + ArrayToString(WasAchievements, '/', 0);
+				if (nowPlayer == Players[i]) {
+					ShowNow = i;
+					break;
+				}
+			}
 			active = ScoreState.Leaders;
 		}
 
 		private void SaveLeader() {
 			StreamWriter file = new StreamWriter(@"" + LeadersFile, true);
-			string makeach = "";
-			for (int i = 0; i < WasAchievements.Count; ++i) {
-				makeach += WasAchievements[i].Split('/')[0] + "/";
-			}
-			file.WriteLine(Score.ToString() + " " + Winner.ToString() + " " + name + " " + makeach);
+			file.WriteLine(Score.ToString() + " " + Winner.ToString() + " " + name + " " + ArrayToString(WasAchievements, '/'));
 			file.Close();
 		}
 	}

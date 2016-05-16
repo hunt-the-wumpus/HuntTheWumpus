@@ -155,6 +155,9 @@
     <Content Include="data\Achievements\Step.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\back.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\Cave\background.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

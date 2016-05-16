@@ -21,7 +21,7 @@ namespace HuntTheWumpus
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;//double.Parse(str) use format a.b
-            Control control = new Control(1024, 768);
+            Control control = new Control(1024, 745);
             long TimeDrawing = 1;
             System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
             

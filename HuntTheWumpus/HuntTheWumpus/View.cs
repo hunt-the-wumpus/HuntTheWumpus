@@ -51,8 +51,11 @@ namespace HuntTheWumpus
         public bool IsBaner { get; set; }
 		public bool IsBatAnimated { get; private set; }
         public bool IsArrowAnimation { get; private set; }
+		public bool MaximizateBat { get; private set; }
+		public bool MinimizeBat { get; private set; }
         private int ArrowDirection;
         private Stopwatch BanerTimer;
+		private Stopwatch CoinTimer;
         private Stopwatch StarTimer;
         private List<int> StarX, StarY, StarTime;
 
@@ -76,6 +79,8 @@ namespace HuntTheWumpus
 
         private List<string> ConsoleList;
         private int IndexConsole = 0;
+
+		private string TextCoin = "";
 
         private float Progress = 0.0f;
         private List<bool>[] isActiveLast;
@@ -266,9 +271,6 @@ namespace HuntTheWumpus
 				else
 					DarkRoom.Draw(Graphics, x, y);
 			}
-            /*if (danger == Danger.Bat && DrawDanger) {
-				Bat.Draw(Graphics, x, y);
-			}*/
             for (int i = 0; i < 6; i++)
             {
                 if (StartRoom && Active[number][i])
@@ -339,8 +341,10 @@ namespace HuntTheWumpus
 				Progress = Milliseconds / 2500.0f;
 				int TargetCenterX = Width / 2 - length / 2;
 				int TargetCenterY = (Height - length) / 2 - deltaY;
-				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				//DrawRoom(TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress), dangerLast, CurrentRoomLast, graph, isActiveLast, true);
 				DrawRegion(-ScaleRoomX[numberstone], -ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress) + (int)(2 * length * ScaleRoomX[numberstone]) - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress) + (int)(2 * length * ScaleRoomY[numberstone]) - (int)(length * ScaleRoomY[numberstone] * Progress));
+				//DrawRegion(ScaleRoomX[numberstone], ScaleRoomY[numberstone], TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
+				DrawAllFriends(graph, isActiveLast, DangerListLast, dangerLast, CurrentRoomLast, TargetCenterX - (int)(length * ScaleRoomX[numberstone] * Progress), TargetCenterY - (int)(length * ScaleRoomY[numberstone] * Progress));
 				DrawInterface(Coins, Arrows, CurrentRoom);
 				if (Progress >= 1.0f) {
 					Progress = 0.0f;
@@ -348,7 +352,7 @@ namespace HuntTheWumpus
 					IsAnimated = false;
 				}
 			}
-			if (IsBatAnimated && !IsAnimated) {
+			if ((IsBatAnimated || MaximizateBat) && !IsAnimated) {
 				if (batTimerAnimation == null) {
 					batTimerAnimation = new Stopwatch();
 					batTimerAnimation.Start();
@@ -357,7 +361,15 @@ namespace HuntTheWumpus
 					float progress = Milliseconds / 2500.0f;
 					length = (int)(normallength * (1.0f - progress));
 					if (progress >= 1.0f) {
+						progress -= 1;
+						MaximizateBat = true;
+						MinimizeBat = false;
+						length = (int)(normallength * progress);
+					}
+					if (Milliseconds > 5000) {
 						IsBatAnimated = false;
+						MaximizateBat = false;
+						MinimizeBat = false;
 						batTimerAnimation = null;
 						length = normallength;
 					}
@@ -405,6 +417,7 @@ namespace HuntTheWumpus
 
 		public void StartBatAnimation() {
 			IsBatAnimated = true;
+			MinimizeBat = true;
             for (int i = 0; i < StarX.Count; ++i)
             {
                 StarX[i] = Utily.Next() % Width;
@@ -441,15 +454,39 @@ namespace HuntTheWumpus
             DrawText("Buy Hint", 170, yup + 70, 20, "Arial", drawed);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
-            if (IsBaner && BanerTimer.ElapsedMilliseconds > 2000)
+            if (IsBaner && BanerTimer.ElapsedMilliseconds > 2500)
             {
                 IsBaner = false;
                 BanerTimer.Reset();
             }
             if (IsBaner)
             {
-                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Batang", Color.FromArgb(0, 255, 0));
+				long Milliseconds = BanerTimer.ElapsedMilliseconds;
+				int Alpha = 255;
+				if (Milliseconds < 750) {
+					Alpha = (int)(255 * Milliseconds / 750);
+				}
+				if (Milliseconds > 1750) {
+					Alpha = (int)(255 * (2500 - Milliseconds) / 750);
+				}
+                DrawTextMid(ConsoleList[ConsoleList.Count - 1], Width / 2, 100, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
             }
+			if (CoinTimer != null) {
+				long Milliseconds = CoinTimer.ElapsedMilliseconds;
+				int goldAlpha = Color.Gold.A;
+				if (Milliseconds <= 255) {
+					goldAlpha = (int)Milliseconds;
+				}
+				if (Milliseconds >= 1000 - 255 && Milliseconds <= 1000) {
+					goldAlpha = (int)(1000 - Milliseconds);
+				}
+				if (Milliseconds > 1000) {
+					CoinTimer.Stop();
+					CoinTimer = null;
+					TextCoin = "";
+				}
+				DrawTextMid(TextCoin, Width / 2, Height - 120 - 25 - (int)(Milliseconds / 10), 20, "Arial", Color.FromArgb(goldAlpha, Color.Gold));
+			}
         }
 
         private bool isLeftUpper(int x1, int y1, int x2, int y2, int ix, int iy)
@@ -463,7 +500,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX + (int)(BigSizeX * k);
             return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
         }
-
         private bool isRightUpper(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x2;
@@ -475,7 +511,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = x2 - (int)(BigSizeX * k);
             return (ix - HipotinuzeX > 0 && iy > y1 && iy < y2);
         }
-
         private bool isLeftDown(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x1;
@@ -487,7 +522,6 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX + (int)(BigSizeX * k);
             return (HipotinuzeX - ix > 0 && iy > y1 && iy < y2);
         }
-
         private bool isRightDown(int x1, int y1, int x2, int y2, int ix, int iy)
         {
             int proectionX = x1;
@@ -499,12 +533,10 @@ namespace HuntTheWumpus
             float HipotinuzeX = proectionX - (int)(BigSizeX * k);
             return (ix - HipotinuzeX > 0 && iy > y1 && iy < y2);
         }
-
         private bool isUnder(int x1, int x2, int y12, int x, int y)
         {
             return (y < y12 && x1 < x && x2 > x);
         }
-
         private bool isDown(int x1, int x2, int y12, int x, int y)
         {
             return (y > y12 && x1 < x && x2 > x);
@@ -655,6 +687,15 @@ namespace HuntTheWumpus
                 return RegionPickCave.Play;
             return RegionPickCave.Empty;
         }
+
+		public void StartAddCoinAnimation(int add) {
+			if (add == 0) {
+				return;
+			}
+			CoinTimer = new Stopwatch();
+			TextCoin = "+ " + add.ToString() + " coins";
+			CoinTimer.Start();
+		}
 
 		public void StopAnimation() {
 			IsBaner = false;
