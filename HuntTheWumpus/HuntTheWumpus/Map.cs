@@ -215,7 +215,7 @@ namespace HuntTheWumpus
                         good.Add(j);
                 if (good.Count == 0)
                     return false;
-                int dir = Utily.Next() % good.Count;
+                int dir = good[Utily.Next() % good.Count];
                 lastdir = (dir + 3) % 6;
                 nowWumpus = graph[nowWumpus][dir];
             }
