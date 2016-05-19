@@ -16,6 +16,7 @@ namespace HuntTheWumpus
         public bool Is_Winner { get; private set; }
         // This is TRUE, if now game initialized and playing, else it's FALSE
         public bool Is_playing { get; private set; }
+		public string HintText { get; set; }
 
         // This difficult of last game
         public int Difficult { get; private set; }
@@ -239,7 +240,7 @@ namespace HuntTheWumpus
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2, CanvasHeight / 6, CanvasHeight * 3 / 2, CanvasHeight * 3 / 2), -90, ProgressBarDrawingAngle);
             line_marker.Color = Color.FromArgb(NowNegative, 255 * (MaxLife - LifeTimer) / MaxLife, 255 * LifeTimer / MaxLife, 0);
             g.DrawArc(line_marker, new Rectangle(CanvasWidth / 2 - 10, CanvasHeight / 6 - 10, CanvasHeight * 3 / 2 + 20, CanvasHeight * 3 / 2 + 20), -90, LifeTimer * 360 / MaxLife);
-			g.DrawString("Draw figures, for survive", new Font("Arial", 25), Brushes.White, CanvasWidth - 200, CanvasHeight * 2 - 100);
+			g.DrawString(HintText, new Font("Arial", 25), Brushes.White, CanvasWidth - g.MeasureString(HintText, new Font("Arial", 25)).Width / 2, CanvasHeight * 2 - 100);
         }
 
         public void TickTime()

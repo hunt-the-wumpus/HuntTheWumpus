@@ -143,6 +143,7 @@ namespace HuntTheWumpus
                     {
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Pit;
+						minigame.HintText = "Pit! Draw figures for survive!";
                         minigame.InitializeMiniGame(2);
                         UseMiniGame = true;
                         MiniGameEnd = false;
@@ -156,6 +157,7 @@ namespace HuntTheWumpus
                     {
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Wumpus;
+						minigame.HintText = "Wumpus! Draw figures for survive";
                         MiniGameEnd = false;
                         UseMiniGame = true;
                         minigame.InitializeMiniGame(3);
@@ -325,6 +327,7 @@ namespace HuntTheWumpus
                         StoryMiniGame = StoryMG.BuyArrow;
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
+						minigame.HintText = "Draw figures or get arrow";
                         minigame.InitializeMiniGame(1);
                         UseMiniGame = true;
                         player.BuyArrows();
@@ -339,6 +342,7 @@ namespace HuntTheWumpus
                         StoryMiniGame = StoryMG.BuyHint;
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
+						minigame.HintText = "Draw figures for get hint!";
                         minigame.InitializeMiniGame(2);
                         UseMiniGame = true;
                         player.BuyHint();
