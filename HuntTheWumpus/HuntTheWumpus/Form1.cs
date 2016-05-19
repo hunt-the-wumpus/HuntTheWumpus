@@ -19,6 +19,9 @@ namespace HuntTheWumpus
             this.ClientSize = new Size(width, height);
             pictureBox1.Width = width;
             pictureBox1.Height = height;
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            MaximizeBox = false;
+            StartPosition = FormStartPosition.CenterScreen;
         }
 
         public void InitEvent(KeyEventHandler KeyDown, MouseEventHandler MouseDown, MouseEventHandler MouseUp, MouseEventHandler MouseMove)
