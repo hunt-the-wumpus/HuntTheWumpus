@@ -72,6 +72,7 @@ namespace HuntTheWumpus
         private CompressionImage DarkRoom;
         private CompressionImage[] room = new CompressionImage[6];
         private CompressionImage BackGround;
+        private CompressionImage WumpusImg;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
         private List<float> ScaleRoomX = new List<float>();
@@ -150,6 +151,9 @@ namespace HuntTheWumpus
             DarkRoom.ScreenHeight = height;
 
             BackGround = new CompressionImage("data/Cave/background.png", width, 120);
+            WumpusImg = new CompressionImage("data/Cave/wumpus.png", length / 2, length / 2);
+            WumpusImg.ScreenWidth = Width;
+            WumpusImg.ScreenHeight = Height;
             #endregion
             #region setted constants
             StownPosX.Add(1.0f / 3.0f - 1.0f / 70.0f); // 0 item
@@ -264,7 +268,6 @@ namespace HuntTheWumpus
 				else
 					Graphics.DrawImage(DarkRoom.CompressedImage, x, y, length, length);
 			} else {
-				//Graphics.DrawImage(img, new Rectangle(x, y, length, length));
 				if (StartRoom && danger != Danger.Pit)
 					CaveRoom[TypeImageRoom[number]].Draw(Graphics, x, y);
 				else if (StartRoom)
@@ -283,6 +286,8 @@ namespace HuntTheWumpus
 					}
                 }
             }
+            if (StartRoom && danger == Danger.Wumpus)
+                WumpusImg.Draw(Graphics, x + length / 4, y + length / 4);
         }
 
         public void DrawAllFriends(List<int>[] graph, List<bool>[] isActive, List<Danger> DangerList, Danger danger, int CurrentRoom, int basex, int basey, bool activated = true)

@@ -232,6 +232,14 @@ namespace HuntTheWumpus
             bool flag = false;
             while (!flag)
                 flag = TryWumpusGoAway();
+            if (Room == BatRoom.Item1 || Room == BatRoom.Item2)
+                danger = Danger.Bat;
+            else if (Room == PitRoom.Item1 || Room == PitRoom.Item2)
+                danger = Danger.Pit;
+            else if (Room == Wumpus)
+                danger = Danger.Wumpus;
+            else
+                danger = Danger.Empty;
         }
         public void Respaw()
         {
