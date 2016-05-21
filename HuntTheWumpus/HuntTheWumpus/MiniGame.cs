@@ -400,27 +400,27 @@ namespace HuntTheWumpus
         {
             if (Faster)
             {
-                acv.Add("MG1.png/Speedy#Finish buy arrow mini-game in less#than 7 seconds");
+                acv.Add("MG1.png/SPEEDY#Finish buy arrow mini-game in less#than 7 seconds");
             }
             if (Reactivity)
             {
-                acv.Add("MG2.png/Reactive#Finish pit or hint mini-game in#less than 7 seconds");
+                acv.Add("MG2.png/REACTIVE#Finish pit or hint mini-game in#less than 7 seconds");
             }
             if (Zinger)
             {
-                acv.Add("MG3.png/Zinger#Finish wumpus mini-game in less#than 7 seconds");
+                acv.Add("MG3.png/ZINGER#Finish wumpus mini-game in less#than 7 seconds");
             }
             if (Accurate)
             {
-                acv.Add("Precise.png/Precise#Score 500 point in the mini-game on#the 1 lvl by drawing only 1 figure");
+                acv.Add("Precise.png/PRECISE#Score 500 point in the mini-game on#the 1 lvl by drawing only 1 figure");
             }
             if (NoName76)
             {
-                acv.Add("MG2.png/NoName76#Score 500 point in the mini-game on#the 2 lvl by drawing only 1 figure");
+                acv.Add("Sharpeye.png/SHARPEYE#Score 500 point in the mini-game on#the 2 lvl by drawing only 1 figure");
             }
             if (Sniper)
             {
-                acv.Add("Sniper.png/Sniper#Score 500 point in the mini-game on#the 3 lvl by drawing only 1 figure");
+                acv.Add("Sniper.png/SNIPER#Score 500 point in the mini-game on#the 3 lvl by drawing only 1 figure");
             }
         }
     }

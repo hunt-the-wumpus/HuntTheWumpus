@@ -145,7 +145,7 @@ namespace HuntTheWumpus {
 			ShareFaceBook.y = Height - 30 - 40;
 			#endregion
 			#region SetContinueButton
-			Continue = new Button("data/continue.png", 150, 30);
+			Continue = new Button("data/StartNewGameButt.png", 150, 30);
 			Continue.x = 50 + 30 + 3 + 30 + 3 + 50;
 			Continue.y = Height - 30 - 40;
 			#endregion
