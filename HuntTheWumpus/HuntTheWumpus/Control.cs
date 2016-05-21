@@ -333,7 +333,7 @@ namespace HuntTheWumpus
                         player.BuyArrows();
                     }
                     else
-                        view.AddComand("Not enough coins(need " + player.NeedForBuyArrows().ToString() + ")", true, false);
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyArrows().ToString() + " more)", true, false);
                 }
                 if (rg == RegionCave.BuyHint)
                 {
@@ -348,7 +348,7 @@ namespace HuntTheWumpus
                         player.BuyHint();
                     }
                     else
-                        view.AddComand("Not enough coins(need " + player.NeedForBuyHint().ToString() + ")", true, false);
+                        view.AddComand("Not enough coins(need " + player.NeedForBuyHint().ToString() + " more)", true, false);
                 }
                 if (rg == RegionCave.UpConsole)
                     view.ChangeIndex(1);

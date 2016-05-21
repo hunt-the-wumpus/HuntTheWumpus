@@ -596,8 +596,8 @@ namespace HuntTheWumpus
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
-            AddComand("Left mouse bottom for#moving", false);
-            AddComand("Right mouse bottom for#shot arrow", false);
+            AddComand("Left mouse button for#moving", false);
+            AddComand("Right mouse button for#shot arrow", false);
             IndexConsole = ConsoleList.Count - 1;
         }
 
