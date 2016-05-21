@@ -280,11 +280,26 @@ namespace HuntTheWumpus
             if (e.KeyCode == Keys.Enter)
             {
                 score.KeyDown("enter");
+                if (state == ControlState.PickCave)
+                {
+                    StartAfterPick();
+                }
             }
             if (score != null)
             {
                 score.KeyDown((new KeysConverter()).ConvertToString(e.KeyCode));
             }
+        }
+
+        public void StartAfterPick()
+        {
+            long nowseed = seeds[num];
+            if (seed != "")
+                nowseed = long.Parse(seed);
+            Utily.ChangeSeed(nowseed);
+            map = new Map();
+            state = ControlState.Cave;
+            view.AddComand("Map's seed " + nowseed, false);
         }
 
         public void MouseDown(object sender, MouseEventArgs e)
@@ -386,13 +401,7 @@ namespace HuntTheWumpus
                 }
                 if (rg == RegionPickCave.Play)
                 {
-                    long nowseed = seeds[num];
-                    if (seed != "")
-                        nowseed = long.Parse(seed);
-                    Utily.ChangeSeed(nowseed);
-                    map = new Map();
-                    state = ControlState.Cave;
-                    view.AddComand("Map's seed " + nowseed, false);
+                    StartAfterPick();
                 }
             }
         }
