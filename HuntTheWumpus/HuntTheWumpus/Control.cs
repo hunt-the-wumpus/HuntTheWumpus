@@ -299,6 +299,7 @@ namespace HuntTheWumpus
             Utily.ChangeSeed(nowseed);
             map = new Map();
             state = ControlState.Cave;
+            view.ClearConsole();
             view.AddComand("Map's seed " + nowseed, false);
         }
 
