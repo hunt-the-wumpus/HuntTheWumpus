@@ -258,7 +258,7 @@ namespace HuntTheWumpus
             return RegionMenu.Empty;
         }
 
-        public void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom)
+        private void DrawRoom(int x, int y, Danger danger, int number, List<int>[] graph, List<bool>[] Active, bool StartRoom)
         {
 			if (IsBatAnimated && !IsAnimated) {
 				if (StartRoom && danger != Danger.Pit)
@@ -686,7 +686,7 @@ namespace HuntTheWumpus
             Graphics.FillRectangle(Brushes.White, 660, 245, 360, 50);
             DrawText(seed, 658, 250, 30);
 			Graphics.FillRectangle(Brushes.Green, 850, 547, 165, 68);
-            DrawText("PLAY!", 850, 550, 40);
+            DrawText(Messages.PlayButtonText, 850, 550, 40);
         }
 
         public RegionPickCave GetRegionPickCave(int x, int y)
