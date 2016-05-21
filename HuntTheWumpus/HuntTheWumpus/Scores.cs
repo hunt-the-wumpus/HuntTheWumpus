@@ -230,7 +230,7 @@ namespace HuntTheWumpus {
 			}
 			if (active == ScoreState.Null) {
 				g.Clear(Color.White);
-				g.DrawString("Пс! перед вызовом следи, чтобы active не равнялось null", new Font("Colibri", 20), Brushes.Black, 0, 0);
+				g.DrawString("Ps! before call, check active != null", new Font("Colibri", 20), Brushes.Black, 0, 0);
 			}
 		}
 

@@ -32,7 +32,7 @@ namespace HuntTheWumpus
             this.pictureBox1.MouseUp += MouseUp;
         }
 
-        public void DrawAll()//принудительная перерисовка
+        public void DrawAll()
         { 
            pictureBox1.Refresh(); 
         }

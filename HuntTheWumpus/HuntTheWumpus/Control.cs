@@ -96,7 +96,7 @@ namespace HuntTheWumpus
                     minigame.DrawMiniGame(view.Graphics);
                     if (!minigame.Is_playing)
                     {
-                        if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)//не покупка 
+                        if (!minigame.Is_Winner && StoryMiniGame != StoryMG.BuyArrow && StoryMiniGame != StoryMG.BuyHint)
                         {
                             IsWin = false;
                             EndGame();

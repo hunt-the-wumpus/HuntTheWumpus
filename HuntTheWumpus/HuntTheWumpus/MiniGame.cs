@@ -400,27 +400,27 @@ namespace HuntTheWumpus
         {
             if (Faster)
             {
-                acv.Add("MG1.png/БЫСТРЫЙ#Пройти миниигру#на 1 уровне#сложности менее чем#за 7 секунд");
+                acv.Add("MG1.png/Speedy#Finish buy arrow mini-game in less#than 7 seconds");
             }
             if (Reactivity)
             {
-                acv.Add("MG2.png/РЕАКТИВНЫЙ#Пройти миниигру#на 2 уровне#сложности менее чем#за 7 секунд");
+                acv.Add("MG2.png/Reactive#Finish pit or hint mini-game in#less than 7 seconds");
             }
             if (Zinger)
             {
-                acv.Add("MG3.png/ЖИВЧИК#Пройти миниигру#на 3 уровне#сложности менее чем#за 7 секунд");
+                acv.Add("MG3.png/Zinger#Finish wumpus mini-game in less#than 7 seconds");
             }
             if (Accurate)
             {
-                acv.Add("Precise.png/ТОЧНЫЙ#Завершить миниигру#на 1 уровне#сложности нарисовав#одну фигуру");
+                acv.Add("Precise.png/Precise#Score 500 point in the mini-game on#the 1 lvl by drawing only 1 figure");
             }
             if (NoName76)
             {
-                acv.Add("MG2.png/NoName76#Завершить миниигру#на 2 уровне#сложности нарисовав#одну фигуру");
+                acv.Add("MG2.png/NoName76#Score 500 point in the mini-game on#the 2 lvl by drawing only 1 figure");
             }
             if (Sniper)
             {
-                acv.Add("Sniper.png/СНАЙПЕР#Завершить миниигру#на 3 уровне#сложности нарисовав#одну фигуру");
+                acv.Add("Sniper.png/Sniper#Score 500 point in the mini-game on#the 3 lvl by drawing only 1 figure");
             }
         }
     }
