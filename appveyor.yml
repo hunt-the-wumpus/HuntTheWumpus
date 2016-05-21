@@ -3,12 +3,15 @@ version: 0.0.1.{build}
 before_build:
   - ps: nuget restore HuntTheWumpus/HuntTheWumpus.sln
 
+configuration:
+  - Release
+
 after_build:
   - ps: |
       mkdir .\out
-      cp HuntTheWumpus\HuntTheWumpus\bin\Debug\HuntTheWumpus.exe .\out
-      cp HuntTheWumpus\HuntTheWumpus\bin\Debug\Newtonsoft.Json.dll .\out
-      cp HuntTheWumpus\HuntTheWumpus\bin\Debug\data .\out -Recurse
+      cp HuntTheWumpus\HuntTheWumpus\bin\Release\HuntTheWumpus.exe .\out
+      cp HuntTheWumpus\HuntTheWumpus\bin\Release\Newtonsoft.Json.dll .\out
+      cp HuntTheWumpus\HuntTheWumpus\bin\Release\data .\out -Recurse
 
       $zipFile = Join-Path $pwd "wumpus.zip"
       Add-Type -assemblyname System.IO.Compression.FileSystem
