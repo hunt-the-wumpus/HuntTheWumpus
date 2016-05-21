@@ -82,7 +82,7 @@ namespace HuntTheWumpus
         private int IndexConsole = 0;
 
 		private string TextCoin = "";
-		private string TextBaner = "";
+		private string[] TextBaner;
 
         private float Progress = 0.0f;
         private List<bool>[] isActiveLast;
@@ -459,7 +459,7 @@ namespace HuntTheWumpus
             {
                 IsBaner = false;
                 BanerTimer.Reset();
-				TextBaner = "";
+				TextBaner = new string[0];
             }
             if (IsBaner)
             {
@@ -471,7 +471,9 @@ namespace HuntTheWumpus
 				if (Milliseconds > 1750) {
 					Alpha = (int)(255 * (2500 - Milliseconds) / 750);
 				}
-                DrawTextMid(TextBaner, Width / 2, 100, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
+				for (int i = 0; i < TextBaner.Length; ++i) {
+					DrawTextMid(TextBaner[i], Width / 2, 100 + i * 30, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
+				}
             }
 			if (CoinTimer != null) {
 				long Milliseconds = CoinTimer.ElapsedMilliseconds;
@@ -596,12 +598,11 @@ namespace HuntTheWumpus
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
-            AddComand("Left mouse button for#moving", false);
-            AddComand("Right mouse button for#shot arrow", false);
+            AddComand("Left mouse button for#moving#Right mouse button for#shot arrow", true);
             IndexConsole = ConsoleList.Count - 1;
         }
 
-        public void AddComand(string s, bool isbaner, bool toaddconsole = true)
+        public void AddComand(string s, bool isbaner = false, bool toaddconsole = true)
         {
 			if (toaddconsole) {
 				string[] strs = s.Split('#');
@@ -610,12 +611,16 @@ namespace HuntTheWumpus
 				for (int i = strs.Length - 1; i >= 0; i--)
 					ConsoleList.Add(strs[i]);
 			}
-            if (isbaner)
-            {
-                BanerTimer.Restart();
-                IsBaner = true;
-            }
-			TextBaner = s;
+			if (isbaner) {
+				BanerTimer.Restart();
+				IsBaner = true;
+				if (s.IndexOf('#') > -1) {
+					TextBaner = s.Split('#');
+				} else {
+					TextBaner = new string[1];
+					TextBaner[0] = s;
+				}
+			}
         }
 
         public void ChangeIndex(int up)
