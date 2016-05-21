@@ -2,6 +2,7 @@
 
 # HuntTheWumpus
 
+
 ## Achivements
 
 ![Speedy](HuntTheWumpus/HuntTheWumpus/data/Achievements/MG1.png) 
@@ -50,4 +51,4 @@ Get 8 arrows
 
 ## Documentaion
 
-Документация в отдельном [репозитории](https://github.com/hunt-the-wumpus/Docs).
+[Object assignment](https://github.com/hunt-the-wumpus/Docs).
