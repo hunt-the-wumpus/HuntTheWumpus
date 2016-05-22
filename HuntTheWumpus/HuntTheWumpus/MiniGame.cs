@@ -87,7 +87,7 @@ namespace HuntTheWumpus
         private bool Zinger = false;
 
         private bool Accurate = false;
-        private bool NoName76 = false;
+        private bool Sharpeye = false;
         private bool Sniper = false;
 
 		private bool IsGoodGame = false;
@@ -337,10 +337,10 @@ namespace HuntTheWumpus
             {
 				Faster = Faster || (Difficult == 1 && LifeTimer >= MaxLife - 7000);
 				Reactivity = Reactivity || (Difficult == 2 && LifeTimer >= MaxLife - 7000);
-				Zinger = Zinger || (Difficult == 3 && LifeTimer >= MaxLife - 7000);
+				Zinger = Zinger || ((Difficult == 3 || Difficult == 4) && LifeTimer >= MaxLife - 7000);
 				Accurate = Accurate || (Difficult == 1 && points >= 500 && PlayerPoints == 500 - points);
-				NoName76 = NoName76 || (Difficult == 2 && points >= 500 && PlayerPoints == 500 - points);
-				Sniper = Sniper || (Difficult == 3 && points >= 500 && PlayerPoints == 500 - points);
+				Sharpeye = Sharpeye || (Difficult == 2 && points >= 500 && PlayerPoints == 500 - points);
+				Sniper = Sniper || ((Difficult == 3 || Difficult == 4) && points >= 500 && PlayerPoints == 500 - points);
 				IsGoodGame = true;
             }
             else {
@@ -400,21 +400,21 @@ namespace HuntTheWumpus
         {
             if (Faster)
             {
-                acv.Add("MG1.png/SPEEDY#Finish buy arrow mini-game in less#than 7 seconds");
+                acv.Add("MG1.png/SPEEDY#Finish 1 lvl mini-game in less#than 7 seconds");
             }
             if (Reactivity)
             {
-                acv.Add("MG2.png/REACTIVE#Finish pit or hint mini-game in#less than 7 seconds");
+                acv.Add("MG2.png/REACTIVE#Finish 2 lvl mini-game in#less than 7 seconds");
             }
             if (Zinger)
             {
-                acv.Add("MG3.png/ZINGER#Finish wumpus mini-game in less#than 7 seconds");
+                acv.Add("MG3.png/ZINGER#Finish 3 lvl mini-game in less#than 7 seconds");
             }
             if (Accurate)
             {
                 acv.Add("Precise.png/PRECISE#Score 500 point in the mini-game on#the 1 lvl by drawing only 1 figure");
             }
-            if (NoName76)
+            if (Sharpeye)
             {
                 acv.Add("Sharpeye.png/SHARPEYE#Score 500 point in the mini-game on#the 2 lvl by drawing only 1 figure");
             }

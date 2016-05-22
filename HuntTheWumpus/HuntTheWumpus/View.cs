@@ -30,6 +30,9 @@ namespace HuntTheWumpus
         Cave2,
         Cave3,
         Cave4,
+        Diff1,
+        Diff2,
+        Diff3,
         Play,
         Empty
     }
@@ -73,6 +76,7 @@ namespace HuntTheWumpus
         private CompressionImage[] room = new CompressionImage[6];
         private CompressionImage BackGround;
         private CompressionImage WumpusImg;
+        private CompressionImage[] DiffImg;
         private List<float> StownPosX = new List<float>();
         private List<float> StownPosY = new List<float>();
         private List<float> ScaleRoomX = new List<float>();
@@ -136,24 +140,17 @@ namespace HuntTheWumpus
             }
             CaveRoom = new CompressionImage[CountImageRoom];
             for (int i = 0; i < CountImageRoom; ++i)
-            {
-                CaveRoom[i] = new CompressionImage("data/Cave/ColorRoom" + (i + 1) + ".png", length, length);
-                CaveRoom[i].ScreenWidth = width;
-                CaveRoom[i].ScreenHeight = height;
-            }
-            PitRoom = new CompressionImage("data/Cave/PitRoom.png", length, length);
-            PitRoom.ScreenHeight = height;
-            PitRoom.ScreenWidth = width;
+                CaveRoom[i] = new CompressionImage("data/Cave/ColorRoom" + (i + 1) + ".png", length, length, Width, Height);
+            PitRoom = new CompressionImage("data/Cave/PitRoom.png", length, length, Width, Height);
             TypeImageRoom = new int[30];
             UpdateImage();
-            DarkRoom = new CompressionImage("data/Cave/DarkRoom.png", length, length);
-            DarkRoom.ScreenWidth = width;
-            DarkRoom.ScreenHeight = height;
-
+            DarkRoom = new CompressionImage("data/Cave/DarkRoom.png", length, length, Width, Height);
             BackGround = new CompressionImage("data/Cave/background.png", width, 120);
-            WumpusImg = new CompressionImage("data/Cave/wumpus.png", length / 2, length / 2);
-            WumpusImg.ScreenWidth = Width;
-            WumpusImg.ScreenHeight = Height;
+            WumpusImg = new CompressionImage("data/Cave/wumpus.png", length / 2, length / 2, Width, Height);
+            DiffImg = new CompressionImage[3];
+            DiffImg[0] = new CompressionImage("./data/Sprites/Bow.png", 200, 200, Width, Height);
+            DiffImg[1] = new CompressionImage("./data/Sprites/CrossBow.png", 200, 200, Width, Height);
+            DiffImg[2] = new CompressionImage("./data/Sprites/ShotGun.png", 200, 200, Width, Height);
             #endregion
             #region setted constants
             StownPosX.Add(1.0f / 3.0f - 1.0f / 70.0f); // 0 item
@@ -472,7 +469,7 @@ namespace HuntTheWumpus
 					Alpha = (int)(255 * (2500 - Milliseconds) / 750);
 				}
 				for (int i = 0; i < TextBaner.Length; ++i) {
-					DrawTextMid(TextBaner[i], Width / 2, 100 + i * 30, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
+					DrawTextMid(TextBaner[i], Width / 2, 100 + i * 45, 30, "Arial", Color.FromArgb(Alpha, 255, 0, 0));
 				}
             }
 			if (CoinTimer != null) {
@@ -633,7 +630,7 @@ namespace HuntTheWumpus
                 IndexConsole = Math.Max(IndexConsole + up, 4);
         }
 
-        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num, string seed)
+        public void DrawPickCave(List<int>[] graph, List<bool>[] isActive, int num, int Diff, string seed)
         {
             Clear(Color.DarkOrange);
             int size = 55;
@@ -642,7 +639,7 @@ namespace HuntTheWumpus
             for (int i = 0; i <= 6; ++i)
                 for (int j = 0; j <= 5; ++j)
                 {
-                    int lx = i * size * 3 / 2 + 100 + i * d, ly = j * hght + (i % 2) * (hght + d) / 2 + 50 + j * d;
+                    int lx = i * size * 3 / 2 + 50 + i * d, ly = j * hght + (i % 2) * (hght + d) / 2 + 50 + j * d;
                     if (i < 6 && j < 5)
                     {
                         Point[] pn = new Point[6];
@@ -681,12 +678,17 @@ namespace HuntTheWumpus
 				}
                 DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
-            DrawText("Pick a cave or", 660, 150, 30);
-            DrawText("enter your seed", 660, 190, 30);
-            Graphics.FillRectangle(Brushes.White, 660, 245, 360, 50);
-            DrawText(seed, 658, 250, 30);
+            DrawText("Pick a cave or enter", 640, 60, 30);
+            DrawText("your seed", 640, 100, 30);
+            Graphics.FillRectangle(Brushes.White, 640, 155, 360, 50);
+            DrawText(seed, 638, 160, 30);
 			Graphics.FillRectangle(Brushes.Green, 850, 547, 165, 68);
             DrawText(Messages.PlayButtonText, 850, 550, 40);
+            Graphics.FillRectangle(Brushes.Green, 630, 295 + Diff * 60, 160, 60);
+            DrawText("Easy", 630, 300, 30);
+            DrawText("Medium", 630, 360, 30);
+            DrawText("Hard", 630, 420, 30);
+            DiffImg[Diff].Draw(Graphics, 810, 300);
         }
 
         public RegionPickCave GetRegionPickCave(int x, int y)
@@ -695,6 +697,8 @@ namespace HuntTheWumpus
                 return (RegionPickCave)(x * 5 / Width);
             if (y > 550 && x > 850)
                 return RegionPickCave.Play;
+            if (x >= 630 && x < 790 && y >= 300 && y < 480)
+                return (RegionPickCave)((int)RegionPickCave.Diff1 + (y - 300) / 60);
             return RegionPickCave.Empty;
         }
 

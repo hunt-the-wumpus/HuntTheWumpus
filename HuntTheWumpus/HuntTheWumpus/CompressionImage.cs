@@ -19,6 +19,14 @@ namespace HuntTheWumpus {
 			ScreenHeight = 100000;
 		}
 
+        public CompressionImage(string file, int width, int height, int ScreenWid, int ScreenHei)
+        {
+            Image img = Image.FromFile(file);
+            CompressedImage = ScaleImage(img, width, height);
+            ScreenWidth = ScreenWid;
+            ScreenHeight = ScreenHei;
+        }
+
 		public CompressionImage(Image img, int width, int height) {
 			CompressedImage = ScaleImage(img, width, height);
 			ScreenWidth = 100000;
@@ -35,7 +43,6 @@ namespace HuntTheWumpus {
             g.DrawImage(CompressedImage, Math.Max(0, x), Math.Max(0, y), new Rectangle(Math.Max(0, -x), Math.Max(0, -y), 
                 Math.Min(CompressedImage.Width, ScreenWidth - x) - Math.Max(0, -x), 
                 Math.Min(CompressedImage.Height, ScreenHeight - y) - Math.Max(0, -y)), GraphicsUnit.Pixel);
-            //g.DrawImage(CompressedImage, x, y, new Rectangle(0, 0, 0 + CompressedImage.Width, 0 + CompressedImage.Height), GraphicsUnit.Pixel);
         }
 
 		private Image ScaleImage(Image source, int width, int height) {
