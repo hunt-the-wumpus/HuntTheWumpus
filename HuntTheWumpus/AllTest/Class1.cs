@@ -44,7 +44,7 @@ namespace xUnit.Tests
             view.Graphics.FillRectangle(Brushes.Aqua, 0, 0, 10, 10);
             view.DrawMainMenu();
             var map = new HuntTheWumpus.Map();
-            view.DrawPickCave(map.graph, map.isActive, 0, "112");
+            view.DrawPickCave(map.graph, map.isActive, 0, 1, "112");
             view.MainForm.DrawAll();
         }
 
@@ -83,6 +83,8 @@ namespace xUnit.Tests
             var map = new HuntTheWumpus.Map();
             int mem = map.Wumpus;
             map.WumpusGoAway();
+            map.WumpusGoAway(1);
+            map.WumpusGoAway(4);
             Assert.False(mem == map.Wumpus, "Wumpus come back");
             for (int i = 0; i < 6; ++i)
                 map.PushArrow(i);

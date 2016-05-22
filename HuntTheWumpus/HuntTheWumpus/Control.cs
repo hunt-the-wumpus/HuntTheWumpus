@@ -51,7 +51,14 @@ namespace HuntTheWumpus
 
         private List<string> HintMessage;
 
-        int num = 0;
+        private int[] ArroDiff = { 1, 1, 2 };
+        private int[] HintDiff = { 2, 2, 3 };
+        private int[] PitDiff = { 1, 2, 3 };
+        private int[] WumpusDiff = { 2, 3, 4 };
+
+        private int numPickCave = 0;
+        private int numDiff = 0;
+        private int Difficulty = 0;
         private Map[] MapForPiсk;
         private Map map;
         private int[] seeds;
@@ -144,7 +151,7 @@ namespace HuntTheWumpus
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Pit;
 						minigame.HintText = "Pit! Draw figures for survive!";
-                        minigame.InitializeMiniGame(2);
+                        minigame.InitializeMiniGame(PitDiff[Difficulty]);
                         UseMiniGame = true;
                         MiniGameEnd = false;
                     }
@@ -160,7 +167,7 @@ namespace HuntTheWumpus
 						minigame.HintText = "Wumpus! Draw figures for survive";
                         MiniGameEnd = false;
                         UseMiniGame = true;
-                        minigame.InitializeMiniGame(3);
+                        minigame.InitializeMiniGame(WumpusDiff[Difficulty]);
                     }
                     Danger dangerabout = map.GetDangerAbout();
                     if (dangerabout == Danger.Bat)
@@ -168,7 +175,12 @@ namespace HuntTheWumpus
                     if (dangerabout == Danger.Pit)
                         view.AddComand("I feel a draft(" + (map.Room + 1) + ")", true);
                     if (dangerabout == Danger.Wumpus)
-                        view.AddComand("I smell a Wumpus!(" + (map.Room + 1) + ")", true);
+                    {
+                        string strout = "I smell a Wumpus!(" + (map.Room + 1) + ")";
+                        if (!player.IsShotArrow)
+                            strout += "#Right click to shoot#arrow";
+                        view.AddComand(strout, true);
+                    }
                 }
                 if (map.IsWin && view.IsEndAnimation())
                 {
@@ -189,7 +201,7 @@ namespace HuntTheWumpus
 
             if (state == ControlState.PickCave)
             {
-                view.DrawPickCave(MapForPiсk[num].graph, MapForPiсk[num].isActive, num, seed);
+                view.DrawPickCave(MapForPiсk[numPickCave].graph, MapForPiсk[numPickCave].isActive, numPickCave, numDiff, seed);
             }
             if (time > 0)
                 view.DrawText((1000 / time).ToString(), 5, 5, 10, "Arial", Color.White);
@@ -214,7 +226,8 @@ namespace HuntTheWumpus
                 Utily.ChangeSeed(seeds[i]);
                 MapForPiсk[i] = new Map();
             }
-            num = 0;
+            numPickCave = 0;
+            numDiff = 1;
             MiniGameEnd = true;
             minigame = new MiniGame(Width, Height);
             player = new Player();
@@ -293,7 +306,8 @@ namespace HuntTheWumpus
 
         public void StartAfterPick()
         {
-            long nowseed = seeds[num];
+            Difficulty = numDiff;
+            long nowseed = seeds[numPickCave];
             if (seed != "")
                 nowseed = long.Parse(seed);
             Utily.ChangeSeed(nowseed);
@@ -317,6 +331,9 @@ namespace HuntTheWumpus
                 {
                     if (e.Button == MouseButtons.Left)
                     {
+                        int WumpusRun = Utily.Next() % 8;
+                        if (WumpusRun < Difficulty)
+                            map.WumpusGoAway(1);
                         int add = map.Move((int)rg);
                         player.AddCoins(add);
                         score.AddScores(5 * add);
@@ -343,8 +360,8 @@ namespace HuntTheWumpus
                         StoryMiniGame = StoryMG.BuyArrow;
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
-						minigame.HintText = "Draw figures or get arrow";
-                        minigame.InitializeMiniGame(1);
+						minigame.HintText = "Draw figures for get arrow";
+                        minigame.InitializeMiniGame(ArroDiff[Difficulty]);
                         UseMiniGame = true;
                         player.BuyArrows();
                     }
@@ -359,7 +376,7 @@ namespace HuntTheWumpus
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
 						minigame.HintText = "Draw figures for get hint!";
-                        minigame.InitializeMiniGame(2);
+                        minigame.InitializeMiniGame(HintDiff[Difficulty]);
                         UseMiniGame = true;
                         player.BuyHint();
                     }
@@ -396,10 +413,11 @@ namespace HuntTheWumpus
             if (state == ControlState.PickCave)
             {
                 RegionPickCave rg = view.GetRegionPickCave(e.X, e.Y);
-                if ((int)rg < 5)
-                {
-                    num = (int)rg;
-                }
+                int Intrg = (int)rg;
+                if (Intrg < 5)
+                    numPickCave = Intrg;
+                if (Intrg >= (int)RegionPickCave.Diff1 && Intrg <= (int)RegionPickCave.Diff3)
+                    numDiff = Intrg - (int)RegionPickCave.Diff1;
                 if (rg == RegionPickCave.Play)
                 {
                     StartAfterPick();

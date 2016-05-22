@@ -205,6 +205,10 @@ namespace HuntTheWumpus
         private bool TryWumpusGoAway()
         {
             int step = Utily.Next() % 3 + 2;
+            return TryWumpusGoAway(step);
+        }
+        private bool TryWumpusGoAway(int step)
+        {
             int nowWumpus = Wumpus;
             int lastdir = -1;
             for (int i = 0; i < step; i++)
@@ -219,7 +223,7 @@ namespace HuntTheWumpus
                 lastdir = (dir + 3) % 6;
                 nowWumpus = graph[nowWumpus][dir];
             }
-            if (!RoomIsDanger(nowWumpus))
+            if (!RoomIsDanger(nowWumpus) && Room != nowWumpus)
             {
                 Wumpus = nowWumpus;
                 return true;
@@ -240,6 +244,16 @@ namespace HuntTheWumpus
                 danger = Danger.Wumpus;
             else
                 danger = Danger.Empty;
+        }
+        public void WumpusGoAway(int step)
+        {
+            int CountTry = 0;
+            bool flag = false;
+            while (!flag && CountTry < 100)
+            {
+                flag = TryWumpusGoAway(step);
+                ++CountTry;
+            }
         }
         public void Respaw()
         {
