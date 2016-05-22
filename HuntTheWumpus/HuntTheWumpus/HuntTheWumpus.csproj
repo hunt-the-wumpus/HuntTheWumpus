@@ -133,6 +133,9 @@
     <Content Include="data\Achievements\BackGround.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Achievements\Dodger.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\Achievements\Explorer.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

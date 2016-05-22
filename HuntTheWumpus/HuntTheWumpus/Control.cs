@@ -79,10 +79,10 @@ namespace HuntTheWumpus
             MapForPiсk = new Map[5];
             seeds = new int[5];
             HintMessage = new List<string>();
-            HintMessage.Add("Wumpus in ");
-            HintMessage.Add("Pit in ");
-            HintMessage.Add("Bat in ");
-            HintMessage.Add("You have bad luck...");
+            HintMessage.Add(Messages.WumpusHint);
+            HintMessage.Add(Messages.PitHint);
+            HintMessage.Add(Messages.BatHint);
+            HintMessage.Add(Messages.BadLuckHint);
         }
 
         public void UpDate(long time)
@@ -127,12 +127,12 @@ namespace HuntTheWumpus
                         if (minigame.Is_Winner && StoryMiniGame == StoryMG.BuyArrow)
                         {
                             player.GiveArrows();
-                            view.AddComand("You received 2 arrows", true, false);
+                            view.AddComand(Messages.GiveArrowsString, true, false);
                         }
                         if (minigame.Is_Winner && StoryMG.Wumpus == StoryMiniGame)
                         {
                             map.WumpusGoAway();
-                            view.AddComand("Wumpus run away", true);
+                            view.AddComand(Messages.WumpusRunString, true);
                         }
                         if (minigame.Is_Winner)
                         {
@@ -150,35 +150,35 @@ namespace HuntTheWumpus
                     {
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Pit;
-						minigame.HintText = "Pit! Draw figures for survive!";
+						minigame.HintText = Messages.PitHintText;
                         minigame.InitializeMiniGame(PitDiff[Difficulty]);
                         UseMiniGame = true;
                         MiniGameEnd = false;
                     }
                     if (map.danger == Danger.Bat)
                     {
-                        view.AddComand("You met BAT", true);
+                        view.AddComand(Messages.MetBatString, true);
                         map.Respaw();
                     }
                     if (map.danger == Danger.Wumpus)
                     {
                         minigame = new MiniGame(Width, Height);
                         StoryMiniGame = StoryMG.Wumpus;
-						minigame.HintText = "Wumpus! Draw figures for survive";
+						minigame.HintText = Messages.WumpusHintText;
                         MiniGameEnd = false;
                         UseMiniGame = true;
                         minigame.InitializeMiniGame(WumpusDiff[Difficulty]);
                     }
                     Danger dangerabout = map.GetDangerAbout();
                     if (dangerabout == Danger.Bat)
-                        view.AddComand("Bats Nearby(" + (map.Room + 1) + ")", true);
+                        view.AddComand(String.Format(Messages.BatWarning, map.Room + 1), true);
                     if (dangerabout == Danger.Pit)
-                        view.AddComand("I feel a draft(" + (map.Room + 1) + ")", true);
+                        view.AddComand(String.Format(Messages.PitWarning, map.Room + 1), true);
                     if (dangerabout == Danger.Wumpus)
                     {
-                        string strout = "I smell a Wumpus!(" + (map.Room + 1) + ")";
+                        string strout = String.Format(Messages.WumpusWarning, map.Room + 1);
                         if (!player.IsShotArrow)
-                            strout += "#Right click to shoot#arrow";
+                            strout += Messages.HintRightClick;
                         view.AddComand(strout, true);
                     }
                 }
@@ -249,7 +249,7 @@ namespace HuntTheWumpus
             if (!UseMiniGame)
             {
                 List<string> ls = new List<string>();
-                ls.Add("MG1.png/namedlyaneuzalMiniGame#mbvseponatno");
+                ls.Add(Messages.DodgerAchiv);
                 score.getAchievement(ls);
             }
             score.SetFinalState(IsWin);
@@ -314,7 +314,7 @@ namespace HuntTheWumpus
             map = new Map();
             state = ControlState.Cave;
             view.ClearConsole();
-            view.AddComand("Map's seed " + nowseed, false);
+            view.AddComand(String.Format(Messages.MapSeedString, nowseed), false);
         }
 
         public void MouseDown(object sender, MouseEventArgs e)
@@ -360,7 +360,7 @@ namespace HuntTheWumpus
                         StoryMiniGame = StoryMG.BuyArrow;
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
-						minigame.HintText = "Draw figures for get arrow";
+						minigame.HintText = Messages.ArrowHintText;
                         minigame.InitializeMiniGame(ArroDiff[Difficulty]);
                         UseMiniGame = true;
                         player.BuyArrows();
@@ -375,7 +375,7 @@ namespace HuntTheWumpus
                         StoryMiniGame = StoryMG.BuyHint;
                         MiniGameEnd = false;
                         minigame = new MiniGame(Width, Height);
-						minigame.HintText = "Draw figures for get hint!";
+						minigame.HintText = Messages.HintHintText;
                         minigame.InitializeMiniGame(HintDiff[Difficulty]);
                         UseMiniGame = true;
                         player.BuyHint();

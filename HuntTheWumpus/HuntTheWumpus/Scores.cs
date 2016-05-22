@@ -230,7 +230,7 @@ namespace HuntTheWumpus {
 			}
 			if (active == ScoreState.Null) {
 				g.Clear(Color.White);
-				g.DrawString("Ps! before call, check active != null", new Font("Colibri", 20), Brushes.Black, 0, 0);
+				g.DrawString(Messages.DebugScore, new Font("Colibri", 20), Brushes.Black, 0, 0);
 			}
 		}
 
@@ -242,7 +242,7 @@ namespace HuntTheWumpus {
 			if (activeImage != null) {
 				g.DrawImage(BackGround, new Rectangle(CanvasWidth - width, (int)AchievementDrawingPosition + height, width, height * 3 / 2));
 				g.DrawImage(activeImage, new Rectangle(CanvasWidth - width + 5, (int)AchievementDrawingPosition, width, height));
-				g.DrawString("New achievement!", StandardFont, new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height * 7 / 6);
+				g.DrawString(Messages.NewAchievement, StandardFont, new SolidBrush(Color.LimeGreen), CanvasWidth - width / 3 * 2, (float)AchievementDrawingPosition + height * 7 / 6);
 				string[] strings = MessageAchievement.Split('#');
 				for (int i = 0; i < strings.Length; ++i) {
 					g.DrawString(strings[i], StandardFont, new SolidBrush(Color.LimeGreen), CanvasWidth - width + 5, (float)AchievementDrawingPosition + height * 7 / 6 + (i + 1) * 12);
@@ -268,14 +268,14 @@ namespace HuntTheWumpus {
 			Brush standardField = new SolidBrush(Color.Cyan);
 			Brush standardText = new SolidBrush(Color.DarkBlue);
 			Font fieldText = new Font("Arial", editHeight * 2 / 3);
-			g.DrawString("Enter your name", fieldText, Brushes.White, 50, 50);
+			g.DrawString(Messages.EnterName, fieldText, Brushes.White, 50, 50);
 			g.FillRectangle(standardField, new Rectangle(editX, editY, editWidth, editHeight));
 			g.DrawString(name, fieldText, standardText, editX + 3, editY + 1);
 		}
 
 		private void DrawLeaders(Graphics g) {
 			ListBackground.Draw(g, 0, 0);
-			g.DrawString("Leaders", new Font("Arial", 30), Brushes.White, 30, 30);
+			g.DrawString(Messages.Leader, new Font("Arial", 30), Brushes.White, 30, 30);
 			Font StandardTextFont = new Font("Arial", 20);
 			Brush StandardFieldBrush = new SolidBrush(Color.Cyan);
 			Brush StandardTextBrush = new SolidBrush(Color.Black);
@@ -290,9 +290,9 @@ namespace HuntTheWumpus {
 				string playername = splitted[2];
 				string isvictory = splitted[1];
 				if (isvictory == "True") {
-					isvictory = "Victory";
+					isvictory = Messages.WinString;
 				} else {
-					isvictory = "Defeated";
+					isvictory = Messages.LoseString;
 				}
 				string scores = splitted[0];
 				int CountAchievements = splitted[3].Split('/').Length - 1;
@@ -357,7 +357,7 @@ namespace HuntTheWumpus {
 		
 		private void DrawFinalMain(Graphics g) {
 			g.DrawImage(FinalPicture, 0, 0);
-			g.DrawString("Your scores " + Score.ToString(), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
+			g.DrawString(String.Format(Messages.YourScore, Score), new Font("Arial", 20),  new SolidBrush(Color.Cyan), 75, 200);
 			int activestring = 0;
 			int DrawAchivements = 0;
 			for (int i = 0; i < WasAchievements.Count; ++i) {

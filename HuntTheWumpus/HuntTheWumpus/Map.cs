@@ -319,14 +319,14 @@ namespace HuntTheWumpus
         public void GetAchievement(List<string> achiv)
         {
             if (VisitRoom == 30)
-                achiv.Add("explorer.png/Explorer#Enter all rooms of the cave");
+                achiv.Add(Messages.ExplorerAchiv);
             if (VisitRoom >= 12)
-                achiv.Add("Step.png/Step into the Abyss#Explore 12 rooms");
+                achiv.Add(Messages.StepAchiv);
             bool flag = true;
             for (int i = 0; i < 30; ++i)
                 flag = flag && CountVisit[i] == 1;
             if (flag)
-                achiv.Add("Hamilton.png/Hamilton's descendant#Go through all the rooms visiting#each 1 time only");
+                achiv.Add(Messages.HamiltonAchiv);
         }
     }
 

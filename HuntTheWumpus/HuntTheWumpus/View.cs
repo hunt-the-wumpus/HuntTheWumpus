@@ -436,20 +436,20 @@ namespace HuntTheWumpus
         {
             int yup = Height - 120;
             BackGround.Draw(Graphics, 0, Height - 120);
-            DrawText("Arrows " + arrows, 10, yup + 10, 20, "Arial", Color.White);
-            DrawText("Coins " + coins, 10, yup + 40, 20, "Arial", Color.White);
-            DrawText("Room " + (room + 1), 10, yup + 70, 20, "Arial", Color.White);
+            DrawText(String.Format(Messages.CountArrowString, arrows), 10, yup + 10, 20, "Arial", Color.White);
+            DrawText(String.Format(Messages.CountCoinsString, coins), 10, yup + 40, 20, "Arial", Color.White);
+            DrawText(String.Format(Messages.NowRoomString, room + 1), 10, yup + 70, 20, "Arial", Color.White);
 			Color drawed = Color.FromArgb(0, 255, 0);
 			if (coins < 15) {
 				drawed = Color.FromArgb(255, 0, 0);
 			}
-            DrawText("Buy Arrows", 170, yup + 20, 22, "Arial", drawed);
+            DrawText(Messages.BuyArrowsString, 170, yup + 20, 22, "Arial", drawed);
 			if (coins >= 25) {
 				drawed = Color.FromArgb(0, 255, 0);
 			} else {
 				drawed = Color.FromArgb(255, 0, 0);
 			}
-            DrawText("Buy Hint", 170, yup + 70, 20, "Arial", drawed);
+            DrawText(Messages.BuyHintString, 170, yup + 70, 20, "Arial", drawed);
             for (int i = IndexConsole; i > IndexConsole - 5 && i >= 0; --i)
                 DrawText(ConsoleList[i], 730, yup + 10 + (IndexConsole - i) * 18, 15, "Consolas", Color.White);
             if (IsBaner && BanerTimer.ElapsedMilliseconds > 2500)
@@ -595,7 +595,7 @@ namespace HuntTheWumpus
         public void ClearConsole()
         {
             ConsoleList = new List<string>();
-            AddComand("Left mouse button for#moving#Right mouse button for#shot arrow", true);
+            AddComand(Messages.ControlLog, true);
             IndexConsole = ConsoleList.Count - 1;
         }
 
@@ -678,16 +678,16 @@ namespace HuntTheWumpus
 				}
                 DrawText((i + 1).ToString(), i * Width / 5 + 70, Height - 100, 40);
             }
-            DrawText("Pick a cave or enter", 640, 60, 30);
-            DrawText("your seed", 640, 100, 30);
+            DrawText(Messages.EnterSeed1, 640, 60, 30);
+            DrawText(Messages.EnterSeed2, 640, 100, 30);
             Graphics.FillRectangle(Brushes.White, 640, 155, 360, 50);
             DrawText(seed, 638, 160, 30);
 			Graphics.FillRectangle(Brushes.Green, 850, 547, 165, 68);
             DrawText(Messages.PlayButtonText, 850, 550, 40);
             Graphics.FillRectangle(Brushes.Green, 630, 295 + Diff * 60, 160, 60);
-            DrawText("Easy", 630, 300, 30);
-            DrawText("Medium", 630, 360, 30);
-            DrawText("Hard", 630, 420, 30);
+            DrawText(Messages.Diff1String, 630, 300, 30);
+            DrawText(Messages.Diff2String, 630, 360, 30);
+            DrawText(Messages.Diff3String, 630, 420, 30);
             DiffImg[Diff].Draw(Graphics, 810, 300);
         }
 
@@ -707,7 +707,7 @@ namespace HuntTheWumpus
 				return;
 			}
 			CoinTimer = new Stopwatch();
-			TextCoin = "+ " + add.ToString() + " coins";
+			TextCoin = String.Format(Messages.CoinsLog, add);
 			CoinTimer.Start();
 		}
 

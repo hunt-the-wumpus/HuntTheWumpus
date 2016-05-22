@@ -117,10 +117,182 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ArrowHintText" xml:space="preserve">
+    <value>Draw figures for get arrow</value>
+    <comment>minigame</comment>
+  </data>
+  <data name="BadLuckHint" xml:space="preserve">
+    <value>You have bad luck...</value>
+    <comment>hint</comment>
+  </data>
+  <data name="BatHint" xml:space="preserve">
+    <value>Bat in </value>
+    <comment>hint</comment>
+  </data>
+  <data name="BatWarning" xml:space="preserve">
+    <value>Bats Nearby({0})</value>
+  </data>
+  <data name="BuyArrowsString" xml:space="preserve">
+    <value>Buy Arrows</value>
+    <comment>interface</comment>
+  </data>
+  <data name="BuyHintString" xml:space="preserve">
+    <value>Buy Hint</value>
+    <comment>interface</comment>
+  </data>
+  <data name="CoinsLog" xml:space="preserve">
+    <value>+ {0} coins</value>
+  </data>
+  <data name="ControlLog" xml:space="preserve">
+    <value>Left mouse button for#moving#Right mouse button for#shot arrow</value>
+  </data>
+  <data name="CountArrowString" xml:space="preserve">
+    <value>Arrows {0}</value>
+    <comment>interface</comment>
+  </data>
+  <data name="CountCoinsString" xml:space="preserve">
+    <value>Coins {0}</value>
+    <comment>interface</comment>
+  </data>
+  <data name="DebugScore" xml:space="preserve">
+    <value>Ps! before call, check active != null</value>
+  </data>
+  <data name="Diff1String" xml:space="preserve">
+    <value>Easy</value>
+  </data>
+  <data name="Diff2String" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="Diff3String" xml:space="preserve">
+    <value>Hard</value>
+  </data>
+  <data name="DodgerAchiv" xml:space="preserve">
+    <value>Dodger.png/DODGER#Don't use MiniGame</value>
+  </data>
+  <data name="EnterName" xml:space="preserve">
+    <value>Enter your name</value>
+    <comment>score</comment>
+  </data>
+  <data name="EnterSeed1" xml:space="preserve">
+    <value>Pick a cave or enter</value>
+    <comment>pickCave</comment>
+  </data>
+  <data name="EnterSeed2" xml:space="preserve">
+    <value>your seed</value>
+    <comment>pickCave</comment>
+  </data>
+  <data name="ExplorerAchiv" xml:space="preserve">
+    <value>explorer.png/EXPLORER#Enter all rooms of the cave</value>
+  </data>
+  <data name="FasterAchiv" xml:space="preserve">
+    <value>"MG1.png/SPEEDY#Finish 1 lvl mini-game in less#than 7 seconds</value>
+  </data>
+  <data name="GiveArrowsString" xml:space="preserve">
+    <value>You received 2 arrows</value>
+    <comment>log</comment>
+  </data>
+  <data name="HamiltonAchiv" xml:space="preserve">
+    <value>Hamilton.png/HAMILTON'S DESCRENDANT#Go through all the rooms visiting#each 1 time only</value>
+  </data>
+  <data name="HintHintText" xml:space="preserve">
+    <value>Draw figures for get hint!</value>
+    <comment>minigame</comment>
+  </data>
+  <data name="HintRightClick" xml:space="preserve">
+    <value>#Right click to shoot#arrow</value>
+    <comment>log</comment>
+  </data>
+  <data name="HunterAchiv" xml:space="preserve">
+    <value>Hunter.png/HUNTER#Buy 4 arrows</value>
+  </data>
+  <data name="Leader" xml:space="preserve">
+    <value>Leaders</value>
+    <comment>score</comment>
+  </data>
+  <data name="LoseString" xml:space="preserve">
+    <value>Defeat</value>
+    <comment>score</comment>
+  </data>
+  <data name="MapSeedString" xml:space="preserve">
+    <value>Map's seed is {0}</value>
+    <comment>log</comment>
+  </data>
+  <data name="MetBatString" xml:space="preserve">
+    <value>You met BAT</value>
+    <comment>log</comment>
+  </data>
+  <data name="NewAchievement" xml:space="preserve">
+    <value>New achievement!</value>
+    <comment>score achiv</comment>
+  </data>
   <data name="NotEnoughCoins" xml:space="preserve">
     <value>Not enough coins(need {0} more)</value>
+    <comment>log</comment>
+  </data>
+  <data name="NowRoomString" xml:space="preserve">
+    <value>Room {0}</value>
+    <comment>interface</comment>
+  </data>
+  <data name="PitHint" xml:space="preserve">
+    <value>Pit in </value>
+    <comment>hint</comment>
+  </data>
+  <data name="PitHintText" xml:space="preserve">
+    <value>Pit! Draw figures for survive!</value>
+    <comment>minigame</comment>
+  </data>
+  <data name="PitWarning" xml:space="preserve">
+    <value>I feel a draft({0})</value>
   </data>
   <data name="PlayButtonText" xml:space="preserve">
     <value>PLAY!</value>
+    <comment>pickcave</comment>
+  </data>
+  <data name="PreciseAchiv" xml:space="preserve">
+    <value>Precise.png/PRECISE#Score 500 point in the mini-game on#the 1 lvl by drawing </value>
+  </data>
+  <data name="Reactivity" xml:space="preserve">
+    <value>MG2.png/REACTIVE#Finish 2 lvl mini-game in#less than 7 seconds</value>
+  </data>
+  <data name="RobinAchiv" xml:space="preserve">
+    <value>Robin.png/ROBIN HOOD#Buy 8 arrows</value>
+  </data>
+  <data name="SharpeyeAchiv" xml:space="preserve">
+    <value>Sharpeye.png/SHARPEYE#Score 500 point in the mini-game on#the 2 lvl by drawing only 1 figure</value>
+  </data>
+  <data name="ShooterAchiv" xml:space="preserve">
+    <value>Shooter.png/SHOOTER#Buy 2 arrows</value>
+  </data>
+  <data name="SniperAchiv" xml:space="preserve">
+    <value>Sniper.png/SNIPER#Score 500 point in the mini-game on#the 3 lvl by drawing only 1 figure</value>
+  </data>
+  <data name="StepAchiv" xml:space="preserve">
+    <value>Step.png/STEP INTO ABYSS#Explore 12 rooms</value>
+  </data>
+  <data name="WinString" xml:space="preserve">
+    <value>Victory</value>
+    <comment>score</comment>
+  </data>
+  <data name="WumpusHint" xml:space="preserve">
+    <value>Wumpus in </value>
+    <comment>hint</comment>
+  </data>
+  <data name="WumpusHintText" xml:space="preserve">
+    <value>Wumpus! Draw figures for survive</value>
+    <comment>minigame</comment>
+  </data>
+  <data name="WumpusRunString" xml:space="preserve">
+    <value>Wumpus run away</value>
+    <comment>log</comment>
+  </data>
+  <data name="WumpusWarning" xml:space="preserve">
+    <value>I smell a Wumpus!({0})</value>
+  </data>
+  <data name="YourScore" xml:space="preserve">
+    <value>Your score {0}</value>
+    <comment>score</comment>
+  </data>
+  <data name="ZingerAchiv" xml:space="preserve">
+    <value>MG3.png/ZINGER#Finish 3 lvl mini-game in less#than 7 seconds</value>
   </data>
 </root>

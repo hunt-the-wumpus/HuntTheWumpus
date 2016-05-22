@@ -68,11 +68,11 @@ namespace HuntTheWumpus
         public void GetAchievement(List<string> achiv)
         {
             if (CountBuyArrow == 2)
-                achiv.Add("Shooter.png/Shooter#Buy 2 arrows");
+                achiv.Add(Messages.ShooterAchiv);
             if (CountBuyArrow == 4)
-                achiv.Add("Hunter.png/Hunter#Buy 4 arrows");
+                achiv.Add(Messages.HunterAchiv);
             if (CountBuyArrow == 8)
-                achiv.Add("Robin.png/Robin Hood#Buy 8 arrows");
+                achiv.Add(Messages.RobinAchiv);
         }
     }
 }

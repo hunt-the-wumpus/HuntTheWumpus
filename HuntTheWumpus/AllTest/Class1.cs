@@ -83,9 +83,9 @@ namespace xUnit.Tests
             var map = new HuntTheWumpus.Map();
             int mem = map.Wumpus;
             map.WumpusGoAway();
+            Assert.False(mem == map.Wumpus, "Wumpus come back");
             map.WumpusGoAway(1);
             map.WumpusGoAway(4);
-            Assert.False(mem == map.Wumpus, "Wumpus come back");
             for (int i = 0; i < 6; ++i)
                 map.PushArrow(i);
             for (int i = 0; i < 6; ++i)
