@@ -168,7 +168,12 @@ namespace HuntTheWumpus
                     if (dangerabout == Danger.Pit)
                         view.AddComand("I feel a draft(" + (map.Room + 1) + ")", true);
                     if (dangerabout == Danger.Wumpus)
-                        view.AddComand("I smell a Wumpus!(" + (map.Room + 1) + ")", true);
+                    {
+                        string strout = "I smell a Wumpus!(" + (map.Room + 1) + ")";
+                        if (!player.IsShotArrow)
+                            strout += "#Right click to shoot#arrow";
+                        view.AddComand(strout, true);
+                    }
                 }
                 if (map.IsWin && view.IsEndAnimation())
                 {

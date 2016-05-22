@@ -10,6 +10,7 @@ namespace HuntTheWumpus
     {
         public int Arrow { get; private set; }
         public int Coins { get; private set; }
+        public bool IsShotArrow { get; private set; }
 
         private int CostArrow;
         private int CountBuyArrow;
@@ -22,6 +23,7 @@ namespace HuntTheWumpus
             Coins = 5;
             Arrow = 3;
             CountBuyArrow = 0;
+            IsShotArrow = false;
         }
 
         public bool CanBuyArrow()
@@ -45,6 +47,7 @@ namespace HuntTheWumpus
         public void PushArrow()
         {
             --Arrow;
+            IsShotArrow = true;
         }
         public bool CanBuyHint()
         {
