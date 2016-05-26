@@ -292,6 +292,9 @@
     <Content Include="data\Sprites\ShotGun.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="data\Sprites\Spear.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="data\StartNewGameButt.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

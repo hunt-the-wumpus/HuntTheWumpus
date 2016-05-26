@@ -140,10 +140,9 @@ namespace HuntTheWumpus
                         }
                         MiniGameEnd = true;
                     }
-                } else {
-					view.DrawInterface(player.Coins, player.Arrow, map.Room);
-				}
-                if (!CheckDanger && !view.MinimizeBat && !view.IsAnimated)
+                } else 
+					view.DrawInterface(player.Coins, player.Arrow, map.Room, player.CanBuyArrow(), player.CanBuyHint());
+				if (!CheckDanger && !view.MinimizeBat && !view.IsAnimated)
                 {
                     CheckDanger = true;
                     if (map.danger == Danger.Pit)
