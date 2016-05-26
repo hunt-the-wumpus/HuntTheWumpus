@@ -8,17 +8,17 @@ HuntTheWumpus is remake project for N_-_N by Molten Great Cleaner Shaft team. Th
 ## Mehaniks
 
 ### Map
-Cave are 30 rooms and bridge. Every room contain <= 3 bridge. Every bridge hve 1-4 coins.
+Cave are 30 rooms and bridge. Every room contains <= 3 bridges. Every bridge have 1-4 coins.
 
 ### Danger
-3 dnager
-* Bat. 2 Bats live in 2 rooms. If your meet bat, your and bat respawn
-* Pit. Pits are 2 room. If you visit room with Pit, you mast complite the MiniGame for survival
-* Wumpus. Main danger. If you visit room with wumpus, you mast complite the MiniGame. Wumpus will run away, if you will defeat him. On medium and hard Difficulty smtime wumpus walk in Cave. For win, you mast shot arrow to room, where wumpus sleep.
-If you near danger, you see baner about this danger
+3 danger
+* Bat. 2 Bats live in 2 rooms. If your meet a bat, you and bat respawn
+* Pit. Pits are 2 in rooms. If you enter room with Pit, you must complete the MiniGame for survival
+* Wumpus. Main danger. If you enter room with wumpus, you must complete the MiniGame. Wumpus will run away, if you will defeat him. On medium and hard Difficulty sometimes wumpus  can walk in the Cave. To win, you must shoot an arrow to the room, where wumpus sleeps.
+If you near a danger, you'll see a baner about this danger
 
 ### Player
-Player can buy 2 arrows (15 coins) and Hint (25 coins). For buy, you mast complete the MiniGame. If you shot all arrows, you defaet. If you buy Hint, you can learn bats, pits and Wumpus Direction.
+Player can buy 2 arrows (15 coins) and a Hint (25 coins). To buy, you must complete the MiniGame. If you spent all arrows, you loose. If you buy Hint, you can see bats, pits and Wumpus Direction.
 
 
 ### Achivements
