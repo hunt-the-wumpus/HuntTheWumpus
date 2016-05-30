@@ -5,7 +5,7 @@
 ### About project
 HuntTheWumpus is remake project for N_-_N by Molten Great Cleaner Shaft team. This project write on C# with use Git for control vesrion and xUnit for UnitTesting, appveyor for Continues Integration. 
 
-## Mehaniks
+## Mechanicvks
 
 ### Map
 Cave are 30 rooms and bridge. Every room contains <= 3 bridges. Every bridge have 1-4 coins.
